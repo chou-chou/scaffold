@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ser</artifactId>
+        <groupId>com.hrp</groupId>
+        <version>1.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>ser-back</artifactId>
+    <packaging>war</packaging>
+    <name>SER Back</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <warName>ser-back</warName>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <uriEncoding>utf-8</uriEncoding>
+                    <port>8888</port>
+                    <path>/SER</path>
+                    <contextReloadable>false</contextReloadable>
+                    <useTestClasspath>false</useTestClasspath>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>tomcat-maven-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <url>http://localhost:8080/manager/text</url>
+                    <username>admin</username>
+                    <password>admin</password>
+                    <path>/SER</path>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <configuration>
+                            <tasks>
+                                <delete dir="src/main/webapp/WEB-INF/classes"/>
+                                <delete dir="src/main/webapp/WEB-INF/log"/>
+                                <delete dir="src/main/webapp/WEB-INF/lib"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- MyBatis自动生成Mapper插件 -->
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>${mybatis-generator.version}</version>
+                <configuration>
+                    <verbose>true</verbose>
+                    <overwrite>true</overwrite>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <!-- jackjson-all-1.7.6 -->
+        <dependency>
+            <groupId>jackson</groupId>
+            <artifactId>jackson</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/jackson-all-1.7.6.jar</systemPath>
+        </dependency>
+        <!-- jpush-java-libraryV2 -->
+        <dependency>
+            <groupId>jpush</groupId>
+            <artifactId>jpush</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/jpush-java-libraryV2.jar</systemPath>
+        </dependency>
+        <!-- mail -->
+        <dependency>
+            <groupId>mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/mail.jar</systemPath>
+        </dependency>
+        <!--QRCode -->
+        <dependency>
+            <groupId>QRCode</groupId>
+            <artifactId>QRCode</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/QRCode.jar</systemPath>
+        </dependency>
+        <!-- saaj -->
+        <dependency>
+            <groupId>saaj</groupId>
+            <artifactId>saaj</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/saaj.jar</systemPath>
+        </dependency>
+        <!-- sun.misc.BASE64Decoder -->
+        <dependency>
+            <groupId>sun-misc</groupId>
+            <artifactId>sun-misc</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/sun.misc.BASE64Decoder.jar</systemPath>
+        </dependency>
+        <!-- ueditor -->
+        <dependency>
+            <groupId>ueditor</groupId>
+            <artifactId>ueditor</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/ueditor.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hrp</groupId>
+            <artifactId>ser-common</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
+</project>

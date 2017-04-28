@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD SQL Map Config 3.0//EN"  
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	
+	<settings> 
+        <setting name="cacheEnabled" value="true" /><!-- 全局映射器启用缓存 -->   
+        <setting name="useGeneratedKeys" value="true" /> 
+        <setting name="defaultExecutorType" value="REUSE" /> 
+       <!--  <setting name="jdbcTypeForNull" value="NULL" /> -->
+    </settings>
+
+	<typeAliases>
+        <typeAlias type="com.hrp.entity.system.TreeNode" alias="TreeNode"/>
+        <typeAlias type="com.hrp.entity.system.Authority" alias="Authority"/>
+		<typeAlias type="com.hrp.entity.system.User" alias="User"/>
+		<typeAlias type="com.hrp.entity.system.Role" alias="Role"/>
+		<typeAlias type="com.hrp.entity.system.Menu" alias="Menu"/>
+		<typeAlias type="com.hrp.entity.system.Button" alias="Button"/>
+		<typeAlias type="com.hrp.entity.system.Dictionary" alias="Dictionary"/>
+		<typeAlias type="com.hrp.entity.system.Department" alias="Department"/>
+		<typeAlias type="com.hrp.entity.system.UserRoleLink" alias="UserRoleLink"/>
+		
+		<typeAlias type="com.hrp.utils.PageData" alias="pd"/>
+		<!-- 分页 -->
+		<typeAlias type="com.hrp.plugins.Page" alias="Page"/>
+	</typeAliases>
+	
+	<plugins>
+		<plugin interceptor="com.hrp.plugins.PagePlugin">
+			<property name="dialect" value="sqlserver"/>
+			<property name="pageSqlId" value=".*listPage.*"/>
+		</plugin>
+	</plugins>
+	
+</configuration>

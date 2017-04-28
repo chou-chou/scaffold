@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-4.3.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+    <description>spring主配置文件</description>
+
+    <!-- 启用注解 -->
+    <context:annotation-config />
+
+    <!-- 启动组件扫描 com.hrp包下面注解 -->
+    <context:component-scan base-package="com.hrp">
+        <context:include-filter type="regex" expression="com.hrp.service.*"/>
+        <context:include-filter type="regex" expression="com.hrp.oauth.service.*" />
+
+        <!-- 排除@Controller组件，该组件由SpringMVC配置文件扫描 -->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
+
+    <context:property-placeholder location="classpath:config/system.properties" ignore-unresolvable="true"/>
+
+    <!-- 强制使用CGLIB  -->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <!-- Spring启动之后启动 -->
+    <!--<bean id="startfilter" class="com.hrp.filter.StartFilter" />-->
+
+    <!-- =====================================关联文件============================================= -->
+    <!--<import resource="classpath:spring/spring-activiti.xml" />-->
+    <import resource="classpath:spring/spring-cache.xml" />
+    <!--<import resource="classpath:spring/spring-i18n.xml" />-->
+    <import resource="classpath:spring/spring-mybatis.xml" />
+    <!--<import resource="classpath:spring/spring-oauth.xml" />-->
+    <!--<import resource="classpath:spring/spring-quartz.xml" />-->
+    <!--<import resource="classpath:spring/spring-redis.xml" />-->
+    <import resource="classpath:spring/spring-rest.xml" />
+    <import resource="classpath:spring/spring-shiro.xml" />
+
+    <!-- 日志切面 -->
+    <bean id="logAspect" class="com.hrp.utils.LogAspect" />
+
+</beans>

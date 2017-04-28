@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AuthorityMapper">
+
+    <resultMap type="Authority" id="authorityMap">
+        <id column="ID" property="id"/>
+        <result column="ADDRESS" property="address"/>
+        <result column="EXPIRE" property="expire"/>
+        <result column="ENABLED" property="enabled"/>
+    </resultMap>
+
+
+    <!-- 表名 -->
+    <sql id="tableName">
+        T_AUTHORITY
+    </sql>
+
+    <!-- 字段 -->
+    <sql id="field">
+        ID,ADDRESS,EXPIRE,ENABLED
+    </sql>
+
+    <!-- 获取菜单列表 -->
+    <select id="listAll" resultMap="authorityMap">
+        select <include refid="field"></include>
+        from <include refid="tableName"></include>
+        where ENABLED = 1
+    </select>
+
+</mapper>

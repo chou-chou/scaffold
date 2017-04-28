@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+						http://www.springframework.org/schema/aop 
+						http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+						http://www.springframework.org/schema/context 
+						http://www.springframework.org/schema/context/spring-context-4.3.xsd
+						http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<description>mybatis 主配置</description>
+
+    <!-- 属性和配置文件读入 ,多个用逗号隔开 数据库参数和系统参数 -->
+    <bean name="customName" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
+        <property name="location">
+            <value>classpath:config/system.properties</value>
+        </property>
+    </bean>
+
+    <context:annotation-config />
+    <context:component-scan base-package="com.hrp.dao">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
+    </context:component-scan>
+
+    <!-- 阿里 druid数据库连接池 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+         <!-- 数据库基本信息配置 -->
+         <property name="url" value="${jdbc.url}" />
+         <property name="username" value="${jdbc.username}" />
+         <property name="password" value="${jdbc.password}" />
+         <property name="driverClassName" value="${jdbc.driver}" />
+         <property name="filters" value="${jdbc.filters}" />
+   		 <!-- 最大并发连接数 -->
+         <property name="maxActive" value="${jdbc.maxActive}" />
+         <!-- 初始化连接数量 -->
+         <property name="initialSize" value="${jdbc.initialSize}" />
+         <!-- 配置获取连接等待超时的时间 -->
+         <property name="maxWait" value="${jdbc.maxWait}" />
+         <!-- 最小空闲连接数 -->
+         <property name="minIdle" value="${jdbc.minIdle}" />
+   		 <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+         <property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}" />
+         <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+         <property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}" />
+         <property name="validationQuery" value="${jdbc.validationQuery}" />
+         <property name="testWhileIdle" value="${jdbc.testWhileIdle}" />
+         <property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
+         <property name="testOnReturn" value="${jdbc.testOnReturn}" />
+         <property name="maxOpenPreparedStatements" value="${jdbc.maxOpenPreparedStatements}" />
+         <!-- 打开removeAbandoned功能 -->
+         <property name="removeAbandoned" value="${jdbc.removeAbandoned}" />
+         <!-- 1800秒，也就是30分钟 -->
+         <property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeout}" />
+         <!-- 关闭abanded连接时输出错误日志 -->   
+         <property name="logAbandoned" value="${jdbc.logAbandoned}" />
+	</bean>
+
+    <!-- ==========================================配置Mybatis========================================== -->
+    <!-- 配置mybatis的sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    	<property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"></property>
+        <!-- mapper扫描 -->
+        <property name="mapperLocations" value="classpath:mybatis/*/*.xml"></property>
+    </bean>
+    
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
+		<constructor-arg ref="sqlSessionFactory" />
+	</bean>
+
+    <!-- ==========================================事务配置========================================== -->
+    <!-- 事务管理器 -->
+    <bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!-- 配置哪些方法要加入事务控制 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="delete*" propagation="REQUIRED" read-only="false"
+                       rollback-for="java.lang.Exception"/>
+            <tx:method name="insert*" propagation="REQUIRED" read-only="false"
+                       rollback-for="java.lang.Exception" />
+            <tx:method name="update*" propagation="REQUIRED" read-only="false"
+                       rollback-for="java.lang.Exception" />
+            <tx:method name="save*" propagation="REQUIRED" read-only="false"
+                       rollback-for="java.lang.Exception" />
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 配置AOP，Spring是通过AOP来进行事务管理的，面向接口注入 -->
+    <aop:config>
+        <aop:pointcut id="point" expression="execution(* com.hrp.service..*(..))" />
+        <aop:advisor pointcut-ref="point" advice-ref="txAdvice" />
+    </aop:config>
+
+    <!-- 启用对事务注解的支持 -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+    <!-- 当proxy-target-class为false时使用JDK动态代理，为true时使用cglib代理，cglib无法拦截接口方法 -->
+    <aop:aspectj-autoproxy proxy-target-class="true" />
+
+</beans>

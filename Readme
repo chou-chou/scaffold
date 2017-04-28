@@ -1,0 +1,10 @@
+1、获取系统硬件信息 —— Sigar在Java中的使用：
+
+    Windows：将sigar.jar包放到classpath下，将sigar-amd64-winnt.dll放到环境变量java.library.path下。
+    Linux：将sigar.jar包放到classpath下，将libsigar-x86-linux.so放到环境变量java.library.path下。
+
+    System.getProperty("java.library.path") 可以查看系统中java.library.path的路径。
+
+2、生成系统验证信息
+
+    ser-back\src\test\com\hrp\util\SysInfo.java
