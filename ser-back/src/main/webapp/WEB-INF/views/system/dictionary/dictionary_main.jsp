@@ -19,7 +19,9 @@
     <script type="text/javascript" src="<%=basePath%>/static/js/bootstrap-multiselect.min.js"></script>--%>
 
     <link rel="stylesheet" href="<%=basePath%>/plugins/select2/css/select2.min.css"/>
-    <script type="text/javascript" src="<%=basePath%>/plugins/select2/js/select2.min.js"></script>
+
+    <script type="text/javascript" src="<%=basePath%>/static/js/pinyin.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/plugins/select2/js/select2.full.js"></script>
     <script type="text/javascript" src="<%=basePath%>/plugins/select2/js/i18n/zh-CN.js"></script>
 
 </head>
@@ -56,7 +58,8 @@
                 </form>
 
                 <!-- 分割线 -->
-                <div class="hr hr-5"></div>
+                <div class="hr hr-4"></div>
+                <%--<div class="hr hr-dotted"></div>--%>
 
                 <div class="row">
                     <div class="col-xs-12">
@@ -64,6 +67,15 @@
                         <div class="row">
                             <!-- 字典树 -->
                             <div class="col-sm-4">
+                                <!-- 工具按钮 新增/编辑/删除 -->
+                                <div>
+                                    <p>
+                                        <button class="btn btn-sm btn-primary" onclick="">新增</button>
+                                        <button class="btn btn-sm btn-primary" onclick="">编辑</button>
+                                        <button class="btn btn-sm btn-primary" onclick="">删除</button>
+                                    </p>
+                                </div>
+
                                 <div class="widget-box widget-color-blue2">
                                     <div class="widget-header">
                                         <h4 class="widget-title lighter smaller">字典树</h4>
@@ -80,95 +92,99 @@
                             <!-- 菜单新增/编辑 -->
                             <div class="col-sm-8">
 
-                                <!-- 工具按钮 新增/编辑/删除 -->
-                                <div>
-                                    <p>
-                                        <button class="btn btn-sm btn-primary" onclick="">新增</button>
-                                        <button class="btn btn-sm btn-primary" onclick="">编辑</button>
-                                        <button class="btn btn-sm btn-primary" onclick="">删除</button>
-                                    </p>
-                                </div>
+                                <%--<div class="hr hr-dotted"></div>--%>
 
-                                <div class="hr hr-dotted"></div>
+                                <div class="clearfix form-actions">
+                                    <!-- 新增/编辑 -->
+                                    <div class="row">
+                                        <div class="col-xs-12">
 
-                                <!-- 新增/编辑 -->
-                                <div class="row">
-                                    <div class="col-xs-12">
+                                            <form class="form-horizontal" role="form">
 
-                                        <form class="form-horizontal" role="form">
-                                            <input id="dicId" name="dicId" type="hidden" value="${dic.dicId}" />
-                                            <input id="tag" name="tag" type="hidden" />
+                                                <input id="dicId" name="dicId" type="hidden" value="${dic.dicId}"/>
+                                                <input id="tag" name="tag" type="hidden"/>
 
-                                            <div class="form-group">
-                                                <label class="control-label col-sm-2 col-xs-12 no-padding-right" for="supCode">上级字典:</label>
-                                                <div class="col-sm-10 col-xs-12">
-                                                    <select id="supCode" name="supCode" class="select2" multiple=""
-                                                            style="max-height:150px; overflow-y:auto; overflow-x: hidden" >
-                                                        <option value="-1"> - 请选择 - </option>
-                                                        <c:forEach items="${dicList}" var="dic" varStatus="index">
-                                                            <option value="${dic.entryCode}">${dic.entryValue}</option>
-                                                        </c:forEach>
-                                                    </select>
+                                                <div class="form-group">
+                                                    <label class="control-label col-sm-2 col-xs-12 no-padding-right"
+                                                           for="supCode">上级字典:</label>
+                                                    <div class="col-sm-10 col-xs-12">
+                                                        <select id="supCode" name="supCode" class="select2" multiple=""
+                                                                style="max-height:150px; overflow-y:auto; overflow-x: hidden">
+                                                            <option value="-1"> - 请选择 -</option>
+                                                            <c:forEach items="${dicList}" var="dic" varStatus="index">
+                                                                <option value="${dic.entryCode}">${dic.entryValue}</option>
+                                                            </c:forEach>
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <%--<div class="form-group">
-                                                <label class="control-label col-sm-2 col-xs-12 no-padding-right" for="supCode">上级字典:</label>
-                                                <div class="col-sm-10 col-xs-12">
-                                                    <select id="supCode" name="supCode" class="multiselect dropdown-menu" style="max-height:150px; overflow-y:auto; overflow-x: hidden" multiple="">
-                                                        <c:forEach items="${dicList}" var="dic" varStatus="index">
-                                                            <option value="${dic.entryCode}">${dic.entryValue}</option>
-                                                        </c:forEach>
-                                                    </select>
+                                                <%--<div class="form-group">
+                                                    <label class="control-label col-sm-2 col-xs-12 no-padding-right" for="supCode">上级字典:</label>
+                                                    <div class="col-sm-10 col-xs-12">
+                                                        <select id="supCode" name="supCode" class="multiselect dropdown-menu" style="max-height:150px; overflow-y:auto; overflow-x: hidden" multiple="">
+                                                            <c:forEach items="${dicList}" var="dic" varStatus="index">
+                                                                <option value="${dic.entryCode}">${dic.entryValue}</option>
+                                                            </c:forEach>
+                                                        </select>
+                                                    </div>
+                                                </div>--%>
+
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label no-padding-right"
+                                                           for="entryCode">字典编码:</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" id="entryCode" name="entryCode"
+                                                               placeholder="字典编码" class="col-xs-10 col-sm-5"
+                                                               value="${dic.entryCode}"/>
+                                                    </div>
                                                 </div>
-                                            </div>--%>
 
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label no-padding-right" for="entryCode">字典编码:</label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="entryCode" name="entryCode" placeholder="字典编码" class="col-xs-10 col-sm-5"
-                                                        value="${dic.entryCode}"/>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label no-padding-right"
+                                                           for="entryValue">字典名称:</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" id="entryValue" name="entryValue"
+                                                               placeholder="字典名称" class="col-xs-10 col-sm-5"
+                                                               value="${dic.entryValue}"/>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label no-padding-right" for="entryValue">字典名称:</label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="entryValue" name="entryValue" placeholder="字典名称" class="col-xs-10 col-sm-5"
-                                                           value="${dic.entryValue}"/>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label no-padding-right"
+                                                           for="sequence">序号:</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" id="sequence" name="sequence"
+                                                               placeholder="序号" class="col-xs-10 col-sm-5"
+                                                               value="${dic.sequence}"/>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label no-padding-right" for="sequence">序号:</label>
-                                                <div class="col-sm-10">
-                                                    <input type="text" id="sequence" name="sequence" placeholder="序号" class="col-xs-10 col-sm-5"
-                                                           value="${dic.sequence}"/>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label no-padding-right" for="enabled">
-                                                    是否可用:
-                                                </label>
-                                                <div class="col-sm-10 checkbox">
-                                                    <label>
-                                                        <input id="enabled" name="enabled" class="ace ace-checkbox-2" type="checkbox" <c:if test="${dic.enabled == true}">checked</c:if>/>
-                                                        <span class="lbl">  注: 勾选即可用 </span>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label no-padding-right"
+                                                           for="enabled">
+                                                        是否可用:
                                                     </label>
+                                                    <div class="col-sm-10 checkbox">
+                                                        <label>
+                                                            <input id="enabled" name="enabled"
+                                                                   class="ace ace-checkbox-2" type="checkbox"
+                                                                   <c:if test="${dic.enabled == true}">checked</c:if>/>
+                                                            <span class="lbl">  注: 勾选即可用 </span>
+                                                        </label>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label no-padding-right" for="remark">备注:</label>
-                                                <div class="col-sm-10">
-                                                    <textarea id="remark" name="remark" class="form-control"placeholder="备注信息">${dic.sequence}</textarea>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label no-padding-right" for="remark">备注:</label>
+                                                    <div class="col-sm-10">
+                                                        <textarea id="remark" name="remark" class="form-control"
+                                                                  placeholder="备注信息">${dic.sequence}</textarea>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="clearfix form-actions">
                                                 <div class="col-md-offset-3 col-md-9">
-                                                    <button class="btn btn-info" type="button" onclick="return saveChange();">
+                                                    <button class="btn btn-info" type="button"
+                                                            onclick="return saveChange();">
                                                         <i class="ace-icon fa fa-check bigger-110"></i>
                                                         提交
                                                     </button>
@@ -179,9 +195,10 @@
                                                         重置
                                                     </button>
                                                 </div>
-                                            </div>
 
-                                        </form>
+
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -242,7 +259,7 @@
         check: {
             enable: true,
             chkStyle: "checkbox",
-            chkboxType: {"Y":"", "N":""}
+            chkboxType: {"Y": "", "N": ""}
         },
         view: {
             addHoverDom: addHoverDom,  // 当鼠标移动到节点上时，显示用户自定义控件
@@ -276,31 +293,35 @@
         ajaxFetchData();  // 异步获取字典数据
     });
 
-    $('.select2').css('width', '200px').select2({
-        allowClear:true,
+    $('.select2').select2({
+        width: '200px',
+        placeholder: {
+            id: '-1',
+            text: '键入查询'
+        },
+        allowClear: true,
         language: "zh-CN",
-        placeholder:'键入查询',
         //minimumInputLength: 1,
         multiple: false
     });
 
     /*$('.multiselect').multiselect({
-        enableFiltering: true,
-        filterPlaceholder: '键入关键词查询',
-        enableHTML: true,
-        buttonClass: 'btn btn-white btn-primary',
-        templates: {
-            button: '<button type="button" class="multiselect dropdown-toggle" data-toggle="dropdown"><span class="multiselect-selected-text"></span> &nbsp;<b class="fa fa-caret-down"></b></button>',
-            ul: '<ul class="multiselect-container dropdown-menu"></ul>',
-            filter: '<li class="multiselect-item filter"><div class="input-group"><span class="input-group-addon"><i class="fa fa-search"></i></span><input class="form-control multiselect-search" type="text"></div></li>',
-            filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default btn-white btn-grey multiselect-clear-filter" type="button"><i class="fa fa-times-circle red2"></i></button></span>',
-            li: '<li><a tabindex="0"><label></label></a></li>',
-            divider: '<li class="multiselect-item divider"></li>',
-            liGroup: '<li class="multiselect-item multiselect-group"><label></label></li>'
-        }
-    });*/
+     enableFiltering: true,
+     filterPlaceholder: '键入关键词查询',
+     enableHTML: true,
+     buttonClass: 'btn btn-white btn-primary',
+     templates: {
+     button: '<button type="button" class="multiselect dropdown-toggle" data-toggle="dropdown"><span class="multiselect-selected-text"></span> &nbsp;<b class="fa fa-caret-down"></b></button>',
+     ul: '<ul class="multiselect-container dropdown-menu"></ul>',
+     filter: '<li class="multiselect-item filter"><div class="input-group"><span class="input-group-addon"><i class="fa fa-search"></i></span><input class="form-control multiselect-search" type="text"></div></li>',
+     filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default btn-white btn-grey multiselect-clear-filter" type="button"><i class="fa fa-times-circle red2"></i></button></span>',
+     li: '<li><a tabindex="0"><label></label></a></li>',
+     divider: '<li class="multiselect-item divider"></li>',
+     liGroup: '<li class="multiselect-item multiselect-group"><label></label></li>'
+     }
+     });*/
 
-    $(document).one('ajaxloadstart.page', function(e){
+    $(document).one('ajaxloadstart.page', function (e) {
         $('[class*=select2]').remove();
         //$('.multiselect').multiselect('destroy');
     })
@@ -320,6 +341,7 @@
             },
             success: function (data) {
                 //var result = eval("(" + data + ")");  // 这个data不能直接使用，需要转化一下
+                var json = JSON.stringify(data);
 
                 t = $.fn.zTree.init(t, setting, data);
             }
@@ -374,8 +396,6 @@
     // 新增Form/编辑Form
     function editDictionary(dicId, tag) {
 
-        alert(dicId + " " + tag);
-
         $.ajax({
             type: "GET",
             url: "/dictionary/editDictionary.do",
@@ -387,13 +407,24 @@
             },
             success: function (dic) {
                 // 设置
-                $("#supCode").val(dic.entryCode);
-                $("#supCode option[text='" + dic.entryValue + "']").attr("selected", true);
+                //$("#supCode").val(dic.entryCode);
+                //$("#supCode option[text='" + dic.entryValue + "']").attr("selected", true);
                 //$("#supCode").select2().select2('val', dic.entryCode);
                 //$("#supCode").select2('text', dic.entryValue);
 
-                $("#supCode").attr("value", dic.entryCode);
-                $("#supCode").trigger('change');  // 动态改变值以后必须触发改变时间。否则将不会生效
+                $("#supCode").select2('val', dic.entryCode);
+                $("#supCode").trigger('change');  // 动态改变值以后必须触发改变事件。否则将不会生效(联动)
+
+                //$("#supCode").trigger("select2:select");
+
+                if (tag == "ADD") {
+                    $("#dicId").val("");
+                    $("#sequence").val("");
+                    $("#entryCode").val("");
+                    $("#entryValue").val("");
+                    $("#enabled").attr("checked", 'true');
+                    $("#remark").val("");
+                }
 
                 if (tag == 'EDIT') {
                     $("#dicId").val(dic.dicId);
