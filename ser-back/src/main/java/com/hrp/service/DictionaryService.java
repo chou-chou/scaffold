@@ -38,6 +38,30 @@ public interface DictionaryService {
     public Dictionary getByDicId(PageData pd) throws Exception;
 
     /**
+     * 根据SUP_CODE查询父字典
+     * @param pd
+     * @return
+     * @throws Exception
+     */
+    public Dictionary getBySupCode(PageData pd) throws Exception;
+
+    /**
+     * 根据SUP_CODE查询父字典
+     * @param supCode
+     * @return
+     * @throws Exception
+     */
+    public Dictionary getBySupCode(String supCode) throws Exception;
+
+    /**
+     * 获取子字典数据
+     * @param pd
+     * @return
+     * @throws Exception
+     */
+    public List<Dictionary> getSubDictionaryes(PageData pd) throws Exception;
+
+    /**
      * 新增字典
      * @param pd
      * @return

@@ -54,4 +54,19 @@ public class DictionaryServiceImpl implements DictionaryService {
         Integer result = (Integer) baseDao.delete("DictionaryMapper.deleteDictionary", pd);
         return (result > 0) ? true : false;
     }
+
+    @Override
+    public Dictionary getBySupCode(PageData pd) throws Exception {
+        return (Dictionary) baseDao.findForObject("DictionaryMapper.getBySupCode", pd);
+    }
+
+    @Override
+    public Dictionary getBySupCode(String supCode) throws Exception {
+        return (Dictionary) baseDao.findForObject("DictionaryMapper.getBySupCode", supCode);
+    }
+
+    @Override
+    public List<Dictionary> getSubDictionaryes(PageData pd) throws Exception {
+        return (List<Dictionary>) baseDao.findForList("DictionaryMapper.getSubDictionarys", pd);
+    }
 }

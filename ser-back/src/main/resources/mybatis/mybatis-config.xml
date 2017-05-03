@@ -27,6 +27,7 @@
 	</typeAliases>
 	
 	<plugins>
+        <!-- 分页处理 -->
 		<plugin interceptor="com.hrp.plugins.PagePlugin">
 			<property name="dialect" value="sqlserver"/>
 			<property name="pageSqlId" value=".*listPage.*"/>

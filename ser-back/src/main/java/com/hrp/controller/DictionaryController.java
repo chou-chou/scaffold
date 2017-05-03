@@ -95,6 +95,7 @@ public class DictionaryController extends BaseController {
 
         try {
             dic = this.dictionaryService.getByDicId(pd);
+            logger.info(dic.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -109,34 +110,35 @@ public class DictionaryController extends BaseController {
      */
     @RequestMapping(value = "/editDictionary.do", method = RequestMethod.POST)
     public void editDictionaryPost(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
-        String dicId = request.getParameter("dicId");
         String tag = request.getParameter("tag");
-
         ResultCode rc = new ResultCode();
-        Boolean success = true;
 
         pd = this.getPageData();
 
         switch (tag) {
             case "ADD": // 新增
-
                 try {
-                    success = this.dictionaryService.saveDictionary(pd);
+                    Boolean success = this.dictionaryService.saveDictionary(pd);
                     if (success) {
                         rc.setCode("0");
                         rc.setMessage("新增成功");
+                    } else {
+                        rc.setCode("1");
+                        rc.setMessage("新增失败");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
             case "EDIT": // 编辑
-
                 try {
-                    success = this.dictionaryService.updateDictionary(pd);
+                    Boolean success = this.dictionaryService.updateDictionary(pd);
                     if (success) {
                         rc.setCode("0");
                         rc.setMessage("更新成功");
+                    } else {
+                        rc.setCode("1");
+                        rc.setMessage("更新失败");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -155,7 +157,26 @@ public class DictionaryController extends BaseController {
      */
     @RequestMapping(value = "/removeDictionary.do", method = RequestMethod.POST)
     public void removeDictionary(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+        String dicId = request.getParameter("dicId");
 
+        ResultCode rc = new ResultCode();
+
+        pd = this.getPageData();
+
+        try {
+            Boolean success = this.dictionaryService.deleteByIds(pd);
+            if (success) {
+                rc.setCode("0");
+                rc.setMessage("删除成功");
+            } else {
+                rc.setCode("1");
+                rc.setMessage("删除失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JsonUtil.writeJsonToResponse(response, rc, JsonUtil.OBJECT_TYPE_BEAN);
     }
 
 }

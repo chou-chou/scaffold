@@ -4,6 +4,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+import com.hrp.utils.PageData;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,8 @@ public class BaseDaoTest extends AbstractTransactionalJUnit4SpringContextTests /
      */
 
     protected static final Logger logger = LoggerFactory.getLogger(BaseDaoTest.class);
+
+    protected static PageData pd = new PageData();
 
     static {
         LoggerContext lc = (LoggerContext)LoggerFactory.getILoggerFactory();

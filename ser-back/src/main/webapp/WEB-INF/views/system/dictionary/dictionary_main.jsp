@@ -102,7 +102,7 @@
                                             <form class="form-horizontal" role="form">
 
                                                 <input id="dicId" name="dicId" type="hidden" value="${dic.dicId}"/>
-                                                <input id="tag" name="tag" type="hidden"/>
+                                                <input id="tag" name="tag" type="hidden" value="ADD"/>
 
                                                 <div class="form-group">
                                                     <label class="control-label col-sm-2 col-xs-12 no-padding-right"
@@ -110,7 +110,7 @@
                                                     <div class="col-sm-10 col-xs-12">
                                                         <select id="supCode" name="supCode" class="select2" multiple=""
                                                                 style="max-height:150px; overflow-y:auto; overflow-x: hidden">
-                                                            <option value="-1"> - 请选择 -</option>
+                                                            <option value="-1">请选择</option>
                                                             <c:forEach items="${dicList}" var="dic" varStatus="index">
                                                                 <option value="${dic.entryCode}">${dic.entryValue}</option>
                                                             </c:forEach>
@@ -286,14 +286,20 @@
                     return true;
                 }
             }
-        }
+        }/*,
+        async: {
+            enabled: true,
+            url: "/dictionary/getDicTree.do",
+            autoParam: ['code'],
+            dataType: "json"
+        }*/
     };
 
     $(document).ready(function () {
         ajaxFetchData();  // 异步获取字典数据
     });
 
-    $('.select2').select2({
+    $('#supCode').select2({
         width: '200px',
         placeholder: {
             id: '-1',
@@ -324,7 +330,9 @@
     $(document).one('ajaxloadstart.page', function (e) {
         $('[class*=select2]').remove();
         //$('.multiselect').multiselect('destroy');
-    })
+    });
+
+    var zTree = $.fn.zTree.getZTreeObj("dictionaryTree");
 
     // 业务功能
     // 异步获取字典数据信息，并展示
@@ -351,12 +359,21 @@
     // 新增/修改 -- 提交
     function saveChange() {
 
+        var tag = $("#tag").val();
+
         var supCode = $("#supCode").val();
         var entryCode = $("#entryCode").val();
         var entryValue = $("#entryValue").val();
         var sequence = $("#sequence").val();
-        var enabled = $("#enabled").val();
+        var enabled = "";
+        if ($("#enabled").val() !== undefined)  enabled = $("#enabled").val();
         var remark = $("#remark").val;
+
+        if (enabled == 'on') {
+            enabled = 1;
+        } else {
+            enabled = 0;
+        }
 
         if (supCode == '') {
             layer.msg("请选择一个合适的上级字典!");
@@ -369,6 +386,8 @@
             dataType: "json",
             async: true,
             data: {
+                tag: $("#tag").val(),
+                dicId: $("#dicId").val(),
                 supCode: supCode,
                 entryCode: entryCode,
                 entryValue: entryValue,
@@ -377,8 +396,17 @@
                 remark: remark
             },
             success: function (rc) {
-                if (rc.code == '0' || rc.code == "0") {
+                if (rc.code == '0') {
                     alert(rc.message);
+
+                    if (tag == "ADD") {
+
+                    }
+
+                    if (tag == "EDIT") {
+                        zTree.getNodeByTId(dic.entryCode);
+                        zTree.updateNode()
+                    }
                 }
             }
         });
@@ -406,18 +434,12 @@
                 tag: tag
             },
             success: function (dic) {
-                // 设置
-                //$("#supCode").val(dic.entryCode);
-                //$("#supCode option[text='" + dic.entryValue + "']").attr("selected", true);
-                //$("#supCode").select2().select2('val', dic.entryCode);
-                //$("#supCode").select2('text', dic.entryValue);
-
-                $("#supCode").select2('val', dic.entryCode);
-                $("#supCode").trigger('change');  // 动态改变值以后必须触发改变事件。否则将不会生效(联动)
-
-                //$("#supCode").trigger("select2:select");
+                //alert(JSON.stringify(dic));
+                //$("#supCode").val(dic.entryCode).trigger("change");// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
 
                 if (tag == "ADD") {
+                    $("#supCode").val(dic.entryCode).trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
+
                     $("#dicId").val("");
                     $("#sequence").val("");
                     $("#entryCode").val("");
@@ -427,6 +449,12 @@
                 }
 
                 if (tag == 'EDIT') {
+                    if (dic.supDic !== undefined && dic.supDic !== null) {
+                        $("#supCode").val(dic.supDic.entryCode).trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
+                    } else {
+                        $("#supCode").val('-1').trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
+                    }
+
                     $("#dicId").val(dic.dicId);
                     $("#sequence").val(dic.sequence);
                     $("#entryCode").val(dic.entryCode);
@@ -442,10 +470,37 @@
             }
         });
 
-        return true;
+        return false;
     }
 
     function removeDictionary(dicId) {
+        layer.confirm('您确定要删除该字典数据？', {
+            btn: ['确定', '暂时不要']  // 按钮
+        }, function(){
+            layer.msg('您点击了确定', {icon:1});
+
+            // 执行异步删除动作
+            $.ajax({
+                type: "POST",
+                url: "/dictionary/removeDictionary.do",
+                dataType: "json",
+                async: true,
+                data: {
+                    dicId: dicId
+                },
+                success: function (rc) {
+                    if (rc.code == '0')
+                        layer.msg('已为您删除该字典数据[' + dicId + ']', {icon:1});
+                    else
+                        layer.msg('删除操作出错![' + rc.message + ']');
+                }
+            });
+
+            return true;
+        }, function() {
+
+            return false;
+        });
 
         return false;
     }

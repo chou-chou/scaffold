@@ -53,7 +53,7 @@ public class DictionaryMapperTest extends BaseDaoTest {
     @Test
     public void getByDicId() throws Exception {
         PageData pd = new PageData();
-        pd.put("dicId", "1");
+        pd.put("dicId", "2");
 
         Dictionary dic = (Dictionary) dao.findForObject("DictionaryMapper.getByDicId", pd);
         logger.info(dic.toString());
@@ -81,4 +81,20 @@ public class DictionaryMapperTest extends BaseDaoTest {
         logger.info(result.toString());
     }
 
+
+    @Test
+    public void getBySupCode() throws Exception {
+        pd.put("supCode", "CV0100.06");
+        Dictionary result = (Dictionary) dao.findForObject("DictionaryMapper.getBySupCode", pd);
+        logger.info(result.toString());
+    }
+
+    @Test
+    public void getSubDictionaryes() throws Exception {
+        pd.put("entryCode", "CV0100.06");
+        List<Dictionary> list = (List<Dictionary>) dao.findForList("DictionaryMapper.getSubDictionaryes", pd);
+        for (Dictionary dictionary : list) {
+            logger.info(dictionary.toString());
+        }
+    }
 }

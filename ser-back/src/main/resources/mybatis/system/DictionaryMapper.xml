@@ -26,6 +26,14 @@
         <result column="ENABLED" property="enabled"/>
         <result column="REMARK" property="remark"/>
     </resultMap>
+
+    <resultMap type="Dictionary" id="DictionaryExtendMap" extends="DictionaryMap">
+        <!-- 查询父字典 -->
+        <association column="SUP_CODE" property="supDic" select="DictionaryMapper.getBySupCode"/>
+        <!-- 查询子字典 -->
+        <!--<collection column="ENTRY_CODE" property="subDictionarys" javaType="ArrayList" ofType="Dictionary" select="DictionartMapper.getSubDictionarys"/>-->
+    </resultMap>
+
     <!-- 表名 -->
     <sql id="tableName">
         T_DICTIONARY
@@ -41,9 +49,19 @@
         #{dicId}, #{entryCode}, #{entryValue}, #{supCode},#{sequence}, #{isLeaf}, #{classCode}, #{className}, #{additional}, #{enabled}, #{remark}
     </sql>
 
-    <select id="getByDicId" parameterType="pd" resultMap="DictionaryMap">
-        select <include refid="field"></include> from <include refid="tableName"></include>
+    <select id="getByDicId" parameterType="pd" resultMap="DictionaryExtendMap">
+        select top 1 <include refid="field"></include> from <include refid="tableName"></include>
         where DIC_ID = #{dicId}
+    </select>
+
+    <select id="getBySupCode" parameterType="String" resultMap="DictionaryMap">
+        select top 1 <include refid="field"></include> from <include refid="tableName"></include>
+        where ENTRY_CODE = #{supCode}
+    </select>
+
+    <select id="getSubDictionarys" parameterType="pd" resultMap="DictionaryMap">
+        select <include refid="field"></include> from <include refid="tableName"></include>
+        where SUP_CODE = #{entryCode}
     </select>
 
     <!-- 根据条件获取字典列表 -->
@@ -77,7 +95,7 @@
         INNER JOIN TREE
         ON d.IS_LEAF = 1 AND d.SUP_CODE = TREE.ENTRY_CODE
         )
-        SELECT DIC_ID, ENTRY_CODE, ENTRY_VALUE, SUP_CODE, SEQUENCE, IS_LEAF FROM TREE
+        SELECT DISTINCT DIC_ID, ENTRY_CODE, ENTRY_VALUE, SUP_CODE, SEQUENCE, IS_LEAF FROM TREE
         OPTION (MAXRECURSION 5) <!-- 限制递归次数 -->
     </select>
 
