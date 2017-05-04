@@ -65,8 +65,10 @@ public class DictionaryMapperTest extends BaseDaoTest {
         PageData pd = new PageData();
         pd.put("entryCode", "test");
         pd.put("entryValue", "测试");
+        pd.put("enabled", true);
 
-        dao.save("DictionaryMapper.saveDictionary", pd);
+        Object r = dao.save("DictionaryMapper.saveDictionaryMap", pd);
+        logger.info(r + "\n" + pd.toString());
     }
 
     @Test
@@ -96,5 +98,27 @@ public class DictionaryMapperTest extends BaseDaoTest {
         for (Dictionary dictionary : list) {
             logger.info(dictionary.toString());
         }
+    }
+
+    @Test
+    @Rollback(false)
+    public void deleteDictionary() throws Exception {
+        pd.put("ids", new String[]{"14"});
+        Object o = dao.delete("DictionaryMapper.deleteDictionary", pd);
+        logger.info(String.valueOf(o));
+    }
+
+    @Test
+    @Rollback(false)
+    public void saveDictionaryBean() throws Exception {
+        Dictionary dictionary = new Dictionary();
+        pd.put("entryCode", "test");
+        pd.put("entryValue", "测试");
+        pd.put("enabled", true);
+        dictionary.setEntryCode("TEST_3");
+        dictionary.setEntryValue("测试3");
+
+        Object r = dao.save("DictionaryMapper.saveDictionaryBean", dictionary);
+        logger.info(r + "\n" + dictionary.toString());
     }
 }

@@ -2,7 +2,7 @@ package com.hrp.controller;
 
 import com.hrp.entity.system.Dictionary;
 import com.hrp.entity.system.TreeNode;
-import com.hrp.pojo.ResultCode;
+import com.hrp.pojo.Result;
 import com.hrp.service.DictionaryService;
 import com.hrp.utils.JsonUtil;
 import com.hrp.utils.PageData;
@@ -111,17 +111,44 @@ public class DictionaryController extends BaseController {
     @RequestMapping(value = "/editDictionary.do", method = RequestMethod.POST)
     public void editDictionaryPost(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
         String tag = request.getParameter("tag");
-        ResultCode rc = new ResultCode();
+        Result rc = new Result();
 
         pd = this.getPageData();
 
         switch (tag) {
             case "ADD": // 新增
                 try {
-                    Boolean success = this.dictionaryService.saveDictionary(pd);
-                    if (success) {
+                    String entryCode = StringUtil.isNotNullOrBlank(request.getParameter("entryCode"))
+                            ? request.getParameter("entryCode") : "";
+                    String entryValue = StringUtil.isNotNullOrBlank(request.getParameter("entryValue"))
+                            ? request.getParameter("entryValue") : "";
+                    String supCode = StringUtil.isNotNullOrBlank(request.getParameter("supCode"))
+                            ? request.getParameter("supCode") : "";   // 父级Code
+                    String sequence = StringUtil.isNotNullOrBlank(request.getParameter("sequence"))
+                            ? request.getParameter("sequence") : "";
+                    String enabled = StringUtil.isNotNullOrBlank(request.getParameter("enabled"))
+                            ? String.valueOf(request.getParameter("enabled")) : "";
+                    String remark = StringUtil.isNotNullOrBlank(request.getParameter("remark"))
+                            ? request.getParameter("remark") : "";
+
+                    Dictionary dictionary = new Dictionary();
+                    dictionary.setSupCode(supCode);
+                    dictionary.setEntryCode(entryCode);
+                    dictionary.setEntryValue(entryValue);
+                    if (StringUtil.isNotNullOrBlank(sequence))
+                        dictionary.setSequence(Integer.parseInt(sequence));
+                    dictionary.setEnabled("1".equals(enabled));
+                    dictionary.setRemark(remark);
+
+                    Integer res = (Integer) this.dictionaryService.saveDictionary(dictionary);  // mybatis insert后dictionary会获取实体数据，包括新增的id
+                    Dictionary supDic = this.dictionaryService.getBySupCode(supCode);  // 有可能是根级root -> -1
+
+                    dictionary.setSupDic(supDic);  // 父级bean
+                    if (res > 0) {
                         rc.setCode("0");
                         rc.setMessage("新增成功");
+                        rc.setData(dictionary); // 返回字典数据（包括父级）
+                        rc.setSuccess(true);
                     } else {
                         rc.setCode("1");
                         rc.setMessage("新增失败");
@@ -136,6 +163,8 @@ public class DictionaryController extends BaseController {
                     if (success) {
                         rc.setCode("0");
                         rc.setMessage("更新成功");
+                        rc.setSuccess(true);
+                        rc.setData(request.getParameter("dicId"));
                     } else {
                         rc.setCode("1");
                         rc.setMessage("更新失败");
@@ -159,15 +188,16 @@ public class DictionaryController extends BaseController {
     public void removeDictionary(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
         String dicId = request.getParameter("dicId");
 
-        ResultCode rc = new ResultCode();
-
+        Result rc = new Result();
         pd = this.getPageData();
+        pd.put("ids", new String[]{dicId});
 
         try {
             Boolean success = this.dictionaryService.deleteByIds(pd);
             if (success) {
                 rc.setCode("0");
                 rc.setMessage("删除成功");
+                rc.setData(dicId);
             } else {
                 rc.setCode("1");
                 rc.setMessage("删除失败");

@@ -108,8 +108,8 @@
                                                     <label class="control-label col-sm-2 col-xs-12 no-padding-right"
                                                            for="supCode">上级字典:</label>
                                                     <div class="col-sm-10 col-xs-12">
-                                                        <select id="supCode" name="supCode" class="select2" multiple=""
-                                                                style="max-height:150px; overflow-y:auto; overflow-x: hidden">
+                                                        <select id="supCode" name="supCode" class="select2"
+                                                                style="max-height:35px; overflow-y:auto; overflow-x: hidden">
                                                             <option value="-1">请选择</option>
                                                             <c:forEach items="${dicList}" var="dic" varStatus="index">
                                                                 <option value="${dic.entryCode}">${dic.entryValue}</option>
@@ -166,7 +166,7 @@
                                                     </label>
                                                     <div class="col-sm-10 checkbox">
                                                         <label>
-                                                            <input id="enabled" name="enabled"
+                                                            <input id="enabled" name="enabled" value="1"
                                                                    class="ace ace-checkbox-2" type="checkbox"
                                                                    <c:if test="${dic.enabled == true}">checked</c:if>/>
                                                             <span class="lbl">  注: 勾选即可用 </span>
@@ -300,7 +300,7 @@
     });
 
     $('#supCode').select2({
-        width: '200px',
+        width: '235px',
         placeholder: {
             id: '-1',
             text: '键入查询'
@@ -332,8 +332,6 @@
         //$('.multiselect').multiselect('destroy');
     });
 
-    var zTree = $.fn.zTree.getZTreeObj("dictionaryTree");
-
     // 业务功能
     // 异步获取字典数据信息，并展示
     function ajaxFetchData() {
@@ -356,6 +354,8 @@
         });
     }
 
+    // 定义
+
     // 新增/修改 -- 提交
     function saveChange() {
 
@@ -365,20 +365,21 @@
         var entryCode = $("#entryCode").val();
         var entryValue = $("#entryValue").val();
         var sequence = $("#sequence").val();
-        var enabled = "";
+        var enabled = 0;
         if ($("#enabled").val() !== undefined)  enabled = $("#enabled").val();
-        var remark = $("#remark").val;
-
-        if (enabled == 'on') {
-            enabled = 1;
-        } else {
-            enabled = 0;
-        }
+        var remark = $("#remark").val();
 
         if (supCode == '') {
             layer.msg("请选择一个合适的上级字典!");
             return false;
         }
+
+        if (entryCode == null || entryCode == '') {
+            layer.msg('请正确填写字典编码!');
+            return false;
+        }
+
+        if (remark == undefined || remark == null)  remark = "";
 
         $.ajax({
             type: "POST",
@@ -397,15 +398,27 @@
             },
             success: function (rc) {
                 if (rc.code == '0') {
+                    var zTree = $.fn.zTree.getZTreeObj("dictionaryTree");
                     alert(rc.message);
 
                     if (tag == "ADD") {
+                        var supCode = null;
+                        if (rc.data != null && rc.data.supDic != null) {
+                            supCode = zTree.getNodeByTId("dictionaryTree_" + rc.data.supDic.dicId);  // 父级
+                            //supCode = zTree.getNodeByParam("id", rc.data.supDic.dicId, null); // 父级
+                        }
 
+                        if (supCode != undefined && supCode != null) {
+                            zTree.addNodes(supCode, -1, {id:rc.data.dicId, pId:rc.data.entryCode, code:rc.data.entryCode, name:rc.data.entryValue});
+                            var n = zTree.getNodeByParam("id", rc.data.dicId, null);  // 根据新的id找到新添加的节点
+                            zTree.selectNode(n);  // 让新添加的节点处于选中状态
+                        }
                     }
 
                     if (tag == "EDIT") {
-                        zTree.getNodeByTId(dic.entryCode);
-                        zTree.updateNode()
+                        var node = zTree.getNodeByParam("id", rc.data, null);
+                        node.name = entryValue;
+                        zTree.updateNode(node);
                     }
                 }
             }
@@ -434,11 +447,9 @@
                 tag: tag
             },
             success: function (dic) {
-                //alert(JSON.stringify(dic));
-                //$("#supCode").val(dic.entryCode).trigger("change");// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
 
                 if (tag == "ADD") {
-                    $("#supCode").val(dic.entryCode).trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
+                    $("#supCode").val(dic.entryCode).trigger('change.select2');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
 
                     $("#dicId").val("");
                     $("#sequence").val("");
@@ -489,9 +500,13 @@
                     dicId: dicId
                 },
                 success: function (rc) {
-                    if (rc.code == '0')
+                    if (rc.code == '0') {
+                        var zTree = $.fn.zTree.getZTreeObj("dictionaryTree");
+                        var node = zTree.getNodeByParam("id", rc.data, null);
+                        zTree.removeNode(node);
+
                         layer.msg('已为您删除该字典数据[' + dicId + ']', {icon:1});
-                    else
+                    } else
                         layer.msg('删除操作出错![' + rc.message + ']');
                 }
             });
@@ -499,7 +514,7 @@
             return true;
         }, function() {
 
-            return false;
+            return true;
         });
 
         return false;

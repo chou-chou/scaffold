@@ -113,7 +113,7 @@
         <include refid="tableName"></include>
     </select>
 
-    <insert id="saveDictionary" parameterType="pd" useGeneratedKeys="true" keyProperty="DIC_ID">
+    <insert id="saveDictionaryBean" parameterType="Dictionary" useGeneratedKeys="true" keyProperty="dicId">
         insert into T_DICTIONARY (<trim suffixOverrides=",">
         <if test="entryCode != null and entryCode != ''">ENTRY_CODE,</if>
         <if test="entryValue != null and entryValue != ''">ENTRY_VALUE,</if>
@@ -138,6 +138,36 @@
         <if test="additional != null and additional != ''">#{additional}</if>
         <if test="remark != null and remark != ''">#{remark}</if>
     </trim>)
+    </insert>
+
+    <insert id="saveDictionaryMap" parameterType="pd" useGeneratedKeys="true" keyColumn="DIC_ID" keyProperty="DIC_ID">
+        insert into T_DICTIONARY (<trim suffixOverrides=",">
+        <if test="entryCode != null and entryCode != ''">ENTRY_CODE,</if>
+        <if test="entryValue != null and entryValue != ''">ENTRY_VALUE,</if>
+        <if test="supCode != null and supCode != ''">SUP_CODE,</if>
+        <if test="sequence != null and sequence != ''">SEQUENCE,</if>
+        <if test="isLeaf != null and isLeaf != ''">IS_LEAF,</if>
+        <if test="classCode != null and classCode != ''">CLASS_CODE,</if>
+        <if test="className != null and className != ''">CLASS_NAME,</if>
+        <if test="enabled != null and enabled != ''">ENABLED,</if>
+        <if test="additional != null and additional != ''">ADDITIONAL</if>
+        <if test="remark != null and remark != ''">REMARK</if>
+    </trim>)
+        values(<trim suffixOverrides=",">
+        <if test="entryCode != null and entryCode != ''">#{entryCode},</if>
+        <if test="entryValue != null and entryValue != ''">#{entryValue},</if>
+        <if test="supCode != null and supCode != ''">#{supCode},</if>
+        <if test="sequence != null and sequence != ''">#{sequence},</if>
+        <if test="isLeaf != null and isLeaf != ''">#{isLeaf},</if>
+        <if test="classCode != null and classCode != ''">#{classCode},</if>
+        <if test="className != null and className != ''">#{className},</if>
+        <if test="enabled != null and enabled != ''">#{enabled},</if>
+        <if test="additional != null and additional != ''">#{additional}</if>
+        <if test="remark != null and remark != ''">#{remark}</if>
+    </trim>)
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="DIC_ID">
+            select SCOPE_IDENTITY()
+        </selectKey>
     </insert>
 
     <update id="updateDictionary" parameterType="pd">

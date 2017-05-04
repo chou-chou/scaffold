@@ -39,7 +39,7 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     public Boolean saveDictionary(PageData pd) throws Exception {
-        Integer result = (Integer) baseDao.save("DictionaryMapper.saveDictionary", pd);
+        Integer result = (Integer) baseDao.save("DictionaryMapper.saveDictionaryMap", pd);
         return (result > 0) ? true : false;
     }
 
@@ -68,5 +68,10 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     public List<Dictionary> getSubDictionaryes(PageData pd) throws Exception {
         return (List<Dictionary>) baseDao.findForList("DictionaryMapper.getSubDictionarys", pd);
+    }
+
+    @Override
+    public Object saveDictionary(Dictionary dic) throws Exception {
+        return baseDao.save("DictionaryMapper.saveDictionaryBean", dic);
     }
 }

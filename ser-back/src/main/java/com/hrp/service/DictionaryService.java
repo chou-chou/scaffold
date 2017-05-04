@@ -70,6 +70,14 @@ public interface DictionaryService {
     public Boolean saveDictionary(PageData pd) throws Exception;
 
     /**
+     * 新增字典
+     * @param dic
+     * @return
+     * @throws Exception
+     */
+    public Object saveDictionary(Dictionary dic) throws Exception;
+
+    /**
      * 编辑字典
      * @param pd
      * @return
