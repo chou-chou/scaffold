@@ -225,4 +225,14 @@
             <include refid="tableName"></include>
     </select>
 
+    <!-- 批量删除 -->
+    <delete id="batchDeleteUser" parameterType="String">
+        delete from
+        <include refid="tableName"></include>
+        where  id  in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
 </mapper>

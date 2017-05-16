@@ -1,8 +1,8 @@
 package com.hrp.service;
 
 import com.hrp.entity.system.User;
-import com.hrp.plugins.Page;
 import com.hrp.utils.PageData;
+import com.hrp.utils.plugins.Page;
 
 import java.util.List;
 import java.util.Set;

@@ -14,8 +14,8 @@ public class Department implements Serializable {
     private Integer deptId;  // 部门ID
     private String deptCode; // 部门编码
     private String deptName;  // 部门名称
-    private Integer supId;  // 上级编码
-    private String function;  // 部门职能
+    private String supId;  // 上级编码
+    private String described;  // 部门职能描述
     private String address;  // 地址
     private String remark;  // 备注
 
@@ -46,20 +46,20 @@ public class Department implements Serializable {
         this.deptName = deptName;
     }
 
-    public Integer getSupId() {
+    public String getSupId() {
         return supId;
     }
 
-    public void setSupId(Integer supId) {
+    public void setSupId(String supId) {
         this.supId = supId;
     }
 
-    public String getFunction() {
-        return function;
+    public String getDescribed() {
+        return described;
     }
 
-    public void setFunction(String function) {
-        this.function = function;
+    public void setDescribed(String described) {
+        this.described = described;
     }
 
     public String getAddress() {

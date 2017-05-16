@@ -4,8 +4,8 @@ import com.hrp.controller.BaseController;
 import com.hrp.plugins.websocketInstantMsg.ChatServer;
 import com.hrp.plugins.websocketOnline.OnlineChatServer;
 import com.hrp.utils.Constant;
+import com.hrp.utils.PropsUtil;
 import com.hrp.utils.SystemValidate;
-import com.hrp.utils.Tools;
 import org.java_websocket.WebSocketImpl;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -57,13 +57,10 @@ public class StartFilter extends BaseController implements Filter {
 		WebSocketImpl.DEBUG = false;
 		ChatServer s;
 		try {
-			String strWEBSOCKET = Tools.readTxtFile(Constant.WEBSOCKET);//读取WEBSOCKET配置,获取端口配置
-			if(null != strWEBSOCKET && !"".equals(strWEBSOCKET)){
-				String strIW[] = strWEBSOCKET.split(",fh,");
-				if(strIW.length == 5){
-					s = new ChatServer(Integer.parseInt(strIW[1]));
-					s.start();
-				}
+            String chatPort = PropsUtil.getValue("websocket.chat.port", Constant.CONFIG);//读取WEBSOCKET配置,获取端口配置
+			if(null != chatPort && !"".equals(chatPort)){
+                s = new ChatServer(Integer.parseInt(chatPort));
+                s.start();
 			}
 			//System.out.println( "websocket服务器启动,端口" + s.getPort() );
 		} catch (UnknownHostException e) {
@@ -78,13 +75,11 @@ public class StartFilter extends BaseController implements Filter {
 		WebSocketImpl.DEBUG = false;
 		OnlineChatServer s;
 		try {
-			String strWEBSOCKET = Tools.readTxtFile(Constant.WEBSOCKET);//读取WEBSOCKET配置,获取端口配置
-			if(null != strWEBSOCKET && !"".equals(strWEBSOCKET)){
-				String strIW[] = strWEBSOCKET.split(",fh,");
-				if(strIW.length == 5){
-					s = new OnlineChatServer(Integer.parseInt(strIW[3]));
-					s.start();
-				}
+            String port = PropsUtil.getValue("websocket.manage.port", Constant.CONFIG);//读取WEBSOCKET配置,获取端口配置
+			if(null != port && !"".equals(port)){
+				s = new OnlineChatServer(Integer.parseInt(port));
+				s.start();
+
 			}
 			//System.out.println( "websocket服务器启动,端口" + s.getPort() );
 		} catch (UnknownHostException e) {

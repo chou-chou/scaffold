@@ -1,11 +1,11 @@
 package com.hrp.controller;
 
 import com.hrp.entity.system.User;
-import com.hrp.plugins.Page;
 import com.hrp.utils.Constant;
 import com.hrp.utils.Jurisdiction;
 import com.hrp.utils.PageData;
 import com.hrp.utils.UuidUtil;
+import com.hrp.utils.plugins.Page;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;

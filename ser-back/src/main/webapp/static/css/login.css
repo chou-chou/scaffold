@@ -191,7 +191,7 @@ pre {
 }
 
 @font-face {
-    font-family:login-icon;src:url(../fonts/iconfont.eot?v=1.0.9);src:url(../fonts/iconfont.eot?v=1.0.9#iefix) format('embedded-opentype'), url(../fonts/iconfont.svg?v=1.0.9#iconfont) format('svg'),url(../fonts/iconfont.woff?v=1.0.9) format('woff'),url(../fonts/iconfont.ttf?v=1.0.9) format('truetype')
+    font-family:login-icon;src:url(../fonts/iconfont/iconfont.eot?v=1.0.9);src:url(../fonts/iconfont/iconfont.eot?v=1.0.9#iefix) format('embedded-opentype'), url(../fonts/iconfont/iconfont.svg?v=1.0.9#iconfont) format('svg'),url(../fonts/iconfont/iconfont.woff?v=1.0.9) format('woff'),url(../fonts/iconfont/iconfont.ttf?v=1.0.9) format('truetype')
 }
 
 .login-icon {

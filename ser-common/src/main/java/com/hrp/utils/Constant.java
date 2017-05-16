@@ -73,6 +73,8 @@ public class Constant {
     public static final String SESSION_USERNAME = "USERNAME";			//用户名
     public static final String SESSION_QX = "QX";
 
+    public static final String CONFIG = "config/system.properties";  // 配置文件目录
+
     public static final String PAGE	= "admin/config/PAGE.txt";			//分页条数配置路径
     public static final String SMS1 = "admin/config/SMS1.txt";			//短信账户配置路径1
     public static final String SMS2 = "admin/config/SMS2.txt";			//短信账户配置路径2

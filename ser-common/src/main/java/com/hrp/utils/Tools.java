@@ -146,7 +146,7 @@ public class Tools {
 
     /**
      * 写txt里的单行内容
-     * @param filePath  文件路径
+     * @param fileP  文件路径
      * @param content  写入的内容
      */
     public static void writeFile(String fileP,String content){
@@ -187,7 +187,7 @@ public class Tools {
 
     /**
      * 验证手机号码
-     * @param mobiles
+     * @param mobileNumber
      * @return
      */
     public static boolean checkMobileNumber(String mobileNumber){
@@ -217,10 +217,10 @@ public class Tools {
      * 读取txt里的单行内容
      * @param fileP  文件路径
      */
-    public static String readTxtFile(String fileP) {
+    public static String readTxtFile1(String fileP) {
         try {
 
-            String filePath = String.valueOf(Thread.currentThread().getContextClassLoader().getResource(""))+"../../";	//项目路径
+            String filePath = String.valueOf(Thread.currentThread().getContextClassLoader().getResource(""))+"../.././";	//项目路径
             filePath = filePath.replaceAll("file:/", "");
             filePath = filePath.replaceAll("%20", " ");
             filePath = filePath.trim() + fileP.trim();

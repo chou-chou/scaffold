@@ -12,12 +12,13 @@ import java.util.List;
 public class Role implements Serializable {
 
     private Integer roleId;  // 角色ID
+    private String code;//角色编码
     private String roleName;  // 角色名称
     private String cnName;  // 中文名
     private String supId;  // 父角色ID
     private String remark;  // 备注
-    private boolean isSys;  // 是否系统管理管理角色
-
+    private String isSys;  // 是否系统管理管理角色
+    private String orders;//排序
     private Role supRole;  // 父角色
     private List<Role> subRoles;  // 子角色集合
 
@@ -30,6 +31,14 @@ public class Role implements Serializable {
 
     public void setRoleId(Integer roleId) {
         this.roleId = roleId;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getRoleName() {
@@ -64,20 +73,20 @@ public class Role implements Serializable {
         this.remark = remark;
     }
 
-    public boolean isSys() {
+    public String getIsSys() {
         return isSys;
     }
 
-    public void setSys(boolean sys) {
-        isSys = sys;
+    public void setIsSys(String isSys) {
+        this.isSys = isSys;
     }
 
-    public Role getSupRole() {
-        return supRole;
+    public String getOrders() {
+        return orders;
     }
 
-    public void setSupRole(Role supRole) {
-        this.supRole = supRole;
+    public void setOrders(String orders) {
+        this.orders = orders;
     }
 
     public List<Role> getSubRoles() {
@@ -86,6 +95,14 @@ public class Role implements Serializable {
 
     public void setSubRoles(List<Role> subRoles) {
         this.subRoles = subRoles;
+    }
+
+    public Role getSupRole() {
+        return supRole;
+    }
+
+    public void setSupRole(Role supRole) {
+        this.supRole = supRole;
     }
 
     public List<Button> getSubBtns() {

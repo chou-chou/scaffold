@@ -38,7 +38,7 @@
     <div class="main-content">
         <div class="main-content-inner">
             <div class="page-content">
-                <form id="menuFrm" class="form-horizontal" action="#" method="post" name="menuFrm">
+                <form id="dicFrm" class="form-horizontal" action="#" method="post" name="dicFrm">
                     <div class="form-group">
                         <div class="col-sm-11">
                             <div class="form-inline">
@@ -273,7 +273,7 @@
                 enable: true,
                 idKey: "code",
                 pIdKey: "pId",
-                rootPId: ""
+                rootPId: "-1"
             }
         },
         callback: {
@@ -347,7 +347,6 @@
             },
             success: function (data) {
                 //var result = eval("(" + data + ")");  // 这个data不能直接使用，需要转化一下
-                var json = JSON.stringify(data);
 
                 t = $.fn.zTree.init(t, setting, data);
             }

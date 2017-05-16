@@ -1,6 +1,7 @@
 package com.hrp.service.impl;
 
 import com.hrp.dao.BaseDao;
+import com.hrp.entity.system.Dictionary;
 import com.hrp.entity.system.Role;
 import com.hrp.service.RoleService;
 import com.hrp.utils.PageData;
@@ -45,7 +46,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     public List<Role> listAllRolesByPId(PageData pd) throws Exception {
-        return null;
+        return( List<Role>)baseDao.findForList("RoleMapper.listAllRole",pd);
     }
 
     public PageData findObjectById(PageData pd) throws Exception {
@@ -56,17 +57,23 @@ public class RoleServiceImpl implements RoleService {
 
     }
 
+    public Object add(Role role) throws Exception {
+        return baseDao.save("RoleMapper.saveRoleBean",role);
+    }
     public void edit(PageData pd) throws Exception {
 
     }
 
-    public void deleteRoleById(String ROLE_ID) throws Exception {
+    public boolean deleteRoleById(int[] roleIds) throws Exception {
+        Integer result = (Integer) baseDao.delete("RoleMapper.batchDeleteRole", roleIds);
+        return (result > 0) ? true : false;
+    }
+
+    public void updateRoleButtons(Role pd) throws Exception {
 
     }
 
-    public void updateRoleButtons(Role role) throws Exception {
 
-    }
 
     public void updateRoleMenus(Role role) throws Exception {
 
@@ -74,5 +81,15 @@ public class RoleServiceImpl implements RoleService {
 
     public Role getRoleById(String ROLE_ID) throws Exception {
         return null;
+    }
+
+    @Override
+    public Role getByRoleId(PageData pd) throws Exception {
+        return (Role) baseDao.findForObject("RoleMapper.getByRoleId", pd);
+    }
+    @Override
+    public boolean updateRole(PageData pd) throws Exception {
+        Integer result = (Integer) baseDao.update("RoleMapper.updateRole", pd);
+        return (result > 0) ? true : false;
     }
 }

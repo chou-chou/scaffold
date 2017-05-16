@@ -2,9 +2,9 @@ package com.hrp.service.impl;
 
 import com.hrp.dao.BaseDao;
 import com.hrp.entity.system.User;
-import com.hrp.plugins.Page;
 import com.hrp.service.UserService;
 import com.hrp.utils.PageData;
+import com.hrp.utils.plugins.Page;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;

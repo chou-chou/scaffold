@@ -36,15 +36,6 @@
 
 <script src="<%=basePath%>/static/js/index.js"></script>
 
-<!-- page specific plugin scripts -->
-<script src="<%=basePath%>/static/js/jquery.dataTables.min.js"></script>
-<script src="<%=basePath%>/static/js/jquery.dataTables.bootstrap.min.js"></script>
-<%--<script src="<%=basePath%>/static/js/buttons.flash.min.js"></script>--%>
-<script src="<%=basePath%>/static/js/buttons.html5.min.js"></script>
-<script src="<%=basePath%>/static/js/buttons.print.min.js"></script>
-<script src="<%=basePath%>/static/js/buttons.colVis.min.js"></script>
-<script src="<%=basePath%>/static/js/dataTables.select.min.js"></script>
-
 <script src="<%=basePath%>/plugins/zTree/3.5/jquery.ztree.all-3.5.min.js" ></script>
 <script src="<%=basePath%>/plugins/layer/layer.js" ></script>
 

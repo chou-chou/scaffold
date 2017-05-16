@@ -35,6 +35,7 @@ public interface RoleService {
      */
     public void add(PageData pd) throws Exception;
 
+    public Object add(Role role) throws Exception;
     /**
      * 保存修改
      * @param pd
@@ -47,7 +48,7 @@ public interface RoleService {
      * @param ROLE_ID
      * @throws Exception
      */
-    public void deleteRoleById(String ROLE_ID) throws Exception;
+    public boolean deleteRoleById(int[] ROLE_ID) throws Exception;
 
     /**
      * 给当前角色附加按钮权限
@@ -61,6 +62,8 @@ public interface RoleService {
      * @param role
      * @throws Exception
      */
+
+
     public void updateRoleMenus(Role role) throws Exception;
 
     /**
@@ -70,5 +73,9 @@ public interface RoleService {
      * @throws Exception
      */
     public Role getRoleById(String ROLE_ID) throws Exception;
+
+    public Role getByRoleId(PageData pd) throws Exception ;
+
+    public boolean updateRole(PageData pd) throws Exception;
 
 }

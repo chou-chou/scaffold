@@ -23,12 +23,12 @@
 		
 		<typeAlias type="com.hrp.utils.PageData" alias="pd"/>
 		<!-- 分页 -->
-		<typeAlias type="com.hrp.plugins.Page" alias="Page"/>
+		<typeAlias type="com.hrp.utils.plugins.Page" alias="Page"/>
 	</typeAliases>
 	
 	<plugins>
         <!-- 分页处理 -->
-		<plugin interceptor="com.hrp.plugins.PagePlugin">
+		<plugin interceptor="com.hrp.utils.plugins.PagePlugin">
 			<property name="dialect" value="sqlserver"/>
 			<property name="pageSqlId" value=".*listPage.*"/>
 		</plugin>

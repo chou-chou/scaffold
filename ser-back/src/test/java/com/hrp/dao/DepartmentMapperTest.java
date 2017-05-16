@@ -21,8 +21,8 @@ public class DepartmentMapperTest extends BaseDaoTest {
         //DEPT_CODE, DEPT_NAME,SUP_ID,FUNC,REMARK,ADDRESS)
         dt.setDeptCode("D1101");
         dt.setDeptName("消化内科");
-        dt.setSupId(01);
-        dt.setFunction("部门");
+        dt.setSupId("01");
+        dt.setDescribed("部门");
         dt.setRemark("测试部门");
         dt.setAddress("测试地址");
         dao.save("DepartmentMapper.saveRelativity",dt);

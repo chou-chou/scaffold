@@ -26,7 +26,7 @@
 <!-- ace settings handler -->
 <script src="<%=basePath%>/static/js/ace-extra.min.js"></script>
 
-<link rel="stylesheet" href="<%=basePath%>/static/css/tabbale_close.css" />
+<%--<link rel="stylesheet" href="<%=basePath%>/static/css/tabbale_close.css" />--%>
 <link rel="stylesheet" href="<%=basePath%>/static/css/index.css" />
 
 <link rel="stylesheet" href="<%=basePath%>/plugins/zTree/3.5/metro.css" />

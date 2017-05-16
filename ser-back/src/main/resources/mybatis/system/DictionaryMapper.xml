@@ -68,15 +68,17 @@
     <select id="listAllDictionary" parameterType="pd" resultMap="DictionaryMap">
         select <include refid="field"></include> from <include refid="tableName"></include>
         where 1=1
+    <!--
         <if test="entryCode!=null">
-            and ENTRY_CODE = #{entryCode}
+          and ENTRY_CODE = #{entryCode}
         </if>
         <if test="supId!=null">
             and SUP_CODE = #{supCode}
         </if>
+        -->
     </select>
 
-    <!-- 级联获取所有字典列表（获取下级） -->
+<!-- 级联获取所有字典列表（获取下级） -->
     <select id="selectDictionaryCascade" parameterType="pd" resultMap="TreeNodeMap">
         WITH TREE AS
         (select DIC_ID, ENTRY_CODE, ENTRY_VALUE, SUP_CODE, SEQUENCE, IS_LEAF
@@ -96,7 +98,7 @@
         ON d.IS_LEAF = 1 AND d.SUP_CODE = TREE.ENTRY_CODE
         )
         SELECT DISTINCT DIC_ID, ENTRY_CODE, ENTRY_VALUE, SUP_CODE, SEQUENCE, IS_LEAF FROM TREE
-        OPTION (MAXRECURSION 5) <!-- 限制递归次数 -->
+       <!-- OPTION (MAXRECURSION 5) 限制递归次数 -->
     </select>
 
     <!-- 新增 -->
@@ -191,7 +193,7 @@
     <delete id="deleteDictionary" parameterType="pd">
         delete from T_DICTIONARY where DIC_ID in
         <foreach collection="ids" item="id" open="(" separator="," close=")">
-            #{id}
+            #{ids}
         </foreach>
     </delete>
 

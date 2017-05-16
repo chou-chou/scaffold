@@ -1,12 +1,12 @@
 package com.hrp.controller;
 
 import com.hrp.entity.system.Menu;
-import com.hrp.plugins.Page;
 import com.hrp.service.UserService;
 import com.hrp.utils.AppUtil;
 import com.hrp.utils.Jurisdiction;
 import com.hrp.utils.PageData;
 import com.hrp.utils.lang.StringUtil;
+import com.hrp.utils.plugins.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
