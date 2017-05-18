@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+    <mapper namespace="ProjectMapper">
+
+    <resultMap type="Project" id="ProjectMap">
+        <id column="ID" property="id"/>
+        <result column="PRO_CODE" property="proCode"/>
+        <result column="PRO_NAME" property="proName"/>
+        <result column="REPORTOR" property="reportor"/>
+        <result column="REPORT_TIME" property="reportTime"/>
+        <result column="PRO_TYPE" property="proType"/>
+        <result column="DECLARE_FUNDS" property="declareFunds"/>
+    </resultMap>
+
+    <!-- 表名 -->
+    <sql id="tableName">
+        TB_PROJECT
+    </sql>
+
+    <!-- 字段 -->
+    <sql id="field">
+        ID, PRO_CODE, PRO_NAME, REPORTOR, REPORT_TIME, PRO_TYPE, DECLARE_FUNDS
+    </sql>
+
+    <!-- 字段值 -->
+    <sql id="fieldValue">
+        #{ID}, #{PRO_CODE}, #{PRO_NAME}, #{REPORTOR}, #{REPORT_TIME}, #{PRO_TYPE}, #{DECLARE_FUNDS}
+    </sql>
+
+    <!-- 属性值 -->
+    <sql id="propertyValue">
+        #{id},#{proCode},#{proName},#{reportor},#{reportTime},#{proType},#{declareFunds}
+    </sql>
+
+    <select id="getByProjectId" parameterType="pd" resultMap="ProjectMap">
+        select top 1 <include refid="field"></include> from <include refid="tableName"></include>
+        where ID = #{id}
+    </select>
+
+
+    <select id="listAllProject" parameterType="pd" resultMap="ProjectMap">
+        SELECT
+        <include refid="field"></include>
+        FROM
+        <include refid="tableName"></include>
+        WHERE
+        1=1
+        <if test="proInfo != null and dicInfo != ''"><!-- 关键词检索 -->
+            AND (
+            PRO_CODE LIKE '%'+#{proInfo}+'%'
+            OR
+            PRO_NAME LIKE '%'+#{proInfo}+'%'
+            )
+        </if>
+   </select>
+
+    <insert id="saveProjectBean" parameterType="Project" useGeneratedKeys="true" keyProperty="id">
+        insert into TB_PROJECT (<trim suffixOverrides=",">
+        <if test="proCode != null and code != ''">PRO_CODE,</if>
+        <if test="proName != null and roleName != ''">PRO_NAME,</if>
+        <if test="reportor != null and isSys != ''">REPORTOR,</if>
+        <if test="reportTime != null and supId != ''">REPORT_TIME,</if>
+        <if test="proType != null and orders != ''">PRO_TYPE,</if>
+        <if test="declareFunds != null and remark != ''">DECLARE_FUNDS</if>
+    </trim>)
+        values(<trim suffixOverrides=",">
+        <if test="proCode != null and code != ''">#{proCode},</if>
+        <if test="proName != null and roleName != ''">#{proName},</if>
+        <if test="reportor != null and isSys != ''">#{reportor},</if>
+        <if test="reportTime != null and supId != ''">#{reportTime},</if>
+        <if test="proType != null and orders != ''">#{proType},</if>
+        <if test="declareFunds != null and remark != ''">#{declareFunds}</if>
+    </trim>)
+    </insert>
+
+    <update id="updateProject" parameterType="pd">
+        update T_ROLE
+        <set>
+            <if test="proCode != null and proCode != ''">PRO_CODE=#{proCode},</if>
+            <if test="proName != null and proName != ''">PRO_NAME=#{proName},</if>
+            <if test="reportor != null and reportor != ''">REPORTOR=#{reportor},</if>
+            <if test="reportTime != null and reportTime != ''">REPORT_TIME=#{reportTime},</if>
+            <if test="proType != null and proType != ''">PRO_TYPE=#{proType},</if>
+            <if test="declareFunds != null and declareFunds != ''">DECLARE_FUNDS=#{declareFunds}</if>
+        </set>
+        where ROLE_ID = #{roleId}
+    </update>
+
+    <!-- 获取用户总数 -->
+    <select id="getUserCount" parameterType="String" resultType="pd">
+        SELECT
+            count(USER_ID) userCount
+        FROM
+            <include refid="tableName"></include>
+    </select>
+
+    <!-- 批量删除 -->
+    <delete id="batchDeleteProject" parameterType="int">
+        delete from
+        <include refid="tableName"></include>
+        where  ID  in
+        <foreach collection="array" item="roleIds" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+
+
+</mapper>

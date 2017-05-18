@@ -11,10 +11,11 @@ import org.springframework.context.ApplicationContext;
  */
 public class Constant {
 
-    public final static String INDEX_PAGE = "index";
-    public final static String MAIN_PAGE = "redirect:/index.do";
-    public final static String LOGIN_PAGE = "login";
-    public final static String REGISTER_PAGE = "register";
+    public final static String INDEX_PAGE = "back/index";  // 对应back/index.jsp
+    public final static String BACK_MAIN_PAGE = "redirect:/b/index.do";  // 跳转主页面
+    public final static String BACK_LOGIN_PAGE = "back/login";
+    public final static String BACK_REGISTER_PAGE = "back/register";
+
     public final static String LOCK_PAGE = "locked";
     public final static String AUTHORITY_PAGE = "authorization";
 

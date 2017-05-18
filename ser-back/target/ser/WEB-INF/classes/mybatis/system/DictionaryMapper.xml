@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="DictionaryMapper">
+
+    <resultMap type="TreeNode" id="TreeNodeMap">
+        <result column="DIC_ID" property="id"/>
+        <result column="SUP_CODE" property="pId"/>
+        <result column="ENTRY_CODE" property="code"/>
+        <result column="ENTRY_VALUE" property="name"/>
+        <result column="IS_LEAF" property="leaf"/>
+        <result column="SEQUENCE" property="no"/>
+    </resultMap>
+
+    <resultMap type="Dictionary" id="DictionaryMap">
+        <id column="DIC_ID" property="dicId"/>
+        <result column="ENTRY_CODE" property="entryCode"/>
+        <result column="ENTRY_VALUE" property="entryValue"/>
+        <result column="SUP_CODE" property="supCode"/>
+        <result column="IS_LEAF" property="isLeaf"/>
+        <result column="SEQUENCE" property="sequence"/>
+        <result column="CLASS_CODE" property="classCode"/>
+        <result column="CLASS_NAME" property="className"/>
+        <result column="ADDITIONAL" property="additional"/>
+        <result column="ENABLED" property="enabled"/>
+        <result column="REMARK" property="remark"/>
+    </resultMap>
+
+    <resultMap type="Dictionary" id="DictionaryExtendMap" extends="DictionaryMap">
+        <!-- 查询父字典 -->
+        <association column="SUP_CODE" property="supDic" select="DictionaryMapper.getBySupCode"/>
+        <!-- 查询子字典 -->
+        <!--<collection column="ENTRY_CODE" property="subDictionarys" javaType="ArrayList" ofType="Dictionary" select="DictionartMapper.getSubDictionarys"/>-->
+    </resultMap>
+
+    <!-- 表名 -->
+    <sql id="tableName">
+        T_DICTIONARY
+    </sql>
+
+    <!-- 字段 -->
+    <sql id="field">
+        DIC_ID, ENTRY_CODE, ENTRY_VALUE, SUP_CODE, SEQUENCE, IS_LEAF, CLASS_CODE, CLASS_NAME, ADDITIONAL, ENABLED, REMARK
+    </sql>
+
+    <!-- 字段值 -->
+    <sql id="fieldValue">
+        #{dicId}, #{entryCode}, #{entryValue}, #{supCode},#{sequence}, #{isLeaf}, #{classCode}, #{className}, #{additional}, #{enabled}, #{remark}
+    </sql>
+
+    <select id="getByDicId" parameterType="pd" resultMap="DictionaryExtendMap">
+        select top 1 <include refid="field"></include> from <include refid="tableName"></include>
+        where DIC_ID = #{dicId}
+    </select>
+
+    <select id="getBySupCode" parameterType="String" resultMap="DictionaryMap">
+        select top 1 <include refid="field"></include> from <include refid="tableName"></include>
+        where ENTRY_CODE = #{supCode}
+    </select>
+
+    <select id="getSubDictionarys" parameterType="pd" resultMap="DictionaryMap">
+        select <include refid="field"></include> from <include refid="tableName"></include>
+        where SUP_CODE = #{entryCode}
+    </select>
+
+    <!-- 根据条件获取字典列表 -->
+    <select id="listAllDictionary" parameterType="pd" resultMap="DictionaryMap">
+        select <include refid="field"></include> from <include refid="tableName"></include>
+        where 1=1
+    <!--
+        <if test="entryCode!=null">
+          and ENTRY_CODE = #{entryCode}
+        </if>
+        <if test="supId!=null">
+            and SUP_CODE = #{supCode}
+        </if>
+        -->
+    </select>
+
+<!-- 级联获取所有字典列表（获取下级） -->
+    <select id="selectDictionaryCascade" parameterType="pd" resultMap="TreeNodeMap">
+        WITH TREE AS
+        (select DIC_ID, ENTRY_CODE, ENTRY_VALUE, SUP_CODE, SEQUENCE, IS_LEAF
+        from T_DICTIONARY
+        where ENABLED = 1 AND IS_LEAF = 0
+        <if test="dicInfo != null and dicInfo != ''"><!-- 关键词检索 -->
+            AND (
+            ENTRY_CODE LIKE '%'+#{dicInfo}+'%'
+            OR
+            ENTRY_VALUE LIKE '%'+#{dicInfo}+'%'
+            )
+        </if>
+        UNION ALL
+        SELECT d.DIC_ID, d.ENTRY_CODE, d.ENTRY_VALUE, d.SUP_CODE, d.SEQUENCE, d.IS_LEAF
+        FROM T_DICTIONARY d
+        INNER JOIN TREE
+        ON d.IS_LEAF = 1 AND d.SUP_CODE = TREE.ENTRY_CODE
+        )
+        SELECT DISTINCT DIC_ID, ENTRY_CODE, ENTRY_VALUE, SUP_CODE, SEQUENCE, IS_LEAF FROM TREE
+       <!-- OPTION (MAXRECURSION 5) 限制递归次数 -->
+    </select>
+
+    <!-- 新增 -->
+    <insert id="saveDictionaryvity" parameterType="Dictionary">
+        insert into T_DICTIONARY(DIC_ID , ENTRY_CODE , ENTRY_VALUE , SUP_CODE, SEQUENCE , IS_LEAF, CLASS_CODE, CLASS_NAME, ADDITIONAL, ENABLED, REMARK)
+        values(#{dicId}, #{entryCode}, #{entryValue}, #{supCode},#{sequence}, #{isLeaf}, #{classCode}, #{className}, #{additional}, #{enabled}, #{remark})
+    </insert>
+
+    <!-- 获取总数 -->
+    <select id="getDictionaryCount" parameterType="String" resultType="pd">
+        SELECT
+        count(1) dictionaryCount
+        FROM
+        <include refid="tableName"></include>
+    </select>
+
+    <insert id="saveDictionaryBean" parameterType="Dictionary" useGeneratedKeys="true" keyProperty="dicId">
+        insert into T_DICTIONARY (<trim suffixOverrides=",">
+        <if test="entryCode != null and entryCode != ''">ENTRY_CODE,</if>
+        <if test="entryValue != null and entryValue != ''">ENTRY_VALUE,</if>
+        <if test="supCode != null and supCode != ''">SUP_CODE,</if>
+        <if test="sequence != null and sequence != ''">SEQUENCE,</if>
+        <if test="isLeaf != null and isLeaf != ''">IS_LEAF,</if>
+        <if test="classCode != null and classCode != ''">CLASS_CODE,</if>
+        <if test="className != null and className != ''">CLASS_NAME,</if>
+        <if test="enabled != null and enabled != ''">ENABLED,</if>
+        <if test="additional != null and additional != ''">ADDITIONAL</if>
+        <if test="remark != null and remark != ''">REMARK</if>
+    </trim>)
+        values(<trim suffixOverrides=",">
+        <if test="entryCode != null and entryCode != ''">#{entryCode},</if>
+        <if test="entryValue != null and entryValue != ''">#{entryValue},</if>
+        <if test="supCode != null and supCode != ''">#{supCode},</if>
+        <if test="sequence != null and sequence != ''">#{sequence},</if>
+        <if test="isLeaf != null and isLeaf != ''">#{isLeaf},</if>
+        <if test="classCode != null and classCode != ''">#{classCode},</if>
+        <if test="className != null and className != ''">#{className},</if>
+        <if test="enabled != null and enabled != ''">#{enabled},</if>
+        <if test="additional != null and additional != ''">#{additional}</if>
+        <if test="remark != null and remark != ''">#{remark}</if>
+    </trim>)
+    </insert>
+
+    <insert id="saveDictionaryMap" parameterType="pd" useGeneratedKeys="true" keyColumn="DIC_ID" keyProperty="DIC_ID">
+        insert into T_DICTIONARY (<trim suffixOverrides=",">
+        <if test="entryCode != null and entryCode != ''">ENTRY_CODE,</if>
+        <if test="entryValue != null and entryValue != ''">ENTRY_VALUE,</if>
+        <if test="supCode != null and supCode != ''">SUP_CODE,</if>
+        <if test="sequence != null and sequence != ''">SEQUENCE,</if>
+        <if test="isLeaf != null and isLeaf != ''">IS_LEAF,</if>
+        <if test="classCode != null and classCode != ''">CLASS_CODE,</if>
+        <if test="className != null and className != ''">CLASS_NAME,</if>
+        <if test="enabled != null and enabled != ''">ENABLED,</if>
+        <if test="additional != null and additional != ''">ADDITIONAL</if>
+        <if test="remark != null and remark != ''">REMARK</if>
+    </trim>)
+        values(<trim suffixOverrides=",">
+        <if test="entryCode != null and entryCode != ''">#{entryCode},</if>
+        <if test="entryValue != null and entryValue != ''">#{entryValue},</if>
+        <if test="supCode != null and supCode != ''">#{supCode},</if>
+        <if test="sequence != null and sequence != ''">#{sequence},</if>
+        <if test="isLeaf != null and isLeaf != ''">#{isLeaf},</if>
+        <if test="classCode != null and classCode != ''">#{classCode},</if>
+        <if test="className != null and className != ''">#{className},</if>
+        <if test="enabled != null and enabled != ''">#{enabled},</if>
+        <if test="additional != null and additional != ''">#{additional}</if>
+        <if test="remark != null and remark != ''">#{remark}</if>
+    </trim>)
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="DIC_ID">
+            select SCOPE_IDENTITY()
+        </selectKey>
+    </insert>
+
+    <update id="updateDictionary" parameterType="pd">
+        update T_DICTIONARY
+        <set>
+            <if test="entryCode != null and entryCode != ''">ENTRY_CODE=#{entryCode},</if>
+            <if test="entryValue != null and entryValue != ''">ENTRY_VALUE=#{entryValue},</if>
+            <if test="supCode != null and supCode != ''">SUP_CODE=#{supCode},</if>
+            <if test="sequence != null and sequence != ''">SEQUENCE=#{sequence},</if>
+            <if test="isLeaf != null and isLeaf != ''">IS_LEAF=#{isLeaf},</if>
+            <if test="classCode != null and classCode != ''">CLASS_CODE=#{classCode},</if>
+            <if test="className != null and className != ''">CLASS_NAME=#{className},</if>
+            <if test="enabled != null and enabled != ''">ENABLED=#{enabled},</if>
+            <if test="additional != null and additional != ''">ADDITIONAL=#{additional}</if>
+            <if test="remark != null and remark != ''">REMARK=#{remark}</if>
+        </set>
+        where DIC_ID = #{dicId}
+    </update>
+
+    <!-- 支持批量删除 -->
+    <delete id="deleteDictionary" parameterType="pd">
+        delete from T_DICTIONARY where DIC_ID in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+</mapper>

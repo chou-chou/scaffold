@@ -1,6 +1,6 @@
 package com.hrp.filter;
 
-import com.hrp.controller.BaseController;
+import com.hrp.controller.common.BaseController;
 import com.hrp.plugins.websocketInstantMsg.ChatServer;
 import com.hrp.plugins.websocketOnline.OnlineChatServer;
 import com.hrp.utils.Constant;

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         id="WebApp_ID" version="3.0">
+
+    <!-- shiro 安全过滤器 配置Shiro过滤器，先让Shiro过滤系统接收到的请求-->
+    <!-- 这里filter-name必须对应applicationContext.xml中定义的<bean id="shiroFilter" /> -->
+    <!-- 使用[/*]匹配所有请求，保证所有的可控请求都经过Shiro的过滤 -->
+    <!-- 通常会将此filter-mapping放置到最前面(即其他filter-mapping前面),以保证它是过滤器链中第一个起作用的 -->
+    <filter>
+        <filter-name>shiroFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <!-- 该值缺省为false，表示生命周期由SpringApplicationContext管理，设置为true则表示有ServletContext管理 -->
+            <param-name>targetFilterLifecycle</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>shiroFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 指定日志logback的配置文件 -->
+    <context-param>
+        <param-name>logbackConfigLocation</param-name>
+        <param-value>classpath:config/logback.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
+    </listener>
+
+    <!-- Spring配置文件 -->
+  <context-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:spring/spring-base.xml</param-value>
+  </context-param>
+
+    <!-- Spring监听器 -->
+    <listener>
+        <description>Spring监听器</description>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <listener>
+        <description>注册Spring的request作用域</description><!-- LogAspect中需要用到 -->
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+
+    <listener>
+        <description>spring缓存清楚监听器</description>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>
+
+  <!-- 字符编码过滤器 -->
+  <filter>
+    <filter-name>characterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+    <init-param>        
+       <param-name>forceEncoding</param-name>        
+       <param-value>true</param-value>    
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>characterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>DruidWebStatFilter</filter-name>
+    <filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+    <init-param>
+      <param-name>exclusions</param-name>
+      <param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>DruidWebStatFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <servlet>
+    <servlet-name>DruidStatView</servlet-name>
+    <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DruidStatView</servlet-name>
+    <url-pattern>/druid/*</url-pattern>
+  </servlet-mapping>
+
+    <!-- 添加对springmvc的支持（对contriller层的控制）spring控制器 -->
+  <servlet>
+    <servlet-name>springMvc</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>
+          classpath:spring/spring-mvc.xml,
+          classpath:spring/spring-shiro.xml
+      </param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>springMvc</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+  
+  <!-- 接口调用跨域处理 -->
+  <!--<filter>
+	    <filter-name>corsFilter</filter-name>
+	    <filter-class>com.hrp.filter.CorsFilter</filter-class>
+	    <init-param>
+	        <param-name>allowOrigin</param-name>
+	        <param-value>http://test-static.998jk.com,http://static.998jk.com</param-value>
+	    </init-param>
+	    <init-param>
+	        <param-name>allowMethods</param-name>
+	        <param-value>GET,POST,PUT,DELETE,OPTIONS</param-value>
+	    </init-param>
+	    <init-param>
+	        <param-name>allowCredentials</param-name>
+	        <param-value>true</param-value>
+	    </init-param>
+	    <init-param>
+	        <param-name>allowHeaders</param-name>
+	        <param-value>Content-Type</param-value>
+	    </init-param>
+	</filter>
+	<filter-mapping>
+	    <filter-name>corsFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>-->
+	<!-- 接口调用跨域处理 end-->
+
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>serRoot</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.util.WebAppRootListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>startFilter</filter-name>
+        <filter-class>com.hrp.filter.StartFilter</filter-class>
+    </filter>
+
+  <!-- 错误跳转页面 -->
+  <!--<error-page>
+    &lt;!&ndash; 路径不正确 &ndash;&gt;
+    <error-code>404</error-code>
+    <location>/WEB-INF/views/error/404.jsp</location>
+  </error-page>
+  <error-page>
+    &lt;!&ndash; 没有访问权限，访问被禁止 &ndash;&gt;
+    <error-code>405</error-code>
+    <location>/WEB-INF/views/error/405.jsp</location>
+  </error-page>
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/WEB-INF/views/error/500.jsp</location>
+    </error-page>
+  <error-page>
+    &lt;!&ndash; 没有访问权限，访问被禁止 &ndash;&gt;
+    <error-code>500</error-code>
+    <location>/WEB-INF/views/error/500.jsp</location>
+  </error-page>-->
+    <!-- 这里可继续增加服务器错误号的处理及对应显示的页面 -->
+
+</web-app>

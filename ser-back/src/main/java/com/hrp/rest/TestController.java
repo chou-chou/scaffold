@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author KVLT
  * @date 2017-03-15.
  */
-@Api(value = "test", description = "api测试", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "/r/test", description = "api测试", produces = MediaType.APPLICATION_JSON_VALUE)
 @Controller
 public class TestController {
 

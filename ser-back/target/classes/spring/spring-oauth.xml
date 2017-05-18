@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+    <description>OAuth配置文件</description>
+
+    <context:property-placeholder location="classpath:config/system.properties" ignore-unresolvable="true"/>
+
+    <!--<bean id="githubApi" class="com.hrp.oauth.platform.github.GithubApi"/>
+
+    <bean id="oAuthManager" class="com.hrp.oauth.service.OAuthManager" />
+
+    <bean id="oAuthConfig" class="com.hrp.oauth.config.OAuthConfig">
+        <constructor-arg name="callback_url" value="${oauth.callback.url}"/>
+        <constructor-arg name="key" value="${oauth.xxx.key}"/>
+        <constructor-arg name="secret" value="${oauth.xxx.secret}"/>
+        <constructor-arg name="state" value="${oauth.xxx.state}"/>
+    </bean>
+
+    <bean id="customOAuthService" class="com.hrp.oauth.platform.github.GithubOAuthService">
+        <constructor-arg name="api" value="githubApi" />
+        <constructor-arg name="config" value="oAuthConfig"/>
+    </bean>-->
+
+    <bean id="oAuthUserService" class="com.hrp.oauth.service.impl.OAuthUserServiceImpl"/>
+
+</beans>
