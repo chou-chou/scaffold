@@ -35,6 +35,7 @@
     <!-- 自动扫描的包名 -->
     <context:component-scan base-package="com.hrp">
         <context:include-filter type="regex" expression="com.hrp.controller.*"/>
+        <context:include-filter type="annotation" expression="com.hrp.annotation.MvcMapping" />
     </context:component-scan>
 
     <!-- Controller测试的时候使用，发布可以注释掉 -->

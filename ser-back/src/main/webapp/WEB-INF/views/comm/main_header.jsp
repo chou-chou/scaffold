@@ -275,7 +275,7 @@
                         <li class="divider"></li>
 
                         <li>
-                            <a href="logout.do">
+                            <a href="/b/logout.do">
                                 <i class="ace-icon fa fa-power-off"></i>
                                 注销/退出
                             </a>

@@ -1,5 +1,6 @@
 package com.hrp.controller.back;
 
+import com.hrp.annotation.MvcMapping;
 import com.hrp.controller.common.BaseController;
 import com.hrp.entity.system.Menu;
 import com.hrp.service.UserService;
@@ -41,6 +42,7 @@ public class UserController extends BaseController {
      * 角色列表
      */
     @RequestMapping(value = "/list.do", method = RequestMethod.GET)
+    @MvcMapping(url = "/b/user/list.do", path = BASE_PATH + "user_list", type = MvcMapping.ViewType.JSP)
     private ModelAndView list() {
         ModelAndView mv = this.getModelAndView();
         Page page = this.getPage();

@@ -69,9 +69,9 @@
                                 <!-- 工具按钮 新增/编辑/删除 -->
                                 <div>
                                     <p>
-                                        <button class="btn btn-sm btn-primary" onclick="">新增</button>
-                                        <button class="btn btn-sm btn-primary" onclick="">编辑</button>
-                                        <button class="btn btn-sm btn-primary" onclick="">删除</button>
+                                        <button id="departmentAddBtn" class="btn btn-sm btn-primary" onclick="">新增</button>
+                                        <button id="departmentModifyBtn" class="btn btn-sm btn-primary" onclick="">编辑</button>
+                                        <button id="departmentDeleteBtn" class="btn btn-sm btn-primary" onclick="">删除</button>
                                     </p>
                                 </div>
 
@@ -345,7 +345,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/b/department/editDepartment.do",
+            url: "<%=basePath%>/b/department/editDepartment.do",
             dataType: "json",
             async: true,
             data: {

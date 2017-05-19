@@ -1,5 +1,6 @@
 package com.hrp.controller.back;
 
+import com.hrp.annotation.MvcMapping;
 import com.hrp.controller.common.BaseController;
 import com.hrp.entity.business.TbProject;
 import com.hrp.pojo.Result;
@@ -16,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +42,7 @@ public class ProjectController extends BaseController {
      * 角色列表
      */
     @RequestMapping(method = RequestMethod.GET, value = "/list")
+    @MvcMapping(url = "/b/project/list.do", path = BASE_PATH + "project_list", type = MvcMapping.ViewType.JSP)
     private ModelAndView list() {
         ModelAndView mv = this.getModelAndView();
         Page page = this.getPage();
@@ -82,12 +83,12 @@ public class ProjectController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/editProject.do", method = RequestMethod.GET)
-    public void editDictionary(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
-        String roleId = request.getParameter("roleIds");//获取角色id
+    public void editProject(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+        String proIds = request.getParameter("proIds");//获取角色id
         String tag = request.getParameter("tag");
 
         PageData pd = this.getPageData();
-        pd.put("roleId", roleId);
+        pd.put("proIds", proIds);
         TbProject project = null;
         try {
             project = this.projectService.getByProjectId(pd);//查询角色信息返回页面
@@ -106,7 +107,7 @@ public class ProjectController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/editProject.do", method = RequestMethod.POST)
-    public void editDictionaryPost(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+    public void editProjectPost(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
         String tag = request.getParameter("tag");
         Result rc = new Result();
 
@@ -120,14 +121,11 @@ public class ProjectController extends BaseController {
                             ? request.getParameter("proName") : "";
                     String reportor = StringUtil.isNotNullOrBlank(request.getParameter("reportor"))
                             ? request.getParameter("reportor") : "";
-                    String reportorTimeStr = StringUtil.isNotNullOrBlank(request.getParameter("reportorTime"))
-                            ? request.getParameter("reportorTime") : "";
                     String proType = StringUtil.isNotNullOrBlank(request.getParameter("proType"))
                             ? String.valueOf(request.getParameter("proType")) : "";
                     String declareFundsStr = StringUtil.isNotNullOrBlank(request.getParameter("declareFunds"))
                             ? request.getParameter("declareFunds") : "";
-                    SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
-                    Date reportorTime = sdf.parse(reportorTimeStr);
+                    Date reportorTime = new Date();
                     Double declareFunds = Double.valueOf(declareFundsStr);
                     TbProject project = new TbProject();
                     project.setProCode(proCode);
@@ -155,6 +153,8 @@ public class ProjectController extends BaseController {
                 try {
                     System.out.print(request.getParameter("id"));
                     TbProject project = new TbProject();
+                    Date reportTime=new Date();
+                    pd.put("reportTime",reportTime);
                     Boolean success = this.projectService.updateProject(pd);
                     if (success) {
                         rc.setCode("0");
@@ -184,8 +184,8 @@ public class ProjectController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/deleteProjects.do", method = RequestMethod.POST)
-    public void removeDictionary(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
-        String ids = request.getParameter("ids");
+    public void removeProjects(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+        String ids = request.getParameter("proIds");
         String[] arr = ids.split(",");
         Result rc = new Result();
         int[] idsArr = new int[arr.length];

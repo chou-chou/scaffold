@@ -1,5 +1,6 @@
 package com.hrp.controller.back;
 
+import com.hrp.annotation.MvcMapping;
 import com.hrp.controller.common.BaseController;
 import com.hrp.entity.system.Department;
 import com.hrp.entity.system.TreeNode;
@@ -37,7 +38,8 @@ public class DepartmentController extends BaseController {
     /**
      * 部门模块主页面
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/main.do")
+    @RequestMapping(value = "/main.do", method = RequestMethod.GET)
+    @MvcMapping(url = "/b/department/main.do", path = BASE_PATH + "deptList", type = MvcMapping.ViewType.JSP)
     public ModelAndView list(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mv = this.getModelAndView(BASE_PATH + "department_main");
 

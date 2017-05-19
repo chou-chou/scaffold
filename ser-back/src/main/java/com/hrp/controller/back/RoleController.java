@@ -1,5 +1,6 @@
 package com.hrp.controller.back;
 
+import com.hrp.annotation.MvcMapping;
 import com.hrp.controller.common.BaseController;
 import com.hrp.entity.system.Role;
 import com.hrp.pojo.Result;
@@ -40,6 +41,7 @@ public class RoleController extends BaseController {
      * 角色列表
      */
     @RequestMapping(method = RequestMethod.GET, value = "/list")
+    @MvcMapping(url = "/b/role/list.do", path = BASE_PATH + "role_list", type = MvcMapping.ViewType.JSP)
     private ModelAndView list(){
         ModelAndView mv = this.getModelAndView();
         Page page = this.getPage();
@@ -79,7 +81,7 @@ public class RoleController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/editRole.do", method = RequestMethod.GET)
-    public void editDictionary(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+    public void editRole(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
         String roleId = request.getParameter("roleIds");//获取角色id
         String tag = request.getParameter("tag");
 
@@ -104,7 +106,7 @@ public class RoleController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/editRole.do", method = RequestMethod.POST)
-    public void editDictionaryPost(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+    public void editRolePost(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
         String tag = request.getParameter("tag");
         Result rc = new Result();
         PageData pd = this.getPageData();
@@ -178,7 +180,7 @@ public class RoleController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/deleteRoles.do", method = RequestMethod.POST)
-    public void removeDictionary(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+    public void removeRole(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
         String roleIds = request.getParameter("roleIds");
         String[] arr= roleIds.split(",");
         Result rc = new Result();

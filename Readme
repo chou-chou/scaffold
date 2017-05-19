@@ -8,3 +8,14 @@
 2、生成系统验证信息
 
     ser-back\src\test\com\hrp\util\SysInfo.java
+
+3、资源映射处理
+
+    针对菜单树需要放访问的主页面 main.do
+    涉及T_MENU中 访问路径对应的Controller的Method，需要加 @MvcMapping注解，并标注 url、path、type
+
+    例如：
+    DepartmentController.java中main.do方法
+    url     -> /b/department/main.do
+    path    -> back/system/department/deptList  最终这个path会映射成 /WEB-INF/views/back/system/department/deptList.jsp
+    type    -> MvcMapping.ViewType.JSP (默认)   指定映射类型 JSP、FTL、HTML等

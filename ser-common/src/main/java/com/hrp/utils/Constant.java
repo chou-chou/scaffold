@@ -3,6 +3,8 @@ package com.hrp.utils;
 import com.hrp.pojo.ResultCode;
 import org.springframework.context.ApplicationContext;
 
+import java.util.concurrent.ConcurrentMap;
+
 /**
  * Constant
  *
@@ -82,6 +84,8 @@ public class Constant {
     public static final String WEBSOCKET = "admin/config/WEBSOCKET.txt";//WEBSOCKET配置路径
 
     public static ApplicationContext WEB_APP_CONTEXT = null; //该值会在web容器启动时由WebAppContextListener初始化
+
+    public static ConcurrentMap<String, String> MVC_MAP = null;  // 该值记录url - path的对应关系，对应资源映射关系
 
     public static final String NO_INTERCEPTOR_PATH = ".*/((login)|(logout)|(code)|(app)|(weixin)|(static)|(main)|(websocket)).*";	//不对匹配该值的访问路径拦截（正则）
 

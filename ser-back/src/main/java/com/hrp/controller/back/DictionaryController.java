@@ -1,5 +1,6 @@
 package com.hrp.controller.back;
 
+import com.hrp.annotation.MvcMapping;
 import com.hrp.controller.common.BaseController;
 import com.hrp.entity.system.Dictionary;
 import com.hrp.entity.system.TreeNode;
@@ -41,6 +42,7 @@ public class DictionaryController extends BaseController {
      * 字典模块主页面
      */
     @RequestMapping(method = RequestMethod.GET, value = "/main.do")
+    @MvcMapping(url = "/b/dictionary/main.do", path = BASE_PATH + "dicList", type = MvcMapping.ViewType.JSP)
     public ModelAndView list(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mv = this.getModelAndView(BASE_PATH + "dictionary_main");
 

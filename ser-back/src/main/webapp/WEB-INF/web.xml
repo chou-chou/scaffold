@@ -113,7 +113,7 @@
     </servlet-mapping>
 
     <!-- 接口调用跨域处理 -->
-    <!--<filter>
+    <!-- <filter>
           <filter-name>corsFilter</filter-name>
           <filter-class>com.hrp.filter.CorsFilter</filter-class>
           <init-param>

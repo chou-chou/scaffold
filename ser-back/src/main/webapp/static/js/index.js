@@ -1,4 +1,8 @@
 ﻿(function ($) {
+    var local = window.location;
+    var contextPath = local.pathname.split("/")[1];
+    var basePath = local.protocol+"//"+local.host+"/"+contextPath;
+
     $.sertab = {
         requestFullScreen: function () {
             var de = document.documentElement;
@@ -337,18 +341,18 @@
                                 _html += '<ul class="submenu">';
                                 $.each(subchildNodes, function (i) {
                                     var subchildNodesrow = subchildNodes[i];
-                                    _html += '<li class=""><a class="menuItem" data-id="' + subchildNodesrow.menuId + '" href="' + subchildNodesrow.menuUrl + '"><i class="menu-icon fa ' + subchildNodesrow.icon + '"></i><span class="menu-text">' + subchildNodesrow.menuName + '</span></a><b class="arrow"></b></li>';
+                                    _html += '<li class=""><a class="menuItem" data-id="' + subchildNodesrow.menuId + '" href="' + basePath + subchildNodesrow.menuUrl + '"><i class="menu-icon fa ' + subchildNodesrow.icon + '"></i><span class="menu-text">' + subchildNodesrow.menuName + '</span></a><b class="arrow"></b></li>';
                                 });
                                 _html += '</ul>';
 
                             } else {
-                                _html += '<li class=""><a class="menuItem" data-id="' + subrow.menuId + '" href="' + subrow.menuUrl + '"><i class="menu-icon fa ' + subrow.icon + '"></i><span class="menu-text">' + subrow.menuName + '</span></a><b class="arrow"></b>';
+                                _html += '<li class=""><a class="menuItem" data-id="' + subrow.menuId + '" href="' + basePath + subrow.menuUrl + '"><i class="menu-icon fa ' + subrow.icon + '"></i><span class="menu-text">' + subrow.menuName + '</span></a><b class="arrow"></b>';
                             }
                             _html += '</li>';
                         });
                         _html += '</ul>';
                     } else {
-                        _html += '<a href="' + row.menuUrl + '">';
+                        _html += '<a href="' + basePath + row.menuUrl + '">';
                         _html += '<i class="menu-icon fa ' + row.icon + '"></i><span class="menu-text">' + row.menuName + '</span>';
                         _html += '</a>';
                         _html += '<b class="arrow"></b>';

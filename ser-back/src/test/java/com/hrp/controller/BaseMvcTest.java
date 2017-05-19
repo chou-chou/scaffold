@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -28,6 +29,9 @@ public class BaseMvcTest extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Autowired
     protected WebApplicationContext wac;
+
+    @Autowired
+    protected ApplicationContext context;
 
     protected MockMvc mvc;
 

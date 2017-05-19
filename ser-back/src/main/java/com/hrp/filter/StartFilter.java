@@ -62,7 +62,7 @@ public class StartFilter extends BaseController implements Filter {
                 s = new ChatServer(Integer.parseInt(chatPort));
                 s.start();
 			}
-			//System.out.println( "websocket服务器启动,端口" + s.getPort() );
+			logger.info( "websocket服务器启动,端口" + chatPort);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
@@ -81,7 +81,7 @@ public class StartFilter extends BaseController implements Filter {
 				s.start();
 
 			}
-			//System.out.println( "websocket服务器启动,端口" + s.getPort() );
+			logger.info("----- websocket服务器启动,端口" + port);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
@@ -121,5 +121,5 @@ public class StartFilter extends BaseController implements Filter {
         request.getSession().setAttribute("systemName", Constant.SYSTEM_NAME);
 		filterChain.doFilter(request, servletResponse);
 	}
-	
+
 }

@@ -66,14 +66,14 @@ public class IndexController extends BaseController {
     }
 
     //踢出用户
-    @RequestMapping(value="kickouting")
+    @RequestMapping(value="kickouting.do")
     @ResponseBody
     public String kickouting() {
-        return "kickout";
+        return Constant.KICKOUT;
     }
 
     //被踢出后跳转的页面
-    @RequestMapping(value="kickout")
+    @RequestMapping(value="kickout.do")
     public String kickout() {
         return Constant.KICKOUT;
     }

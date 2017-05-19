@@ -46,4 +46,7 @@
     <!-- 日志切面 -->
     <bean id="logAspect" class="com.hrp.utils.LogAspect" />
 
+    <!-- url-path映射列表处理 -->
+    <bean class="com.hrp.listener.MvcMappingListener" />
+
 </beans>
