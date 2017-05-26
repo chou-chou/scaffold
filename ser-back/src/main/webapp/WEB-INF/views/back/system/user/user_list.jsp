@@ -64,7 +64,7 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <div>
-                                    <table id="menu_list" class="table table-striped table-bordered table-hover"
+                                    <table id="user_list" class="table table-striped table-bordered table-hover"
                                            style="margin-top:5px;"><%-- cellspacing="0"  table table-striped table-bordered table-hover--%>
                                         <thead>
                                         <tr>
@@ -117,9 +117,9 @@
                                                             </td>
                                                             <td class="center">
                                                                 <c:if test="${QX.edit != 1 && QX.del != 1 }">
-                                                            <span class="label label-large label-grey arrowed-in-right arrowed-in">
-                                                                <i class="ace-icon fa fa-lock" title="无权限"></i>
-                                                            </span>
+                                                                    <span class="label label-large label-grey arrowed-in-right arrowed-in">
+                                                                        <i class="ace-icon fa fa-lock" title="无权限"></i>
+                                                                    </span>
                                                                 </c:if>
                                                                 <div class="hidden-sm hidden-xs btn-group">
                                                                     <c:if test="${QX.email == 1 }">
@@ -238,19 +238,19 @@
                                                         <a class="btn btn-mini btn-success" onclick="add();">新增</a>
                                                     </c:if>
                                                     <c:if test="${QX.email == 1 }">
-                                                        <a title="批量发送电子邮件" class="btn btn-mini btn-info"
+                                                        <a id="userEmailBtn" title="批量发送电子邮件" class="btn btn-mini btn-info"
                                                            onclick="makeAll('确定要给选中的用户发送邮件吗?');">
                                                             <i class="ace-icon fa fa-envelope bigger-120"></i>
                                                         </a>
                                                     </c:if>
                                                     <c:if test="${QX.sms == 1 }">
-                                                        <a title="批量发送短信" class="btn btn-mini btn-warning"
+                                                        <a id="userSmsBtn" title="批量发送短信" class="btn btn-mini btn-warning"
                                                            onclick="makeAll('确定要给选中的用户发送短信吗?');">
                                                             <i class="ace-icon fa fa-envelope-o bigger-120"></i>
                                                         </a>
                                                     </c:if>
                                                     <c:if test="${QX.del == 1 }">
-                                                        <a title="批量删除" class="btn btn-mini btn-danger"
+                                                        <a id="userDeleteBtn" title="批量删除" class="btn btn-mini btn-danger"
                                                            onclick="makeAll('确定要删除选中的数据吗?');">
                                                             <i class='ace-icon fa fa-trash-o bigger-120'></i>
                                                         </a>
@@ -286,7 +286,7 @@
 <script type="text/javascript">
     jQuery(function ($) {
         //initiate dataTables plugin
-        var menu_list_table = $('#menu_list').DataTable({
+        var user_list_table = $('#user_list').DataTable({
             /*"dom": 'Bfrtip',*/
             bAutoWidth: false,
             "aoColumns": [
@@ -307,7 +307,7 @@
 
         $.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
 
-        new $.fn.dataTable.Buttons(menu_list_table, {
+        new $.fn.dataTable.Buttons(user_list_table, {
             buttons: [
                 {
                     extend: "colvis",
@@ -346,17 +346,17 @@
             ]
         });
 
-        menu_list_table.buttons().container().appendTo($('.tableTools-container'));
+        user_list_table.buttons().container().appendTo($('.tableTools-container'));
 
         // style the message box
-        var defaultCopyAction = menu_list_table.button(1).action();
-        menu_list_table.button(1).action(function (e, dt, button, config) {
+        var defaultCopyAction = user_list_table.button(1).action();
+        user_list_table.button(1).action(function (e, dt, button, config) {
             defaultCopyAction(e, dt, button, config);
             $('.dt-button-info').addClass('gritter-item-wrapper gritter-info gritter-center white');
         });
 
-        var defaultColvisAction = menu_list_table.button(0).action();
-        menu_list_table.button(0).action(function (e, dt, button, config) {
+        var defaultColvisAction = user_list_table.button(0).action();
+        user_list_table.button(0).action(function (e, dt, button, config) {
 
             defaultColvisAction(e, dt, button, config);
 
@@ -376,14 +376,14 @@
             });
         }, 500);
 
-        menu_list_table.on('select', function (e, dt, type, index) {
+        user_list_table.on('select', function (e, dt, type, index) {
             if (type === 'row') {
-                $(menu_list_table.row(index).node()).find('input:checkbox').prop('checked', true);
+                $(user_list_table.row(index).node()).find('input:checkbox').prop('checked', true);
             }
         });
-        menu_list_table.on('deselect', function (e, dt, type, index) {
+        user_list_table.on('deselect', function (e, dt, type, index) {
             if (type === 'row') {
-                $(menu_list_table.row(index).node()).find('input:checkbox').prop('checked', false);
+                $(user_list_table.row(index).node()).find('input:checkbox').prop('checked', false);
             }
         });
 
@@ -391,24 +391,24 @@
         $('th input[type=checkbox], td input[type=checkbox]').prop('checked', false);
 
         //select/deselect all rows according to table header checkbox
-        $('#menu_list > thead > tr > th input[type=checkbox], #menu_list_wrapper input[type=checkbox]').eq(0).on('click', function () {
+        $('#user_list > thead > tr > th input[type=checkbox], #user_list_wrapper input[type=checkbox]').eq(0).on('click', function () {
             var th_checked = this.checked;//checkbox inside "TH" table header
 
-            $('#menu_list').find('tbody > tr').each(function () {
+            $('#user_list').find('tbody > tr').each(function () {
                 var row = this;
-                if (th_checked) menu_list_table.row(row).select();
-                else  menu_list_table.row(row).deselect();
+                if (th_checked) user_list_table.row(row).select();
+                else  user_list_table.row(row).deselect();
             });
         });
 
         //select/deselect a row when the checkbox is checked/unchecked
-        $('#menu_list').on('click', 'td input[type=checkbox]', function () {
+        $('#user_list').on('click', 'td input[type=checkbox]', function () {
             var row = $(this).closest('tr').get(0);
-            if (this.checked) menu_list_table.row(row).deselect();
-            else menu_list_table.row(row).select();
+            if (this.checked) user_list_table.row(row).deselect();
+            else user_list_table.row(row).select();
         });
 
-        $(document).on('click', '#menu_list .dropdown-toggle', function (e) {
+        $(document).on('click', '#user_list .dropdown-toggle', function (e) {
             e.stopImmediatePropagation();
             e.stopPropagation();
             e.preventDefault();

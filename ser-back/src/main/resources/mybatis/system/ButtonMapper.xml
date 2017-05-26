@@ -5,11 +5,17 @@
     <mapper namespace="ButtonMapper">
 
     <resultMap type="Button" id="buttonMap">
-        <id column="BTN_ID" property="btnId"/>
-        <result column="BTN_NAME" property="btnName"/>
-        <result column="MENU_ID" property="menuId"/>
+        <id column="ID" property="id" />
+        <result column="BTN_ID" property="btnId"/>
+        <result column="BTN_TAG" property="btnTag"/>
+        <result column="BTN_TYPE" property="btnType"/>
+        <result column="BTN_TITLE" property="btnTitle"/>
+        <result column="BTN_CLASS" property="btnClass"/>
+        <result column="BTN_TEXT" property="btnText"/>
         <result column="DISABLED" property="disabled"/>
+        <result column="VISIBLE" property="visible" />
         <result column="REMARK" property="remark"/>
+        <result column="MENU_ID" property="menuId"/>
     </resultMap>
     <!-- 表名 -->
     <sql id="tableName">
@@ -18,18 +24,21 @@
 
     <!-- 字段 -->
     <sql id="field">
-        BTN_ID, BTN_NAME, MENU_ID, DISABLED, REMARK
+        ID, BTN_TAG, BTN_ID, BTN_TYPE, BTN_TITLE, BTN_CLASS, BTN_TEXT, MENU_ID, DISABLED, VISIBLE, REMARK
     </sql>
 
     <!-- 字段值 -->
     <sql id="fieldValue">
-        #{btnId}, #{btnName}, #{menuId}, #{disabled}, #{remark}
+        #{id}, #{btnTag}, #{btnId}, #{btnType}, #{btnTitle}, #{btnClass}, #{btnText}, #{menuId}, #{disabled}, #{visible}, #{remark}
     </sql>
 
     <!-- 获取菜单按钮 -->
     <select id="getButtonInfo" parameterType="pd" resultType="pd">
         select <include refid="field"></include> from <include refid="tableName"></include>
         where 1=1
+        <if test="id!=null and id != ''">
+            and ID = #{id}
+        </if>
         <if test="menuId!=null">
             and MENU_ID = #{menuId}
         </if>
@@ -37,7 +46,6 @@
             and DISABLED = #{disabled}
         </if>
     </select>
-
 
     <!-- 更新按钮是否可用 -->
     <update id="disabledButton" parameterType="pd">
@@ -50,20 +58,60 @@
 
     <!-- 获取按钮列表 -->
     <select id="selectButton" parameterType="pd" resultMap="buttonMap">
-        select m.MENU_ID,m.MENU_NAME,m.ROOT_ID,b.BTN_ID,b.BTN_NAME
+        select m.MENU_ID,m.MENU_NAME,m.ROOT_ID,b.BTN_ID,b.BTN_TITLE
         from T_MENU m left join T_BUTTON  b
         on m.MENU_ID = b.MENU_ID
         where 1=1
     </select>
 
     <!-- 新增按钮 -->
-    <insert id="saveButtonvity" parameterType="Button" useGeneratedKeys="true" keyProperty="btnId">
-        insert into T_BUTTON( BTN_NAME,MENU_ID,DISABLED,REMARK)
-        values( #{btnName},#{menuId},#{disabled},#{remark})
-        <selectKey resultType="int" order="AFTER" keyProperty="btnId">
+    <insert id="saveButton" parameterType="Button" useGeneratedKeys="true" keyProperty="id">
+        insert into T_BUTTON (<trim suffixOverrides=",">
+            <if test="btnTag != null and btnTag != ''">BTN_TAG,</if>
+            <if test="btnId != null and btnId != ''">BTN_ID,</if>
+            <if test="btnType != null and btnType != ''">BTN_TYPE,</if>
+            <if test="btnTitle != null and btnTitle != ''">BTN_TITLE,</if>
+            <if test="btnClass != null and btnClass != ''">BTN_CLASS,</if>
+            <if test="menuId != null and menuId != ''">MENU_ID,</if>
+            <if test="disabled != null and disabled != ''">DISABLED,</if>
+            <if test="visible != null and visible != ''">VISIBLE,</if>
+            <if test="btnText != null and btnText != ''">BTN_TEXT,</if>
+            <if test="remark != null and remark != ''">REMARK</if>
+        </trim>)
+            values(<trim suffixOverrides=",">
+            <if test="btnTag != null and btnTag != ''">#{btnTag},</if>
+            <if test="btnId != null and btnId != ''">#{btnId},</if>
+            <if test="btnType != null and btnType != ''">#{btnType},</if>
+            <if test="btnTitle != null and btnTitle != ''">#{btnTitle},</if>
+            <if test="btnClass != null and btnClass != ''">#{btnClass},</if>
+            <if test="menuId != null and menuId != ''">#{menuId},</if>
+            <if test="disabled != null and disabled != ''">#{disabled},</if>
+            <if test="visible != null and visible != ''">#{visible},</if>
+            <if test="btnText != null and btnText != ''">#{btnText},</if>
+            <if test="remark != null and remark != ''">#{remark}</if>
+        </trim>)
+        <!--<selectKey resultType="int" order="AFTER" keyProperty="id">
             SELECT IDENT_CURRENT('T_BUTTON')
-        </selectKey>
+        </selectKey>-->
     </insert>
+
+    <!-- 更新按钮信息 -->
+    <update id="updateButton" parameterType="Button">
+        update T_BUTTON
+        <set>
+            <if test="btnTag != null and btnTag != ''">BTN_TAG=#{btnTag},</if>
+            <if test="btnId != null and btnId != ''">BTN_ID=#{btnId},</if>
+            <if test="btnType != null and btnType != ''">BTN_TYPE=#{btnType},</if>
+            <if test="btnTitle != null and btnTitle != ''">BTN_TITLE=#{btnTitle},</if>
+            <if test="btnClass != null and btnClass != ''">BTN_CLASS=#{btnClass},</if>
+            <if test="menuId != null and menuId != ''">MENU_ID=#{menuId},</if>
+            <if test="disabled != null and disabled != ''">DISABLED=#{disabled},</if>
+            <if test="visible != null and visible != ''">VISIBLE=#{visible},</if>
+            <if test="btnText != null and btnText != ''">BTN_TEXT=#{btnText},</if>
+            <if test="remark != null and remark != ''">REMARK=#{remark}</if>
+        </set>
+        where ID = #{id}
+    </update>
 
     <!-- 获取按钮总数 -->
     <select id="getButtonCount" parameterType="String" resultType="pd">
@@ -72,5 +120,34 @@
         FROM
             <include refid="tableName"></include>
     </select>
+
+    <!-- 列举所有button信息 -->
+    <select id="getButtonList" parameterType="pd" resultMap="buttonMap">
+        SELECT <include refid="field"></include> from <include refid="tableName"></include>
+        WHERE 1=1
+        <if test="menuId != null and menuId != ''">
+            AND MENU_ID = #{menuId}
+        </if>
+        <if test="btnTag != null and btnTag != ''">
+            AND BTN_TAG = #{btnTag}
+        </if>
+        <if test="disabled != null and disabled != ''">
+            AND DISABLED = #{disabled}
+        </if>
+        <if test="visible != null and visible != ''">
+            AND VISIBLE = #{visible}
+        </if>
+        <if test="sort != null and sort != ''">
+            ORDER BY #{sort}
+        </if>
+    </select>
+
+    <!-- 支持批量删除 -->
+    <delete id="deleteButton" parameterType="pd">
+        delete from T_BUTTON where ID in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
 
 </mapper>

@@ -1,6 +1,9 @@
 package com.hrp.service;
 
-import java.util.Set;
+import com.hrp.entity.system.Button;
+import com.hrp.utils.PageData;
+
+import java.util.List;
 
 /**
  * ButtonService
@@ -10,6 +13,12 @@ import java.util.Set;
  */
 public interface ButtonService {
 
-    public Set<String> getButtonsByUsername(String username);
+    public List<Button> getButtonList(PageData pd) throws Exception;
+
+    public Boolean saveButton(Button button) throws Exception;
+
+    public Boolean deleteButton(PageData pd) throws Exception;
+
+    public Boolean updateButton(Button button) throws Exception;
 
 }

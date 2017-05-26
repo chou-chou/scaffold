@@ -91,4 +91,13 @@
            timeToIdleSeconds="120"
            timeToLiveSeconds="120" />
 
+    <cache name="menuCache"
+           maxElementsInMemory="1000"
+           eternal="false"
+           timeToIdleSeconds="3000"
+           timeToLiveSeconds="3000"
+           overflowToDisk="false"
+           memoryStoreEvictionPolicy="LRU" />
+
+
 </ehcache>

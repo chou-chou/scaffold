@@ -23,9 +23,6 @@
 <link rel="stylesheet" href="<%=basePath%>/plugins/ace/css/ace-skins.min.css" />
 <link rel="stylesheet" href="<%=basePath%>/plugins/ace/css/ace-rtl.min.css" />
 
-<!-- ace settings handler -->
-<script src="<%=basePath%>/plugins/ace/js/ace-extra.min.js"></script>
-
 <link rel="stylesheet" href="<%=basePath%>/static/css/index.css" />
 
 <link rel="stylesheet" href="<%=basePath%>/plugins/zTree/3.5/metro.css" />

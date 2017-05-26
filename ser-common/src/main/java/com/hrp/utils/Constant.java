@@ -21,6 +21,8 @@ public class Constant {
     public final static String LOCK_PAGE = "locked";
     public final static String AUTHORITY_PAGE = "authorization";
 
+    public final static String IN_CONTROL = "inCtrl";  // 标记页面上的按钮（button/a/input等）是否被管控
+
     public final static String S_REMEMBER_ME = "rememberMe";  // 记住我
     public final static String S_ADMIN = "admin";  //
 

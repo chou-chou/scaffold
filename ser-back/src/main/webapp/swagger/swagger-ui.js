@@ -12539,7 +12539,7 @@ function baseIsEqualDeep(object, other, equalFunc, customizer, isLoose, stackA, 
     return false;
   }
   // Assume cyclic values are equal.
-  // For more information on detecting circular references see https://es5.github.io/#JO.
+  // For more business on detecting circular references see https://es5.github.io/#JO.
   stackA || (stackA = []);
   stackB || (stackB = []);
 

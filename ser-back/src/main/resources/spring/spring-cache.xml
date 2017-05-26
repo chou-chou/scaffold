@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cache="http://www.springframework.org/schema/cache"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <description>spring cache配置</description>
 
+    <context:annotation-config />
+
+    <context:component-scan base-package="com.hrp.service">
+        <context:include-filter type="annotation" expression="org.springframework.cache.annotation.Cacheable"/>
+        <context:include-filter type="annotation" expression="org.springframework.cache.annotation.CachePut"/>
+        <context:include-filter type="annotation" expression="org.springframework.cache.annotation.CacheEvict"/>
+
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+    </context:component-scan>
+
     <!-- 启用缓存注解功能，这个是必须的，否则注解不会生效，该注解一定要声明在spring主配置文件中才会生效 -->
-    <cache:annotation-driven cache-manager="springCacheManager" proxy-target-class="true" /><!-- cache-manager="springCacheManager" -->
+    <cache:annotation-driven cache-manager="springCacheManager" /><!-- cache-manager="springCacheManager" proxy-target-class="true" -->
 
     <!-- 配置缓存管理器工厂 -->
     <bean id="ehcacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
@@ -24,23 +36,80 @@
         <property name="cacheManager" ref="ehcacheManagerFactory" />
     </bean>
 
-    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
-        <property name="maxIdle" value="100"/><!-- 最大闲置 -->
-        <property name="minIdle" value="10"/><!-- 最小闲置 -->
-        <property name="testOnBorrow" value="true"/><!-- 可以获取 -->
-        <!--        <property name="testOnReturn" value="true"/>-->
+    <!-- 开启切面注解 -->
+    <!--<aop:aspectj-autoproxy proxy-target-class="true" />-->
+
+    <!--<cache:advice id="cacheAdvice" cache-manager="springCacheManager">
+        <cache:caching cache-manager="infoCache">
+            <cache:cacheable method="get*" />
+        </cache:caching>
+    </cache:advice>-->
+
+    <!-- ################ 支持多种缓存实现 ###################### -->
+
+    <!-- Ehcache缓存实现 -->
+    <!--<bean id="ehCacheManagger" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager" ref="ehcacheManagerFactory"/>
+    </bean>-->
+
+    <!-- Redis缓存实现 -->
+    <!--<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="100"/>
+        <property name="minIdle" value="10"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="testOnReturn" value="true"/>
     </bean>
 
-    <!-- redis 配置,也可以把配置挪到properties配置文件中,再读取 -->
-    <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-        <constructor-arg index="0" ref="jedisPoolConfig" />
-        <!-- 端口，默认6379 -->
-        <constructor-arg index="2" value="6379"  name="port" type="int"/>
-        <constructor-arg index="3" value="5000"  name="timeout" type="int"/>
-        <constructor-arg index="1" value="127.0.0.1" name="host" type="java.lang.String"/>
-        <!-- 如果你需要配置密码，请打开这里。
-            <constructor-arg index="4" value="你的密码" name="password" type="java.lang.String"/>
-        -->
+    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="poolConfig" ref="jedisPoolConfig" />
+        <property name="port" value="${redis.port}" />
+        <property name="hostName" value="${redis.host}" />
+        <property name="password" value="${redis.password}" />
+        <property name="timeout" value="${redis.timeout}"></property>
     </bean>
+
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
+        </property>
+    </bean>-->
+
+    <!-- redis 配置,也可以把配置挪到properties配置文件中,再读取  支持分片池 -->
+    <!--<bean id="sharedJedisPool" class="redis.clients.jedis.ShardedJedisPool">&lt;!&ndash; redis.clients.jedis.JedisPool &ndash;&gt;
+        <constructor-arg index="0" ref="jedisPoolConfig" />
+
+        <constructor-arg index="1">
+            <list>
+                <bean class="redis.clients.jedis.JedisShardInfo">
+                    <constructor-arg index="0" value="192.168.18.18" />
+                    <constructor-arg index="1" value="6338" type="int" /> &lt;!&ndash; port &ndash;&gt;
+                    <constructor-arg index="2" value="10000" type="int" /> &lt;!&ndash; timeout &ndash;&gt;
+                    <property name="password" value="password" />
+                </bean>
+                <bean class="redis.clients.jedis.JedisShardInfo">
+                    <constructor-arg index="0" value="192.168.18.18" />
+                    <constructor-arg index="1" value="6338" type="int" /> &lt;!&ndash; port &ndash;&gt;
+                    <constructor-arg index="2" value="10000" type="int" /> &lt;!&ndash; timeout &ndash;&gt;
+                    <property name="password" value="password" />
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="redisCacheManager" class="org.springframework.data.redis.cache.RedisCacheManager">
+        <constructor-arg name="template" ref="redisTemplate" />
+    </bean>
+
+    <bean id="cacheManager" class="org.springframework.cache.support.CompositeCacheManager">
+        <property name="cacheManagers">
+            <list>
+                <ref bean = "ehCacheManagger" />
+            </list>
+        </property>
+    </bean>-->
 
 </beans>

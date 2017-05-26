@@ -22,6 +22,14 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>ser.root</param-value>
+    </context-param>
+    <!--<listener>
+        <listener-class>org.springframework.web.util.WebAppRootListener</listener-class>
+    </listener>-->
+
     <!-- 指定日志logback的配置文件 -->
     <context-param>
         <param-name>logbackConfigLocation</param-name>
@@ -53,6 +61,11 @@
     <listener>
         <description>注册Spring的request作用域</description><!-- LogAspect中需要用到 -->
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+
+    <!-- ehcache磁盘缓存监控，持久化恢复 -->
+    <listener>
+        <listener-class>net.sf.ehcache.constructs.web.ShutdownListener</listener-class>
     </listener>
 
     <!-- 字符编码过滤器 -->
@@ -111,6 +124,10 @@
         <servlet-name>springMvc</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+    
+    <listener>
+        <listener-class>com.hrp.listener.WebApplicationListener</listener-class>
+    </listener>
 
     <!-- 接口调用跨域处理 -->
     <!-- <filter>
@@ -139,18 +156,10 @@
       </filter-mapping>-->
     <!-- 接口调用跨域处理 end-->
 
-    <context-param>
-        <param-name>webAppRootKey</param-name>
-        <param-value>serRoot</param-value>
-    </context-param>
-    <listener>
-        <listener-class>org.springframework.web.util.WebAppRootListener</listener-class>
-    </listener>
-
-    <filter>
+    <!--<filter>
         <filter-name>startFilter</filter-name>
         <filter-class>com.hrp.filter.StartFilter</filter-class>
-    </filter>
+    </filter>-->
 
     <!-- 错误跳转页面 -->
 

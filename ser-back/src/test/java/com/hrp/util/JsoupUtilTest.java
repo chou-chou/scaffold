@@ -1,5 +1,6 @@
 package com.hrp.util;
 
+import com.hrp.utils.Constant;
 import com.hrp.utils.JsoupUtil;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -17,8 +18,13 @@ public class JsoupUtilTest {
 
     @Test
     public void parse() throws Exception {
-        String filePath = "E:\\WorkSpaces\\IdeaWpaces\\SER\\ser-back\\src\\main\\webapp\\WEB-INF\\views\\back\\system\\department\\department_main.jsp";
+        String filePath = "E:\\WorkSpaces\\IdeaWpaces\\SER\\ser-back\\target\\ser\\WEB-INF\\views\\back\\system\\department\\department_main.jsp";
         JsoupUtil ju = JsoupUtil.newInstance();
-        ju.parseBtnByFile(filePath, "button", "input");
+        String[] eles = new String[]{
+                "button.inCtrl",
+                "." + Constant.IN_CONTROL,
+                "input[" + Constant.IN_CONTROL + "]"
+        };
+        ju.parseBtnByFile(filePath, ".inCtrl");
     }
 }

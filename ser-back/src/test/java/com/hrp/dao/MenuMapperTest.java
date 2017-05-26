@@ -21,7 +21,7 @@ public class MenuMapperTest extends BaseDaoTest {
         //MENU_NAME,MENU_URL,LEAF,horizontal,sequence,ROOT_ID,SUP_ID,ICON,DISABLED,REMARK
         me.setMenuName("数据字典");
         me.setMenuUrl("/dic.jsp");
-        me.setLeaf(1);
+        me.setLeaf(true);
         me.setRank(1);
         me.setSequence(1);
         me.setRootId(0);
@@ -35,14 +35,11 @@ public class MenuMapperTest extends BaseDaoTest {
     }
 
     @Test
-    public void listAllMenu() {
-        try {
-            List<Menu> menuList = (List<Menu>) dao.findForList("MenuMapper.listAllMenu", null);
+    public void listAllMenu() throws Exception {
+        List<Menu> menuList = (List<Menu>) dao.findForList("MenuMapper.listAllMenu", null);
 
-            logger.info("获取菜单记录数: " + menuList.size());
-        } catch (Exception e) {
+        logger.info("获取菜单记录数: " + menuList.size());
 
-        }
     }
 
 }

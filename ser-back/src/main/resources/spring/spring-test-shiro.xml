@@ -5,8 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 						http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 						http://www.springframework.org/schema/context 
-						http://www.springframework.org/schema/context/spring-context-4.3.xsd"
-        default-lazy-init="false">
+						http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
 	<description>Shiro 测试配置</description>
 
@@ -83,7 +82,7 @@
         <property name="sessionManager" ref="sessionManager" />
         <property name="kickoutAfter" value="false" />
         <property name="maxSession" value="1" />
-        <property name="kickoutUrl" value="/logout" />
+        <property name="kickoutUrl" value="/login.do?kickout=1" />
     </bean>
 
     <!-- 凭证匹配器，解密实用，注入到realm中使用 -->
@@ -94,9 +93,9 @@
         <property name="maxPasswordRetry" value="${user.password.maxPasswordRetry}" />
 
         <!-- 加密解密的算法要一样，迭代数也是  -->
-        <!--<property name="hashAlgorithmName" value="md5"/>
+        <property name="hashAlgorithmName" value="md5"/>
         <property name="hashIterations" value="2"/>
-        <property name="storedCredentialsHexEncoded" value="true"/>-->
+        <property name="storedCredentialsHexEncoded" value="true" />
     </bean>
 
 	<!-- 继承自AuthorizingRealm的自定义Realm，即指定Shiro验证用户登录的类为自定义的ShiroRealm.java -->
@@ -110,7 +109,7 @@
     </bean>
 
     <!-- ==========================================安全管理器========================================== -->
-    <bean id="securityManager" class="org.apache.shiro.mgt.DefaultSecurityManager">
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
         <property name="cacheManager" ref="shiroCacheManager"/>
         <property name="realm" ref="shiroRealm" />
         <property name="rememberMeManager" ref="rememberMeManager" />
@@ -127,10 +126,13 @@
     <bean id="formAuthenticationFilter" class="com.hrp.shiro.filter.CustomFormAuthenticationFilter">
         <property name="defaultSuccessUrl" value="${shiro.back.default.success.url}"/>
         <property name="adminDefaultSuccessUrl" value="${shiro.back.default.success.url}"/>
+
         <!--表单上的用户名/密码 下次自动登录的参数名-->
         <property name="usernameParam" value="username"/>
         <property name="passwordParam" value="password"/>
         <property name="rememberMeParam" value="rememberMe"/><!--即rememberMe请求参数名，请求参数是boolean类型，true表示rememberMe。   -->
+
+        <property name="failureKeyAttribute" value="shiroLoginFalure" />
     </bean>
 
     <!--<bean id="jCaptchaValidateFilter" class="com.hrp.shiro.filter.JCaptchaValidateFilter">
@@ -141,7 +143,7 @@
 
     <!-- 退出登录过滤器 -->
     <bean id="logoutFilter" class="org.apache.shiro.web.filter.authc.LogoutFilter">
-        <property name="redirectUrl" value="/login?logout=1"/>
+        <property name="redirectUrl" value="${shiro.back.logout.success.url}"/>
     </bean>
 
     <!-- 系统有效性验证 -->
@@ -175,6 +177,7 @@
                 /uploadFiles/**             = anon
 
                 <!-- 不需要验证　-->
+                /#                          = anon
                 /authorization.do           = anon
                 /locked.do                  = anon
 
@@ -200,7 +203,7 @@
                 <!--<entry key="monitor" value-ref="monitorFilter" />
                 <entry key="jCaptchaValidate" value-ref="jCaptchaValidateFilter"/>-->
                 <entry key="logout" value-ref="logoutFilter"/>
-                <!--<entry key="kickout" value-ref="kickoutSessionFilter" />-->
+                <entry key="kickout" value-ref="kickoutSessionFilter" />
             </map>
         </property>
 	</bean>

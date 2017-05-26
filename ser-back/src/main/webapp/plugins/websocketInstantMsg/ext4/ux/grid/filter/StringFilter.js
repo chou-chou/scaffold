@@ -82,7 +82,7 @@ Ext.define('Ext.ux.grid.filter.StringFilter', {
     /**
      * @private
      * Template method that is to return <tt>true</tt> if the filter
-     * has enough configuration information to be activated.
+     * has enough configuration business to be activated.
      * @return {Boolean}
      */
     isActivatable : function () {

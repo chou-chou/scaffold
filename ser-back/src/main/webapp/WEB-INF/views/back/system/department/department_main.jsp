@@ -69,9 +69,12 @@
                                 <!-- 工具按钮 新增/编辑/删除 -->
                                 <div>
                                     <p>
-                                        <button id="departmentAddBtn" class="btn btn-sm btn-primary" onclick="">新增</button>
-                                        <button id="departmentModifyBtn" class="btn btn-sm btn-primary" onclick="">编辑</button>
-                                        <button id="departmentDeleteBtn" class="btn btn-sm btn-primary" onclick="">删除</button>
+                                        <button id="departmentAddBtn" class="inCtrl btn btn-sm btn-primary" onclick="">新增
+                                        </button>
+                                        <button id="departmentModifyBtn" class="inCtrl btn btn-sm btn-primary" onclick="">编辑
+                                        </button>
+                                        <button id="departmentDeleteBtn" class="inCtrl btn btn-sm btn-primary" onclick="">删除
+                                        </button>
                                     </p>
                                 </div>
 
@@ -93,13 +96,13 @@
 
                                 <%--<div class="hr hr-dotted"></div>--%>
 
-                                <div  class="clearfix form-actions">
+                                <div class="clearfix form-actions">
                                     <!-- 新增/编辑 -->
                                     <div class="row">
                                         <div class="col-xs-12">
 
                                             <form class="form-horizontal" role="form">
-                                                <input id="deptId" name="deptId" type="hidden" value="${dic.deptId}"/>
+                                                <input id="deptId" name="deptId" type="hidden" value="${dept.deptId}"/>
                                                 <input id="tag" name="tag" type="hidden"/>
 
                                                 <div class="form-group">
@@ -117,39 +120,41 @@
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label class="col-sm-2 control-label no-padding-right" for="entryCode">部门编码:</label>
+                                                    <label class="col-sm-2 control-label no-padding-right"
+                                                           for="deptCode">部门编码:</label>
                                                     <div class="col-sm-10">
-                                                        <input type="text" id="entryCode" name="entryCode"
+                                                        <input type="text" id="deptCode" name="deptCode"
                                                                placeholder="部门编码" class="col-xs-10 col-sm-5"
-                                                               value="${dic.deptCode}"/>
+                                                               value="${dept.deptCode}"/>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label class="col-sm-2 control-label no-padding-right" for="entryValue">部门名称:</label>
+                                                    <label class="col-sm-2 control-label no-padding-right"
+                                                           for="deptName">部门名称:</label>
                                                     <div class="col-sm-10">
-                                                        <input type="text" id="entryValue" name="entryValue"
+                                                        <input type="text" id="deptName" name="deptName"
                                                                placeholder="部门名称" class="col-xs-10 col-sm-5"
-                                                               value="${dic.deptName}"/>
+                                                               value="${dept.deptName}"/>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label class="col-sm-2 control-label no-padding-right" for="described">功能描述:</label>
+                                                    <label class="col-sm-2 control-label no-padding-right"
+                                                           for="described">功能描述:</label>
                                                     <div class="col-sm-10">
                                                         <input type="text" id="described" name="described"
                                                                placeholder="功能描述" class="col-xs-10 col-sm-5"
-                                                               value="${dic.described}"/>
+                                                               value="${dept.described}"/>
                                                     </div>
                                                 </div>
-
 
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label no-padding-right"
                                                            for="address">地址:</label>
                                                     <div class="col-sm-10">
                                                         <textarea id="address" name="address" class="form-control"
-                                                                  placeholder="地址">${dic.address}</textarea>
+                                                                  placeholder="地址">${dept.address}</textarea>
                                                     </div>
                                                 </div>
 
@@ -158,7 +163,7 @@
                                                            for="remark">备注:</label>
                                                     <div class="col-sm-10">
                                                         <textarea id="remark" name="remark" class="form-control"
-                                                                  placeholder="备注信息">${dic.remark}</textarea>
+                                                                  placeholder="备注信息">${dept.remark}</textarea>
                                                     </div>
                                                 </div>
 
@@ -312,8 +317,8 @@
         var t = $("#departmentTree");
 
         $.ajax({
-            type: "POST",
-            url: "/b/department/getDepTree.do",
+            type: "GET",
+            url: "<%=basePath%>b/department/getDepTree.do",
             dataType: "json",
             async: true,
             data: {
@@ -331,8 +336,8 @@
     function saveChange() {
         var deptId = $("#deptId").val();
         var supId = $("#supCode").val();
-        var deptCode = $("#entryCode").val();
-        var deptName = $("#entryValue").val();
+        var deptCode = $("#deptCode").val();
+        var deptName = $("#deptName").val();
         var described = $("#described").val();
         var address = $("#address").val();
         var remark = $("#remark").val();
@@ -367,7 +372,6 @@
                         var supId = null;
                         if (rc.data != null && rc.data.supId != null) {
                             supId = zTree.getNodeByTId("departmentTree_" + rc.data.supId.deptId);  // 父级
-                            //supCode = zTree.getNodeByParam("id", rc.data.supDic.dicId, null); // 父级
                         }
 
                         if (supId != undefined && supId != null) {
@@ -394,8 +398,8 @@
 
     // 重置表单
     function resetForm() {
-        $("#entryCode").empty();
-        $("#entryValue").empty();
+        $("#deptCode").empty();
+        $("#deptName").empty();
         $("#described").empty();
         $("#address").empty();
         $("#remark").empty();
@@ -408,7 +412,7 @@
 
         $.ajax({
             type: "GET",
-            url: "/b/department/editDepartment.do",
+            url: "<%=basePath%>b/department/editDepartment.do",
             dataType: "json",
             async: true,
             data: {
@@ -416,21 +420,22 @@
                 tag: tag
             },
             success: function (dept) {
+                alert(dept);
 
                 if (tag == 'ADD') {
-                    $("#supCode").val(dept.entryCode).trigger('change.select2');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
+                    $("#supCode").val(dept.deptCode).trigger('change.select2');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
 
                     $("#deptId").val("");
                     $("#described").val("");
-                    $("#entryCode").val("");
-                    $("#entryValue").val("");
+                    $("#deptCode").val("");
+                    $("#deptName").val("");
                     $("#address").val("");
                     $("#remark").val("");
                 }
 
                 if (tag == 'EDIT') {
                     if (dept.supDepartment !== undefined && dept.supDepartment !== null) {
-                        $("#supCode").val(dept.supDepartment.entryCode).trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
+                        $("#supCode").val(dept.supDepartment.deptCode).trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
                     } else {
                         $("#supCode").val('-1').trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
                     }
@@ -438,15 +443,15 @@
                     $("#supCode").attr("value", dept.supId);
                     $("#deptId").val(dept.deptId);
                     $("#described").val(dept.described);
-                    $("#entryCode").val(dept.deptCode);
-                    $("#entryValue").val(dept.deptName);
+                    $("#deptCode").val(dept.deptCode);
+                    $("#deptName").val(dept.deptName);
                     $("#address").val(dept.address);
                     $("#remark").val(dept.remark);
                 }
             }
         });
 
-        return true;
+        return false;
     }
 
     function removeDepartment(deptId, name) {
@@ -458,7 +463,7 @@
             // 执行异步删除动作
             $.ajax({
                 type: "POST",
-                url: "/b/department/removeDepartment.do",
+                url: "<%=basePath%>b/department/removeDepartment.do",
                 dataType: "json",
                 async: true,
                 data: {

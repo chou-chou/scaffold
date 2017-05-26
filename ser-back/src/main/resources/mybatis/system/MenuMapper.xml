@@ -4,20 +4,30 @@
 
 <mapper namespace="MenuMapper">
 
+    <resultMap type="TreeNode" id="TreeNodeMap">
+        <result column="MENU_ID" property="id"/>
+        <result column="SUP_ID" property="pId"/>
+        <result column="MENU_NAME" property="name"/>
+        <result column="MENU_ID" property="code"/>
+        <result column="IS_LEAF" property="leaf"/>
+        <result column="SEQUENCE" property="no"/>
+    </resultMap>
+
     <resultMap type="Menu" id="menuResultMap">
         <id column="MENU_ID" property="menuId"/>
         <result column="MENU_NAME" property="menuName"/>
         <result column="MENU_URL" property="menuUrl"/>
-        <result column="LEAF" property="leaf"/>
+        <result column="IS_LEAF" property="isLeaf"/>
         <result column="RANK" property="rank"/>
         <result column="SEQUENCE" property="sequence"/>
         <result column="ROOT_ID" property="rootId"/>
         <result column="SUP_ID" property="supId"/>
         <result column="ICON" property="icon"/>
-        <result column="DISABLED" property="disabled"/>
+        <result column="ENABLED" property="enabled"/>
         <result column="REMARK" property="remark"/>
+        <result column="UPDATE_TIME" property="updateTime"/>
+        <result column="UPDATE_USERID" property="updateUserId"/>
     </resultMap>
-
 
     <!-- 表名 -->
     <sql id="tableName">
@@ -26,12 +36,12 @@
 
     <!-- 字段 -->
     <sql id="field">
-        MENU_ID,MENU_NAME,MENU_URL,LEAF,RANK,SEQUENCE,ROOT_ID,SUP_ID,ICON, DISABLED,REMARK,MODIFY_DATE,MODIFY_USERID,MODIFY_USERNAME
+        MENU_ID,MENU_NAME,MENU_URL,IS_LEAF,RANK,SEQUENCE,ROOT_ID,SUP_ID,ICON, ENABLED,REMARK,UPDATE_TIME,UPDATE_USERID
     </sql>
 
     <!-- 字段值 -->
     <sql id="fieldValue">
-        #{menuId}, #{menuName}, #{menuUrl}, #{leaf}, #{rank}, #{sequence}, #{rootId}, #{supId},#{icon},#{disabled},#{remark},#{modifyDate},#{modifyUserId},#{modifyUsername}
+        #{menuId}, #{menuName}, #{menuUrl}, #{isLeaf}, #{rank}, #{sequence}, #{rootId}, #{supId},#{icon},#{enabled},#{remark},#{updateTime},#{updateUserId}
     </sql>
 
     <!-- 获取菜单列表 -->
@@ -39,13 +49,104 @@
         select <include refid="field"></include>
         from <include refid="tableName"></include>
         WHERE 1=1
+        <if test="menuId != null and menuId != ''">
+            AND MENU_ID = #{menuId}
+        </if>
+        <if test="menuName != null and menuName != ''">
+            AND MENU_NAME = #{menuName}
+        </if>
+        <if test="menuUrl != null and menuUrl != ''">
+            AND MENU_URL like '%' + #{menuUrl} + '%'
+        </if>
+        <if test="supId != null and supId != ''">
+            AND SUP_ID = #{supId}
+        </if>
+        <if test="enabled != null and enabled != ''">
+            AND ENABLED = #{enabled}
+        </if>
+        <if test="updateUserId != null and updateUserId != ''">
+            AND UPDATE_USERID = #{updateUserId}
+        </if>
+        <if test="sort != null and sort != ''">
+            ORDER BY #{sort}
+        </if>
+    </select>
+
+    <!-- 级联获取所有菜单列表（获取下级） -->
+    <select id="selectMenuCascade" parameterType="pd" resultMap="TreeNodeMap">
+        WITH TREE AS
+        (select MENU_ID, MENU_NAME, MENU_URL, SUP_ID, SEQUENCE, IS_LEAF
+        from T_MENU
+        where ENABLED = 1 AND IS_LEAF = 0
+        <if test="menuInfo != null and menuInfo != ''"><!-- 关键词检索 -->
+            AND (
+            MENU_NAME LIKE '%'+#{menuInfo}+'%'
+            OR
+            MENU_URL LIKE '%'+#{menuInfo}+'%'
+            )
+        </if>
+        UNION ALL
+        SELECT m.MENU_ID, m.MENU_NAME, m.MENU_URL, m.SUP_ID, m.SEQUENCE, m.IS_LEAF
+        FROM T_MENU m
+        INNER JOIN TREE
+        ON m.IS_LEAF = 1 AND m.SUP_ID = TREE.MENU_ID
+        )
+        SELECT DISTINCT MENU_ID, MENU_NAME, MENU_URL, SUP_ID, SEQUENCE, IS_LEAF FROM TREE
+        OPTION (MAXRECURSION 10)
+        <!-- OPTION (MAXRECURSION 10) 限制递归次数 -->
     </select>
 
     <!-- 新增菜单 -->
-    <insert id="saveMenuvity" parameterType="Menu">
-        insert into T_MENU(MENU_ID,MENU_NAME,MENU_URL,LEAF,RANK,SEQUENCE,ROOT_ID,SUP_ID,ICON, DISABLED,REMARK)
-        values(#{menuId},#{menuName},#{menuUrl},#{leaf},#{rank},#{sequence},#{rootId},#{supId},convert(varbinary(max),#{icon}),#{disabled},#{remark})
+    <insert id="saveMenu" parameterType="Menu" useGeneratedKeys="true" keyProperty="menuId">
+        insert into T_MENU (<trim suffixOverrides=",">
+            <if test="menuName != null and menuName != ''">MENU_ID,</if>
+            <if test="menuUrl != null and menuUrl != ''">MENU_URL,</if>
+            <if test="isLeaf != null and isLeaf != ''">IS_LEAF,</if>
+            <if test="rank != null and rank != ''">RANK,</if>
+            <if test="sequence != null and sequence != ''">SEQUENCE,</if>
+            <if test="rootId != null and rootId != ''">ROOT_ID,</if>
+            <if test="supId != null and supId != ''">SUP_ID,</if>
+            <if test="icon != null and icon != ''">ICON,</if>
+            <if test="enabled != null and enabled != ''">ENABLED,</if>
+            <if test="remark != null and remark != ''">REMARK,</if>
+            <if test="updateTime != null and updateTime != ''">UPDATE_TIME,</if>
+            <if test="updateUserId != null and updateUserId != ''">UPDATE_USERID</if>
+        </trim>)
+            values(<trim suffixOverrides=",">
+            <if test="menuName != null and menuName != ''">#{menuName},</if>
+            <if test="menuUrl != null and menuUrl != ''">#{menuUrl},</if>
+            <if test="isLeaf != null and isLeaf != ''">#{isLeaf},</if>
+            <if test="rank != null and rank != ''">#{rank},</if>
+            <if test="sequence != null and sequence != ''">#{sequence},</if>
+            <if test="rootId != null and rootId != ''">#{rootId},</if>
+            <if test="supId != null and supId != ''">#{supId},</if>
+            <if test="icon != null and icon != ''">#{icon},</if>
+            <if test="enabled != null and enabled != ''">#{enabled},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            <if test="updateTime != null and updateTime != ''">#{updateTime},</if>
+            <if test="updateUserId != null and updateUserId != ''">#{updateUserId}</if>
+        </trim>)
     </insert>
+
+    <!-- 更新菜单信息 -->
+    <update id="updateMenu" parameterType="Menu">
+        update T_MENU
+        <set>
+            <if test="menuName != null and menuName != ''">MENU_NAME=#{menuName},</if>
+            <if test="menuUrl != null and menuUrl != ''">MENU_URL=#{menuUrl},</if>
+            <if test="isLeaf != null and isLeaf != ''">IS_LEAF=#{isLeaf},</if>
+            <if test="rank != null and rank != ''">RANK=#{rank},</if>
+            <if test="sequence != null and sequence != ''">SEQUENCE=#{sequence},</if>
+            <if test="rootId != null and rootId != ''">ROOT_ID=#{rootId},</if>
+            <if test="supId != null and supId != ''">SUP_ID=#{supId},</if>
+            <if test="icon != null and icon != ''">ICON=#{icon},</if>
+            <if test="enabled != null and enabled != ''">ENABLED=#{enabled},</if>
+            <if test="remark != null and remark != ''">REMARK=#{remark},</if>
+            <if test="updateTime != null and updateTime != ''">UPDATE_TIME=#{updateTime},</if>
+            <if test="updateUserId != null and updateUserId != ''">UPDATE_USERID=#{updateUserId}</if>
+        </set>
+        where MENU_ID = #{menuId}
+    </update>
 
     <!-- 获取用户总数 -->
     <select id="getMenuCount" parameterType="String" resultType="pd">
@@ -54,5 +155,13 @@
         FROM
         <include refid="tableName"></include>
     </select>
+
+    <!-- 支持批量删除 -->
+    <delete id="deleteMenu" parameterType="pd">
+        delete from T_MENU where MENU_ID in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
 
 </mapper>

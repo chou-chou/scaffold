@@ -15,14 +15,13 @@
 
     <%@ include file="../../../comm/default_header.jsp" %>
 
-    <%--<link rel="stylesheet" href="<%=basePath%>/static/css/bootstrap-multiselect.min.css"/>
-    <script type="text/javascript" src="<%=basePath%>/static/js/bootstrap-multiselect.min.js"></script>--%>
-
     <link rel="stylesheet" href="<%=basePath%>/plugins/select2/css/select2.min.css"/>
+    <link rel="stylesheet" href="<%=basePath%>/plugins/iconpicker/css/fontawesome-iconpicker.min.css"/>
 
     <script type="text/javascript" src="<%=basePath%>/static/js/pinyin.js"></script>
     <script type="text/javascript" src="<%=basePath%>/plugins/select2/js/select2.full.js"></script>
     <script type="text/javascript" src="<%=basePath%>/plugins/select2/js/i18n/zh-CN.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/plugins/iconpicker/js/fontawesome-iconpicker.min.js"></script>
 
 </head>
 <body>
@@ -42,10 +41,10 @@
                     <div class="form-group">
                         <div class="col-sm-11">
                             <div class="form-inline">
-                                <label class="control-label on-padding-left" for="dicInfo"><!-- no-padding-right -->
-                                    字典信息：
+                                <label class="control-label on-padding-left" for="menuInfo"><!-- no-padding-right -->
+                                    菜单信息：
                                 </label>
-                                <input type="text" id="dicInfo" name="dicInfo" class="form-control" value="">
+                                <input type="text" id="menuInfo" name="menuInfo" class="form-control" value="">
                             </div>
                         </div>
                         <div class="col-sm-1">
@@ -59,13 +58,12 @@
 
                 <!-- 分割线 -->
                 <div class="hr hr-4"></div>
-                <%--<div class="hr hr-dotted"></div>--%>
 
                 <div class="row">
                     <div class="col-xs-12">
 
                         <div class="row">
-                            <!-- 字典树 -->
+                            <!-- 菜单树 -->
                             <div class="col-sm-4">
                                 <!-- 工具按钮 新增/编辑/删除 -->
                                 <div>
@@ -78,12 +76,12 @@
 
                                 <div class="widget-box widget-color-blue2">
                                     <div class="widget-header">
-                                        <h4 class="widget-title lighter smaller">字典树</h4>
+                                        <h4 class="widget-title lighter smaller">菜单树</h4>
                                     </div>
 
                                     <div class="widget-body scroll-content" style="overflow:auto;">
                                         <div class="widget-main padding-8">
-                                            <ul id="dictionaryTree" class="ztree"></ul>
+                                            <ul id="menuTree" class="ztree"></ul>
                                         </div>
                                     </div>
                                 </div>
@@ -92,8 +90,6 @@
                             <!-- 菜单新增/编辑 -->
                             <div class="col-sm-8">
 
-                                <%--<div class="hr hr-dotted"></div>--%>
-
                                 <div class="clearfix form-actions">
                                     <!-- 新增/编辑 -->
                                     <div class="row">
@@ -101,51 +97,40 @@
 
                                             <form class="form-horizontal" role="form">
 
-                                                <input id="dicId" name="dicId" type="hidden" value="${dic.dicId}"/>
+                                                <input id="menuId" name="menuId" type="hidden" value="${menu.menuId}"/>
                                                 <input id="tag" name="tag" type="hidden" value="ADD"/>
 
                                                 <div class="form-group">
                                                     <label class="control-label col-sm-2 col-xs-12 no-padding-right"
-                                                           for="supCode">上级字典:</label>
+                                                           for="supId">上级菜单:</label>
                                                     <div class="col-sm-10 col-xs-12">
-                                                        <select id="supCode" name="supCode" class="select2"
+                                                        <select id="supId" name="supId" class="select2"
                                                                 style="max-height:35px; overflow-y:auto; overflow-x: hidden">
                                                             <option value="-1">请选择</option>
-                                                            <c:forEach items="${dicList}" var="dic" varStatus="index">
-                                                                <option value="${dic.entryCode}">${dic.entryValue}</option>
+                                                            <c:forEach items="${menuList}" var="menu" varStatus="index">
+                                                                <option value="${menu.menuId}">${menu.menuName}</option>
                                                             </c:forEach>
                                                         </select>
                                                     </div>
                                                 </div>
 
-                                                <%--<div class="form-group">
-                                                    <label class="control-label col-sm-2 col-xs-12 no-padding-right" for="supCode">上级字典:</label>
-                                                    <div class="col-sm-10 col-xs-12">
-                                                        <select id="supCode" name="supCode" class="multiselect dropdown-menu" style="max-height:150px; overflow-y:auto; overflow-x: hidden" multiple="">
-                                                            <c:forEach items="${dicList}" var="dic" varStatus="index">
-                                                                <option value="${dic.entryCode}">${dic.entryValue}</option>
-                                                            </c:forEach>
-                                                        </select>
-                                                    </div>
-                                                </div>--%>
-
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label no-padding-right"
-                                                           for="entryCode">字典编码:</label>
+                                                           for="menuName">菜单名称:</label>
                                                     <div class="col-sm-10">
-                                                        <input type="text" id="entryCode" name="entryCode"
-                                                               placeholder="字典编码" class="col-xs-10 col-sm-5"
-                                                               value="${dic.entryCode}"/>
+                                                        <input type="text" id="menuName" name="menuName"
+                                                               placeholder="菜单名称" class="col-xs-10 col-sm-5"
+                                                               value="${menu.menuName}"/>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label no-padding-right"
-                                                           for="entryValue">字典名称:</label>
+                                                           for="menuUrl">菜单链接:</label>
                                                     <div class="col-sm-10">
-                                                        <input type="text" id="entryValue" name="entryValue"
-                                                               placeholder="字典名称" class="col-xs-10 col-sm-5"
-                                                               value="${dic.entryValue}"/>
+                                                        <input type="text" id="menuUrl" name="menuUrl"
+                                                               placeholder="菜单链接" class="col-xs-10 col-sm-5"
+                                                               value="${menu.menuUrl}"/>
                                                     </div>
                                                 </div>
 
@@ -155,7 +140,18 @@
                                                     <div class="col-sm-10">
                                                         <input type="text" id="sequence" name="sequence"
                                                                placeholder="序号" class="col-xs-10 col-sm-5"
-                                                               value="${dic.sequence}"/>
+                                                               value="${menu.sequence}"/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label no-padding-right" for="icon">图标:</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" id="icon_" name="icon_" class="col-xs-10 col-sm-5"
+                                                               value="${menu.icon}" />
+                                                        <button id="icon" type="buton" class="btn btn-primary iconpicker-component">
+                                                            <i class="fa ${menu.icon}"/>
+                                                        </button>
                                                     </div>
                                                 </div>
 
@@ -168,7 +164,7 @@
                                                         <label>
                                                             <input id="enabled" name="enabled" value="1"
                                                                    class="ace ace-checkbox-2" type="checkbox"
-                                                                   <c:if test="${dic.enabled == true}">checked</c:if>/>
+                                                                   <c:if test="${menu.enabled == true}">checked</c:if>/>
                                                             <span class="lbl">  注: 勾选即可用 </span>
                                                         </label>
                                                     </div>
@@ -178,7 +174,7 @@
                                                     <label class="col-sm-2 control-label no-padding-right" for="remark">备注:</label>
                                                     <div class="col-sm-10">
                                                         <textarea id="remark" name="remark" class="form-control"
-                                                                  placeholder="备注信息">${dic.sequence}</textarea>
+                                                                  placeholder="备注信息">${menu.remark}</textarea>
                                                     </div>
                                                 </div>
 
@@ -211,6 +207,23 @@
 </div>
 
 <script type="text/javascript">
+    jQuery(function ($) {
+        $('#icon').iconpicker({
+            selected: false,
+            defaultValue: false,
+            templates: {
+                popover: '<div class="iconpicker-popover popover"><div class="arrow"></div>' +
+                '<div class="popover-title"></div><div class="popover-content"></div></div>',
+                footer: '<div class="popover-footer"></div>',
+                buttons: '<button class="iconpicker-btn iconpicker-btn-cancel btn btn-default btn-sm">Cancel</button>' +
+                ' <button class="iconpicker-btn iconpicker-btn-accept btn btn-primary btn-sm">Accept</button>',
+                search: '<input type="search" class="form-control iconpicker-search" placeholder="Type to filter" />',
+                iconpicker: '<div class="iconpicker"><div class="iconpicker-items"></div></div>',
+                iconpickerItem: '<a role="button" href="#" class="iconpicker-item"><i></i></a>',
+            }
+        });
+    }
+
     var zTree;
     var demoIframe;
 
@@ -287,12 +300,12 @@
                 }
             }
         }/*,
-        async: {
-            enabled: true,
-            url: "/dictionary/getDicTree.do",
-            autoParam: ['code'],
-            dataType: "json"
-        }*/
+         async: {
+         enabled: true,
+         url: "/dictionary/getDicTree.do",
+         autoParam: ['code'],
+         dataType: "json"
+         }*/
     };
 
     $(document).ready(function () {

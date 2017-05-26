@@ -74,7 +74,7 @@ Ext.define('Ext.ux.ProgressBarPager', {
     // private, overriddes
     parentOverrides  : {
         // private
-        // This method updates the information via the progress bar.
+        // This method updates the business via the progress bar.
         updateInfo : function(){
             if(this.displayItem){
                 var count = this.store.getCount(),

@@ -42,7 +42,7 @@ public class DictionaryController extends BaseController {
      * 字典模块主页面
      */
     @RequestMapping(method = RequestMethod.GET, value = "/main.do")
-    @MvcMapping(url = "/b/dictionary/main.do", path = BASE_PATH + "dicList", type = MvcMapping.ViewType.JSP)
+    @MvcMapping(url = "/b/dictionary/main.do", path = BASE_PATH + "dictionary_main", type = MvcMapping.ViewType.JSP)
     public ModelAndView list(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mv = this.getModelAndView(BASE_PATH + "dictionary_main");
 

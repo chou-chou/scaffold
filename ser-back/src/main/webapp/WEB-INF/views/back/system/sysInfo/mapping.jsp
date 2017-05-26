@@ -30,14 +30,14 @@
         if ('ontouchstart' in document.documentElement) document.write("<script src='<%=basePath%>/plugins/jquery/jquery.mobile.custom.min.js'>" + "<" + "/script>")
     </script>
 
-    <script src="<%=basePath%>/plugins/dataTables/jquery.dataTables.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/jquery.dataTables.bootstrap.min.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/extends/button/dataTables.buttons.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/extends/button/buttons.flash.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/extends/button/buttons.html5.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/extends/button/buttons.print.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/extends/button/buttons.colVis.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/extends/select/dataTables.select.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/jquery.dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/dataTables.buttons.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/buttons.flash.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/buttons.html5.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/buttons.print.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/buttons.colVis.js"></script>
+    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/select/dataTables.select.js"></script>
 
 </head>
 

@@ -177,6 +177,7 @@
                 /uploadFiles/**             = anon
 
                 <!-- 不需要验证　-->
+                /#                          = anon
                 /authorization.do           = anon
                 /locked.do                  = anon
 
@@ -209,5 +210,8 @@
 
     <!-- Shiro生命周期处理器  保证实现了Shiro内部lifecycle函数的bean执行 -->
     <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+    <!-- 开启Shiro注解(写在这里才有效，spring-shiro.xml无效) -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
 </beans>

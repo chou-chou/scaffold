@@ -3,6 +3,7 @@ package com.hrp.listener;
 import com.google.common.collect.Maps;
 import com.hrp.annotation.MvcMapping;
 import com.hrp.utils.Constant;
+import com.hrp.utils.JsoupUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -26,6 +27,7 @@ public class MvcMappingListener implements ApplicationListener<ContextRefreshedE
 	public void onApplicationEvent(ContextRefreshedEvent event) {
         logger.info("----------------Spring容器初始化完毕-------------------");
 
+        JsoupUtil ju = JsoupUtil.newInstance();
         ConcurrentMap<String, String> mvcMap = Maps.newConcurrentMap();
         try {
             // 获取上下文
@@ -46,18 +48,30 @@ public class MvcMappingListener implements ApplicationListener<ContextRefreshedE
                     }
                 }
             }
+
+            logger.info("---------打印Mapping关系---------");
+            Set<Map.Entry<String, String>> mvcSet = mvcMap.entrySet();
+            Iterator<Map.Entry<String, String>> iter = mvcSet.iterator();
+            while (iter.hasNext()) {
+                Map.Entry<String, String> me = iter.next();
+                logger.info(me.getKey() + "\t" + me.getValue());
+            }
+
+            Constant.MVC_MAP = mvcMap;
+
+            String path = Thread.currentThread().getContextClassLoader().getResource("").toURI().getPath();
+            path = path.replace('/', '\\')
+                    .replace("file:", "")
+                    .replace("classes\\", "");
+
+            logger.info(" -----------" + path + " ----------------");
+
+            String rootPath = System.getProperty("ser.root");
+            logger.info(" ----- 项目根路径： " + rootPath + " -----------");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        logger.info("---------打印Mapping关系---------");
-        Set<Map.Entry<String, String>> mvcSet = mvcMap.entrySet();
-        Iterator<Map.Entry<String, String>> iter = mvcSet.iterator();
-        while (iter.hasNext()) {
-            Map.Entry<String, String> me = iter.next();
-            logger.info(me.getKey() + "\t" + me.getValue());
-        }
 
-        Constant.MVC_MAP = mvcMap;
     }
 }

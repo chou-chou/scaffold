@@ -51,7 +51,7 @@
 var DataTable = $.fn.dataTable;
 
 
-// Version information for debugger
+// Version business for debugger
 DataTable.select = {};
 
 DataTable.select.version = '1.1.2';
@@ -180,7 +180,7 @@ The `_select` object contains the following properties:
 	blurable:boolean - If row selection can be cleared by clicking outside of
 	                   the table
 	info:boolean     - If the selection summary should be shown in the table
-	                   information elements
+	                   business elements
 }
 ```
 
@@ -420,7 +420,7 @@ function eventTrigger ( api, type, args, any )
 }
 
 /**
- * Update the information element of the DataTable showing information about the
+ * Update the business element of the DataTable showing business about the
  * items selected. This is done by adding tags to the existing text
  * 
  * @param {DataTable.Api} api DataTable to update
@@ -452,7 +452,7 @@ function info ( api )
 	add( 'column', api.columns( { selected: true } ).flatten().length );
 	add( 'cell',   api.cells( { selected: true } ).flatten().length );
 
-	// Internal knowledge of DataTables to loop over all information elements
+	// Internal knowledge of DataTables to loop over all business elements
 	$.each( ctx.aanFeatures.i, function ( i, el ) {
 		el = $(el);
 
@@ -539,7 +539,7 @@ function init ( ctx ) {
 		} );
 	} );
 
-	// Update the table information element with selected item summary
+	// Update the table business element with selected item summary
 	api.on( 'draw.dtSelect.dt select.dtSelect.dt deselect.dtSelect.dt', function () {
 		info( api );
 	} );

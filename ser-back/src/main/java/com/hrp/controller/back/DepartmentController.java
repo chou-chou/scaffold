@@ -28,7 +28,7 @@ import java.util.List;
 public class DepartmentController extends BaseController {
 
     // menu模块基础路径
-    private final static String BASE_PATH = "back/system/department/";  // --> WEB-INF/views/system/dictionary/
+    private final static String BASE_PATH = "back/system/department/";  // --> WEB-INF/views/back/system/department/
 
     PageData pd = new PageData();
 
@@ -39,7 +39,7 @@ public class DepartmentController extends BaseController {
      * 部门模块主页面
      */
     @RequestMapping(value = "/main.do", method = RequestMethod.GET)
-    @MvcMapping(url = "/b/department/main.do", path = BASE_PATH + "deptList", type = MvcMapping.ViewType.JSP)
+    @MvcMapping(url = "/b/department/main.do", path = BASE_PATH + "department_main", type = MvcMapping.ViewType.JSP)
     public ModelAndView list(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mv = this.getModelAndView(BASE_PATH + "department_main");
 
@@ -60,7 +60,7 @@ public class DepartmentController extends BaseController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/getDepTree.do", method = RequestMethod.POST)
+    @RequestMapping(value = "/getDepTree.do", method = RequestMethod.GET)
     public void getDepTree(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
 
         String deptInfo = request.getParameter("deptInfo");
@@ -86,20 +86,20 @@ public class DepartmentController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/editDepartment.do", method = RequestMethod.GET)
-    public void editDictionary(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
-        String deptId = request.getParameter("dicId");
+    public void editDepartment(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+        String deptId = request.getParameter("deptId");
         String tag = request.getParameter("tag");
 
         pd.put("deptId", deptId);
-        Department dic = null;
+        Department deptment = null;
 
         try {
-            dic = this.departmentService.getByDeptId(pd);
+            deptment = this.departmentService.getByDeptId(pd);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        JsonUtil.writeJsonToResponse(response, dic, JsonUtil.OBJECT_TYPE_BEAN);
+        JsonUtil.writeJsonToResponse(response, deptment, JsonUtil.OBJECT_TYPE_BEAN);
     }
 
     /**
@@ -108,7 +108,7 @@ public class DepartmentController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/editDepartment.do", method = RequestMethod.POST)
-    public void editDictionaryPost(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+    public void editDepartmentPost(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
         String tag = request.getParameter("tag");
         Result rc = new Result();
 
@@ -139,7 +139,7 @@ public class DepartmentController extends BaseController {
                     department.setDescribed(described);
                     department.setRemark(remark);
 
-                    Integer res = (Integer) this.departmentService.saveDepartment(department);  // mybatis insert后dictionary会获取实体数据，包括新增的id
+                    Integer res = (Integer) this.departmentService.saveDepartment(department);  // mybatis insert后department会获取实体数据，包括新增的id
                     Department supDep = this.departmentService.getBySupDep(supId);  // 有可能是根级root -> -1
 
                     department.setSupDepartment(supDep);  // 父级bean
@@ -184,13 +184,12 @@ public class DepartmentController extends BaseController {
      * @param response
      */
     @RequestMapping(value = "/removeDepartment.do", method = RequestMethod.POST)
-    public void removeDictionary(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+    public void removeDepartment(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
         String deptId = request.getParameter("deptId");
 
         Result rc = new Result();
         pd = this.getPageData();
         pd.put("ids", new String[]{deptId});
-        Department dept=new Department();
 
         try {
             Boolean success = this.departmentService.deleteByIds(pd);

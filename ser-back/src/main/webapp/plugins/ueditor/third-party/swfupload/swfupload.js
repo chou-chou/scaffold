@@ -428,7 +428,7 @@ SWFUpload.prototype.destroy = function () {
 
 
 // Public: displayDebugInfo prints out settings and configuration
-// information about this SWFUpload instance.
+// business about this SWFUpload instance.
 // This function (and any references to it) can be deleted when placing
 // SWFUpload in production.
 SWFUpload.prototype.displayDebugInfo = function () {
@@ -1065,7 +1065,7 @@ SWFUpload.prototype.debug = function (message) {
    
 // Private: debugMessage is the default debug_handler.  If you want to print debug messages
 // call the debug() function.  When overriding the function your own function should
-// check to see if the debug setting is true before outputting debug information.
+// check to see if the debug setting is true before outputting debug business.
 SWFUpload.prototype.debugMessage = function (message) {
 	var exceptionMessage, exceptionValues, key;
 

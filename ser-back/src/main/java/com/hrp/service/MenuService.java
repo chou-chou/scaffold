@@ -3,6 +3,10 @@ package com.hrp.service;
 import com.hrp.entity.system.Menu;
 import com.hrp.entity.system.TreeNode;
 import com.hrp.utils.PageData;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 import java.util.Set;
@@ -13,6 +17,7 @@ import java.util.Set;
  * @author KVLT
  * @date 2017-03-24.
  */
+@CacheConfig(cacheNames = "menuCache")
 public interface MenuService {
 
     /**
@@ -57,6 +62,7 @@ public interface MenuService {
      * @param MENU_ID
      * @throws Exception
      */
+    @CacheEvict()
     public void deleteMenuById(String MENU_ID) throws Exception;
 
     /**
@@ -65,6 +71,7 @@ public interface MenuService {
      * @return
      * @throws Exception
      */
+    @CachePut(value = "menuCache", key = "'menuId_' + #menu.getMenuId()")
     public void edit(Menu menu) throws Exception;
 
     /**
@@ -80,6 +87,7 @@ public interface MenuService {
      * @return
      * @throws Exception
      */
+    @Cacheable(cacheNames = "menuCache")
     public List<Menu> listAllMenu() throws Exception;
 
     /**
@@ -96,6 +104,7 @@ public interface MenuService {
      * @return
      * @throws Exception
      */
+    @Cacheable(key = "'userId_' + #userId")
     public List<Menu> listAllMenuByUser(String userId) throws Exception;
 
     /**

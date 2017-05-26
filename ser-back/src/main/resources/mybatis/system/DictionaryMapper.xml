@@ -78,7 +78,7 @@
         -->
     </select>
 
-<!-- 级联获取所有字典列表（获取下级） -->
+    <!-- 级联获取所有字典列表（获取下级） -->
     <select id="selectDictionaryCascade" parameterType="pd" resultMap="TreeNodeMap">
         WITH TREE AS
         (select DIC_ID, ENTRY_CODE, ENTRY_VALUE, SUP_CODE, SEQUENCE, IS_LEAF
@@ -98,6 +98,7 @@
         ON d.IS_LEAF = 1 AND d.SUP_CODE = TREE.ENTRY_CODE
         )
         SELECT DISTINCT DIC_ID, ENTRY_CODE, ENTRY_VALUE, SUP_CODE, SEQUENCE, IS_LEAF FROM TREE
+        OPTION (MAXRECURSION 10)
        <!-- OPTION (MAXRECURSION 5) 限制递归次数 -->
     </select>
 
@@ -125,7 +126,7 @@
         <if test="classCode != null and classCode != ''">CLASS_CODE,</if>
         <if test="className != null and className != ''">CLASS_NAME,</if>
         <if test="enabled != null and enabled != ''">ENABLED,</if>
-        <if test="additional != null and additional != ''">ADDITIONAL</if>
+        <if test="additional != null and additional != ''">ADDITIONAL,</if>
         <if test="remark != null and remark != ''">REMARK</if>
     </trim>)
         values(<trim suffixOverrides=",">
@@ -137,7 +138,7 @@
         <if test="classCode != null and classCode != ''">#{classCode},</if>
         <if test="className != null and className != ''">#{className},</if>
         <if test="enabled != null and enabled != ''">#{enabled},</if>
-        <if test="additional != null and additional != ''">#{additional}</if>
+        <if test="additional != null and additional != ''">#{additional},</if>
         <if test="remark != null and remark != ''">#{remark}</if>
     </trim>)
     </insert>
@@ -193,7 +194,7 @@
     <delete id="deleteDictionary" parameterType="pd">
         delete from T_DICTIONARY where DIC_ID in
         <foreach collection="ids" item="id" open="(" separator="," close=")">
-            #{ids}
+            #{id}
         </foreach>
     </delete>
 

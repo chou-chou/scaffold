@@ -15,18 +15,17 @@ public class Menu implements Serializable {
     private Integer menuId;  // ID
     private String menuName;  // 菜单名称
     private String menuUrl;  // Action
-    private Integer leaf;  // 是否叶子节点
+    private Boolean isLeaf;  // 是否叶子节点
     private Integer rank;  // 等级
     private Integer sequence;  // 顺序
     private Integer rootId;  // 根节点ID
     private String supId;  // 父节点ID
     private String icon;  // 图标
-    private boolean disabled;  // 停用标识
+    private boolean enabled;  // 停用标识
     private String remark;  // 备注
 
-    private Date modifyDate;  // 修改时间
-    private String modifyUserId;  // 修改人ID
-    private String modifyUsername;  // 修改人名称
+    private Date updateTime;  // 修改时间
+    private String updateUserId;  // 修改人ID
 
     private Menu parentMenu;  // 父菜单
     private List<Menu> subMenu;  // 子菜单列表
@@ -64,14 +63,6 @@ public class Menu implements Serializable {
 
     public void setMenuUrl(String menuUrl) {
         this.menuUrl = menuUrl;
-    }
-
-    public Integer getLeaf() {
-        return leaf;
-    }
-
-    public void setLeaf(Integer leaf) {
-        this.leaf = leaf;
     }
 
     public Integer getRank() {
@@ -114,12 +105,20 @@ public class Menu implements Serializable {
         this.icon = icon;
     }
 
-    public boolean isDisabled() {
-        return disabled;
+    public Boolean getLeaf() {
+        return isLeaf;
     }
 
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
+    public void setLeaf(Boolean leaf) {
+        isLeaf = leaf;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getRemark() {
@@ -154,27 +153,19 @@ public class Menu implements Serializable {
         this.hasMenu = hasMenu;
     }
 
-    public Date getModifyDate() {
-        return modifyDate;
+    public Date getUpdateTime() {
+        return updateTime;
     }
 
-    public void setModifyDate(Date modifyDate) {
-        this.modifyDate = modifyDate;
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
-    public String getModifyUserId() {
-        return modifyUserId;
+    public String getUpdateUserId() {
+        return updateUserId;
     }
 
-    public void setModifyUserId(String modifyUserId) {
-        this.modifyUserId = modifyUserId;
-    }
-
-    public String getModifyUsername() {
-        return modifyUsername;
-    }
-
-    public void setModifyUsername(String modifyUsername) {
-        this.modifyUsername = modifyUsername;
+    public void setUpdateUserId(String updateUserId) {
+        this.updateUserId = updateUserId;
     }
 }

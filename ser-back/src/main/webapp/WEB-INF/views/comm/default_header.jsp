@@ -3,6 +3,12 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
+<style type="text/css">
+    .inCtrl {
+        content: ""
+    }
+</style>
+
 <%--<script type="text/javascript">
     $(function() {
         var linkList = window.parent.document.getElementsByTagName("link"); // 获取父窗口link标签对象列表

@@ -161,7 +161,7 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
     showMenu : true,
     /**
      * @cfg {String} stateId
-     * Name of the value to be used to store state information.
+     * Name of the value to be used to store state business.
      */
     stateId : undefined,
     /**
@@ -553,7 +553,7 @@ Ext.define('Ext.ux.grid.FiltersFeature', {
     },
 
     /**
-     * Turns all filters off. This does not clear the configuration information
+     * Turns all filters off. This does not clear the configuration business
      * (see {@link #removeAll}).
      */
     clearFilters : function () {

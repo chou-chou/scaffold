@@ -1,6 +1,7 @@
 package com.hrp.utils;
 
 import com.google.common.collect.Lists;
+import com.hrp.entity.system.Button;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -42,22 +43,34 @@ public class JsoupUtil {
      * @return
      * @throws Exception
      */
-    public List<String> parseBtnByFile(String filePath, String... elementFields) throws Exception {
-        List<String> idList = Lists.newArrayList();
+    public List<Button> parseBtnByFile(String filePath, String... elementFields) throws Exception {
+        List<Button> idList = Lists.newArrayList();
         File input = new File(filePath);  // 读取
 
         Document doc = Jsoup.parse(input, ENCODE);  // 解析
 
-        Elements ids = new Elements();
+        Elements elements = new Elements();
         for (String elementField : elementFields) {
-            ids.addAll(doc.select(elementField)); // 选择页面元素
+            Elements es = doc.select(elementField);
+            logger.info(elementField + "\t" + es.size());
+            elements.addAll(es); // 选择页面元素
         }
 
-        for (Element btn : ids) {
-            if (null != btn.id() && !"".equals(btn.id())) {
-                idList.add(btn.id());
-                logger.info(btn.id());
-            }
+        for (Element ele : elements) {
+            logger.info("\n --- " + "id:\t" + ele.id()
+                    + "\n --- tag:\t" + ele.tagName()
+                    + "\n --- class:\t" + ele.className()
+                    + "\n --- title:\t" + ele.attr("title")
+                    + "\n --- text:\t" + ele.text());
+            Button btn = new Button();
+            btn.setBtnId(ele.id());
+            btn.setBtnTag(ele.tagName());
+            btn.setBtnClass(ele.className());
+            btn.setBtnType(ele.attr("type"));
+            btn.setBtnTitle(ele.attr("title"));
+            btn.setBtnText(ele.text());
+
+            idList.add(btn);
         }
 
         return idList;

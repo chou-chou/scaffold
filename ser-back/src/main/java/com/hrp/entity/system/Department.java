@@ -15,6 +15,8 @@ public class Department implements Serializable {
     private String deptCode; // 部门编码
     private String deptName;  // 部门名称
     private String supId;  // 上级编码
+    private Integer sequence = 0;  // 顺序
+    private Boolean isLeaf;  // 是否叶子结点
     private String described;  // 部门职能描述
     private String address;  // 地址
     private String remark;  // 备注
@@ -92,5 +94,21 @@ public class Department implements Serializable {
 
     public void setSubDepartments(List<Department> subDepartments) {
         this.subDepartments = subDepartments;
+    }
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
+
+    public Boolean getLeaf() {
+        return isLeaf;
+    }
+
+    public void setLeaf(Boolean leaf) {
+        isLeaf = leaf;
     }
 }

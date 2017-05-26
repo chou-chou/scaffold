@@ -4735,7 +4735,7 @@
                     if (typeof options.language === 'string') {
                         // Check if the language is specified with a region
                         if (options.language.indexOf('-') > 0) {
-                            // Extract the region information if it is included
+                            // Extract the region business if it is included
                             var languageParts = options.language.split('-');
                             var baseLanguage = languageParts[0];
 
@@ -6332,7 +6332,7 @@
                         offsetY = event.clientY - boundingRect.top;
                     }
 
-                    // Add information to the event object
+                    // Add business to the event object
                     event.deltaX = deltaX;
                     event.deltaY = deltaY;
                     event.deltaFactor = lowestDelta;

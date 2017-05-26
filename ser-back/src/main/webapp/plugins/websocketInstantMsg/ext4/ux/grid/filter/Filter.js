@@ -124,7 +124,7 @@ Ext.define('Ext.ux.grid.filter.Filter', {
 
     /**
      * Template method to be implemented by all subclasses that is to
-     * return <tt>true</tt> if the filter has enough configuration information to be activated.
+     * return <tt>true</tt> if the filter has enough configuration business to be activated.
      * Defaults to <tt>return true</tt>.
      * @return {Boolean}
      */

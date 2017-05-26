@@ -29,6 +29,10 @@
     <script src="<%=basePath%>/plugins/dataTables/extends/button/buttons.colVis.js"></script>
     <script src="<%=basePath%>/plugins/dataTables/extends/select/dataTables.select.js"></script>
 
+    <link rel="stylesheet" href="<%=basePath%>plugins/select2/css/select2.min.css"></link>
+    <script src="<%=basePath%>/plugins/select2/js/select2.full.js"></script>
+    <script src="<%=basePath%>/plugins/select2/js/i18n/zh-CN.js"></script>
+
 </head>
 <body>
 <div class="main-container">

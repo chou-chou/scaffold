@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +30,7 @@ import java.util.Map;
 public class MenuController extends BaseController {
 
     // menu模块基础路径
-    private final static String BASE_PATH = "back/system/menu/";  // --> WEB-INF/views/system/menu/
+    private final static String BASE_PATH = "back/system/menu/";  // --> WEB-INF/views/back/system/menu/
 
     String menuUrl = "menu.do";  // 菜单地址（权限用）
 
@@ -39,26 +38,12 @@ public class MenuController extends BaseController {
     private MenuService menuService;
 
     /**
-     * 角色列表
+     * 菜单主页面
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/list.do")
-    private ModelAndView list() {
-        ModelAndView mv = this.getModelAndView();
+    @RequestMapping(method = RequestMethod.GET, value = "/main.do")
+    private ModelAndView main() {
+        ModelAndView mv = this.getModelAndView(BASE_PATH + "menu_main");
 
-        PageData pd = new PageData();
-        pd = this.getPageData();
-        try {
-            String MENU_ID = (null == pd.get("MENU_ID") || "".equals(pd.get("MENU_ID").toString()))?"0":pd.get("MENU_ID").toString();
-            List<Menu> menuList = menuService.listAllMenu();
-            // mv.addObject("pd", menuService.getMenuById(pd));	//传入父菜单所有信息
-            mv.addObject("MENU_ID", MENU_ID);
-            mv.addObject("MSG", null == pd.get("MSG")?"list":pd.get("MSG").toString()); //MSG=change 则为编辑或删除后跳转过来的
-            mv.addObject("menuList", menuList);
-//            mv.addObject("QX", Jurisdiction.getHC());	//按钮权限
-            mv.setViewName(BASE_PATH + "menu_list");
-        } catch(Exception e){
-            logger.error(e.toString(), e);
-        }
 
         return mv;
     }

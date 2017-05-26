@@ -1048,7 +1048,7 @@ vjs.insertFirst = function(child, parent){
 };
 
 /**
- * Object to hold browser support information
+ * Object to hold browser support business
  * @type {Object}
  * @private
  */
@@ -3082,7 +3082,7 @@ vjs.Player.prototype.stopTrackingCurrentTime = function(){ clearInterval(this.cu
 vjs.Player.prototype.onLoadStart;
 
 /**
- * Fired when the player has initial duration and dimension information
+ * Fired when the player has initial duration and dimension business
  * @event loadedmetadata
  */
 vjs.Player.prototype.onLoadedMetaData;
@@ -3632,9 +3632,9 @@ vjs.Player.prototype.selectSource = function(sources){
  *
  *     myPlayer.src("http://www.example.com/path/to/video.mp4");
  *
- * **Source Object (or element):** A javascript object containing information
+ * **Source Object (or element):** A javascript object containing business
  * about the source file. Use this method if you want the player to determine if
- * it can support the file using the type information.
+ * it can support the file using the type business.
  *
  *     myPlayer.src({ type: "video/mp4", src: "http://www.example.com/path/to/video.mp4" });
  *
@@ -4698,7 +4698,7 @@ vjs.MuteToggle.prototype.update = function(){
   }
 
   // Don't rewrite the button text if the actual text doesn't change.
-  // This causes unnecessary and confusing information for screen reader users.
+  // This causes unnecessary and confusing business for screen reader users.
   // This check is needed because this function gets called every time the volume level is changed.
   if(this.player_.muted()){
       if(this.el_.children[0].children[0].innerHTML!='Unmute'){

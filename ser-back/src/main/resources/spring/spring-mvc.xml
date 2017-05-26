@@ -23,7 +23,7 @@
 
     <!-- ==========================================shiro注解========================================== -->
     <!-- 开启Shiro注解(写在这里才有效，spring-shiro.xml无效) -->
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+    <!--<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>-->
     <!-- 开启shiro注解支持 -->
     <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
         <property name="securityManager" ref="securityManager"/>
@@ -115,15 +115,11 @@
     <!--json日期处理 -->
     <!--<bean id="customObjectMapper" class="com.hrp.utilss.CustomJsonDateConverter"></bean>-->
 
-    <!-- 控制器异常处理 -->
-    <!--<bean id="exceptionHandlerExceptionResolver" class="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver">
-    </bean>-->
-
     <bean id="exceptionResolver" class="com.hrp.resolver.MyExceptionResolver"/>
 
     <!-- 如果被代理的目标实现了至少一个接口，则会使用JDK动态代理,所有该目标类型实现的接口都将被代理。 -->
     <!-- 如果用JDK动态代理，就必须为被代理的目标实现一个接口（要注意的地方是：需要将ctx.getBean()方法的返回值用接口类型接收）； -->
     <!-- 如果使用CGLIB强制代理，就必选事先将CGLIB包导入项目， 设置beanNameAutoProxyCreator的proxyTargetClass属性为true。 -->
-    <aop:aspectj-autoproxy/> <!-- proxy-target-class="true" -->
+    <!--<aop:aspectj-autoproxy  proxy-target-class="true"/>-->
 
 </beans>

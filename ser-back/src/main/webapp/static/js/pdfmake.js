@@ -2320,7 +2320,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * ready to be saved.
 	 *
 	 * @param {Object} docDefinition document definition
-	 * @param {Object} docDefinition.content an array describing the pdf structure (for more information take a look at the examples in the /examples folder)
+	 * @param {Object} docDefinition.content an array describing the pdf structure (for more business take a look at the examples in the /examples folder)
 	 * @param {Object} [docDefinition.defaultStyle] default (implicit) style definition
 	 * @param {Object} [docDefinition.styles] dictionary defining all styles which can be used in the document
 	 * @param {Object} [docDefinition.pageSize] page size (pdfkit units, A4 dimensions by default)
@@ -17419,10 +17419,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
 	     * for easier debugging.
 	     *
-	     * For more information on precompiling templates see
+	     * For more business on precompiling templates see
 	     * [lodash's custom builds documentation](https://lodash.com/custom-builds).
 	     *
-	     * For more information on Chrome extension sandboxes see
+	     * For more business on Chrome extension sandboxes see
 	     * [Chrome's extensions documentation](https://developer.chrome.com/extensions/sandboxingEval).
 	     *
 	     * @static
@@ -22925,7 +22925,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 
-	// per-version information (cf. JIS X 0510:2004 pp. 30--36, 71)
+	// per-version business (cf. JIS X 0510:2004 pp. 30--36, 71)
 	//
 	// [0]: the degree of generator polynomial by ECC levels
 	// [1]: # of code blocks by ECC levels
@@ -23050,7 +23050,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			return ((i + j) % 2 + (i * j) % 3) % 2 === 0;
 		}];
 
-	// returns true when the version information has to be embeded.
+	// returns true when the version business has to be embeded.
 	var needsverinfo = function (ver) {
 		return ver > 6;
 	};
@@ -23088,9 +23088,9 @@ return /******/ (function(modules) { // webpackBootstrap
 		 * when the entire code has n^2 modules and there are m^2-3 alignment
 		 * patterns, we have:
 		 * - 225 (= 9x9 + 9x8 + 8x9) modules for finder patterns and
-		 *   format information;
+		 *   format business;
 		 * - 2n-34 (= 2(n-17)) modules for timing patterns;
-		 * - 36 (= 3x6 + 6x3) modules for version information, if any;
+		 * - 36 (= 3x6 + 6x3) modules for version business, if any;
 		 * - 25m^2-75 (= (m^2-3)(5x5)) modules for alignment patterns
 		 *   if any, but 10m-20 (= 2(m-2)x5) of them overlaps with
 		 *   timing patterns.
@@ -23098,7 +23098,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		var v = VERSIONS[ver];
 		var nbits = 16 * ver * ver + 128 * ver + 64; // finder, timing and format info.
 		if (needsverinfo(ver))
-			nbits -= 36; // version information
+			nbits -= 36; // version business
 		if (v[2].length) { // alignment patterns
 			nbits -= 25 * v[2].length * v[2].length - 10 * v[2].length - 55;
 		}
@@ -23365,7 +23365,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		};
 
 		// finder patterns and a part of timing patterns
-		// will also mark the format information area (not yet written) as reserved.
+		// will also mark the format business area (not yet written) as reserved.
 		blit(0, 0, 9, 9, [0x7f, 0x41, 0x5d, 0x5d, 0x5d, 0x41, 0x17f, 0x00, 0x40]);
 		blit(n - 8, 0, 8, 9, [0x100, 0x7f, 0x41, 0x5d, 0x5d, 0x5d, 0x41, 0x7f]);
 		blit(0, n - 8, 9, 8, [0xfe, 0x82, 0xba, 0xba, 0xba, 0x82, 0xfe, 0x00, 0x00]);
@@ -23385,7 +23385,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			}
 		}
 
-		// version information
+		// version business
 		if (needsverinfo(ver)) {
 			var code = augumentbch(ver, 6, 0x1f25, 12);
 			var k = 0;
@@ -23440,7 +23440,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		return matrix;
 	};
 
-	// puts the format information.
+	// puts the format business.
 	var putformatinfo = function (matrix, reserved, ecclevel, mask) {
 		var n = matrix.length;
 		var code = augumentbch((ecclevel << 3) | mask, 5, 0x537, 10) ^ 0x5412;
@@ -30910,7 +30910,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this.pending_out = 0;       /* next pending byte to output to the stream */
 	  this.pending = 0;           /* nb of bytes in the pending buffer */
 	  this.wrap = 0;              /* bit 0 true for zlib, bit 1 true for gzip */
-	  this.gzhead = null;         /* gzip header information to write */
+	  this.gzhead = null;         /* gzip header business to write */
 	  this.gzindex = 0;           /* where in extra, name, or comment */
 	  this.method = Z_DEFLATED; /* can only be DEFLATED */
 	  this.last_flush = -1;   /* value of flush param for previous deflate call */
@@ -33204,7 +33204,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this.check = 0;             /* protected copy of check value */
 	  this.total = 0;             /* protected copy of output count */
 	  // TODO: may be {}
-	  this.head = null;           /* where to save gzip header information */
+	  this.head = null;           /* where to save gzip header business */
 
 	  /* sliding window */
 	  this.wbits = 0;             /* log base 2 of requested window size */
@@ -35152,7 +35152,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   provided *table space.  It is checked for LENS and DIST tables against
 	   the constants ENOUGH_LENS and ENOUGH_DISTS to guard against changes in
 	   the initial root table size constants.  See the comments in inftrees.h
-	   for more information.
+	   for more business.
 
 	   sym increments through all symbols, and the loop terminates when
 	   all codes of length max, i.e. all codes, have been processed.  This
@@ -38635,7 +38635,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    panose: new r.Array(r.uint8, 10), // describe the visual characteristics of a given typeface
 	    ulCharRange: new r.Array(r.uint32, 4),
 	    vendorID: new r.String(4), // four character identifier for the font vendor
-	    fsSelection: new r.Bitfield(r.uint16, [// bit field containing information about the font
+	    fsSelection: new r.Bitfield(r.uint16, [// bit field containing business about the font
 	    'italic', 'underscore', 'negative', 'outlined', 'strikeout', 'bold', 'regular', 'useTypoMetrics', 'wws', 'oblique']),
 	    usFirstCharIndex: r.uint16, // The minimum Unicode index in this font
 	    usLastCharIndex: r.uint16 // The maximum Unicode index in this font
@@ -38691,7 +38691,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var versions = OS2.versions;
 	versions[3] = versions[4] = versions[2];
 
-	// PostScript information
+	// PostScript business
 	var post = new r.VersionedStruct(r.fixed32, {
 	  header: { // these fields exist at the top of all versions
 	    italicAngle: r.fixed32, // Italic angle in counter-clockwise degrees from the vertical.
@@ -42542,7 +42542,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}();
 
 	/**
-	 * Represents positioning information for a glyph in a GlyphRun.
+	 * Represents positioning business for a glyph in a GlyphRun.
 	 */
 	var GlyphPosition = function GlyphPosition() {
 	  var xAdvance = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
@@ -50042,7 +50042,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    /**
-	     * The font's copyright information
+	     * The font's copyright business
 	     * @type {string}
 	     */
 

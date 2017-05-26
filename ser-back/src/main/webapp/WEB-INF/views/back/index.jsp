@@ -81,7 +81,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "b/anon/fetchMenus.do",
+                url: "<%=basePath%>b/anon/fetchMenus.do",
                 success: function(data) {
                     $.serindex.loadMenu(data);
                     $.sertab.init();

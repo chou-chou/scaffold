@@ -646,9 +646,9 @@ $.extend( Buttons.prototype, {
 	},
 
 	/**
-	 * Get a button's host information from a button index
+	 * Get a button's host business from a button index
 	 * @param  {int|string} Button index
-	 * @return {object} Button information - object contains `node` and `conf`
+	 * @return {object} Button business - object contains `node` and `conf`
 	 *   properties
 	 * @private
 	 */
@@ -1110,7 +1110,7 @@ Buttons.defaults = {
 };
 
 /**
- * Version information
+ * Version business
  * @type {string}
  * @static
  */

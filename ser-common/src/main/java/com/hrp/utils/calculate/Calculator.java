@@ -119,7 +119,7 @@ public class Calculator {
             // 空白则跳过
             if (c == BLANK)continue;
 
-            // Next line is used output stack information.
+            // Next line is used output stack business.
             // System.out.printf("%-20s %s%n", stack, sb.toString());
 
             // 添加后缀表达式分隔符

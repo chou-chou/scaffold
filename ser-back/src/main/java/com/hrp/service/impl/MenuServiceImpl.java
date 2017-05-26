@@ -5,6 +5,8 @@ import com.hrp.entity.system.Menu;
 import com.hrp.entity.system.TreeNode;
 import com.hrp.service.MenuService;
 import com.hrp.utils.PageData;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,6 +20,7 @@ import java.util.Set;
  * @date 2017-03-24.
  */
 @Service("menuService")
+@CacheConfig(cacheNames = "menuCache")
 public class MenuServiceImpl implements MenuService {
 
     @Resource(name = "baseDao")
@@ -125,12 +128,11 @@ public class MenuServiceImpl implements MenuService {
         return menuList;
     }
 
-    @Override
     public List<Menu> listAllMenuByUser(String userId) throws Exception {
         return null;
     }
 
-    @Override
+    @Cacheable(cacheNames = "menuCache")
     public List<Menu> listAllMenu() throws Exception {
         return (List<Menu>) baseDao.findForList("MenuMapper.listAllMenu", null);
     }

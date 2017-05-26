@@ -9,6 +9,8 @@
         <result column="SUP_ID" property="pId"/>
         <result column="DEPT_CODE" property="code"/>
         <result column="DEPT_NAME" property="name"/>
+        <result column="IS_LEAF" property="leaf"/>
+        <result column="SEQUENCE" property="no"/>
     </resultMap>
 
     <resultMap type="Department" id="DepartmentMap">
@@ -16,6 +18,8 @@
         <result column="DEPT_CODE" property="deptCode"/>
         <result column="DEPT_NAME" property="deptName"/>
         <result column="SUP_ID" property="supId"/>
+        <result column="SEQUENCE" property="sequence" />
+        <result column="IS_LEAF" property="isLeaf" />
         <result column="DESCRIBED" property="described"/>
         <result column="REMARK" property="address"/>
         <result column="ADDRESS" property="remark"/>
@@ -71,7 +75,7 @@
     <!-- 级联获取所有字典列表（获取下级） -->
     <select id="selectDepartmentCascade" parameterType="pd" resultMap="TreeNodeMap">
         WITH TREE AS
-        (select DEPT_ID, DEPT_CODE, DEPT_NAME, SUP_ID, DESCRIBED, REMARK, ADDRESS
+        (select DEPT_ID, DEPT_CODE, DEPT_NAME, SUP_ID, DESCRIBED, REMARK, ADDRESS, IS_LEAF, SEQUENCE
         from T_Department
         where 1=1
         <if test="deptInfo != null and deptInfo != ''"><!-- 关键词检索 -->
@@ -82,7 +86,7 @@
             )
         </if>
         UNION ALL
-        SELECT d.DEPT_ID, d.DEPT_CODE, d.DEPT_NAME, d.SUP_ID, d.DESCRIBED, d.REMARK,d.ADDRESS
+        SELECT d.DEPT_ID, d.DEPT_CODE, d.DEPT_NAME, d.SUP_ID, d.DESCRIBED, d.REMARK, d.ADDRESS, d.IS_LEAF, d.SEQUENCE
         FROM T_Department d
         INNER JOIN TREE
         ON d.SUP_ID = TREE.DEPT_CODE
