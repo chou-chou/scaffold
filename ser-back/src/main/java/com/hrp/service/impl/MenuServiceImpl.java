@@ -57,7 +57,7 @@ public class MenuServiceImpl implements MenuService {
      * @throws Exception
      */
     public void saveMenu(Menu menu) throws Exception {
-        baseDao.save("MenuMapper.insertMenu", menu);
+        baseDao.save("MenuMapper.saveMenu", menu);
     }
 
     /**
@@ -85,7 +85,7 @@ public class MenuServiceImpl implements MenuService {
      * @return
      * @throws Exception
      */
-    public void edit(Menu menu) throws Exception {
+    public void updateMenu(Menu menu) throws Exception {
         baseDao.update("MenuMapper.updateMenu", menu);
     }
 

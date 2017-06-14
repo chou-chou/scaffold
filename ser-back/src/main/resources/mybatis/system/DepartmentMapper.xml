@@ -21,10 +21,16 @@
         <result column="SEQUENCE" property="sequence" />
         <result column="IS_LEAF" property="isLeaf" />
         <result column="DESCRIBED" property="described"/>
-        <result column="REMARK" property="address"/>
-        <result column="ADDRESS" property="remark"/>
+        <result column="REMARK" property="remark"/>
+        <result column="ADDRESS" property="address"/>
+
     </resultMap>
 
+    <resultMap type="Department" id="DepartmentExtendMap" extends="DepartmentMap">
+        <!-- 查询父部门 -->
+        <association column="SUP_ID" property="supDepartment" select="DepartmentMapper.getBySupId"/>
+
+    </resultMap>
     <!-- 表名 -->
     <sql id="tableName">
         T_DEPARTMENT
@@ -32,36 +38,37 @@
 
     <!-- 字段 -->
     <sql id="field">
-        DEPT_ID, DEPT_CODE, DEPT_NAME, SUP_ID, DESCRIBED , REMARK, ADDRESS
+        DEPT_ID, DEPT_CODE, DEPT_NAME, SUP_ID, DESCRIBED , REMARK, ADDRESS,IS_LEAF,SEQUENCE
     </sql>
 
     <!-- 字段值 -->
     <sql id="fieldValue">
-        #{deptId}, #{deptCode}, #{deptName}, #{supId}, #{function}, #{address}, #{remark}
+        #{deptId}, #{deptCode}, #{deptName}, #{supId}, #{described}, #{remark}, #{address},#{isLeaf},#{sequence}
     </sql>
 
-    <select id="getByDeptId" parameterType="pd" resultMap="DepartmentMap">
+    <select id="getByDeptId" parameterType="pd" resultMap="DepartmentExtendMap">
         select <include refid="field"></include> from <include refid="tableName"></include>
         where DEPT_ID = #{deptId}
     </select>
 
     <select id="getBySupId" parameterType="String" resultMap="DepartmentMap">
         select top 1 <include refid="field"></include> from <include refid="tableName"></include>
-        where SUP_ID = #{supId}
+        where DEPT_CODE = #{supId}
     </select>
 
 
     <!-- 获取列表 -->
     <select id="selectDepartment" parameterType="pd" resultMap="DepartmentMap">
-        select DEPT_ID, DEPT_CODE, DEPT_NAME, SUP_ID, DESCRIBED, REMARK, ADDRESS
+        select DEPT_ID, DEPT_CODE, DEPT_NAME, SUP_ID, DESCRIBED, REMARK, ADDRESS,IS_LEAF,SEQUENCE
         from T_DEPARTMENT
         WHERE 1=1
     </select>
 
+
     <!-- 添加部门信息 -->
     <insert id="saveRelativity" parameterType="Department">
-        insert into T_DEPARTMENT(DEPT_CODE, DEPT_NAME,SUP_ID,FUNC,REMARK,ADDRESS)
-        values(#{deptCode}, #{deptName},#{supId},#{function},#{address},#{remark})
+        insert into T_DEPARTMENT(DEPT_CODE, DEPT_NAME,SUP_ID,DESCRIBED,REMARK,ADDRESS,IS_LEAF,SEQUENCE)
+        values(#{deptCode}, #{deptName},#{supId},#{described},#{address},#{remark},#{isLeaf},#{sequence})
     </insert>
 
     <!-- 获取部门总数 -->
@@ -95,14 +102,17 @@
         OPTION (MAXRECURSION 5) <!-- 限制递归次数 -->
     </select>
 
-    <insert id="saveDepartmentBean" parameterType="Department" useGeneratedKeys="true" keyProperty="DEPT_ID">
+    <insert id="saveDepartmentBean" parameterType="Department" useGeneratedKeys="true" keyProperty="deptId">
         insert into T_Department (<trim suffixOverrides=",">
         <if test="deptCode != null and deptCode != ''">DEPT_CODE,</if>
         <if test="deptName != null and deptName != ''">DEPT_NAME,</if>
         <if test="supId != null and supId != ''">SUP_ID,</if>
         <if test="described != null and described != ''">DESCRIBED,</if>
         <if test="remark != null and remark != ''">REMARK,</if>
-        <if test="address != null and address != ''">ADDRESS</if>
+        <if test="address != null and address != ''">ADDRESS,</if>
+        <if test="isLeaf != null and isLeaf != ''">IS_LEAF,</if>
+        <if test="sequence != null and sequence != ''">SEQUENCE</if>
+
     </trim>)
         values(<trim suffixOverrides=",">
         <if test="deptCode != null and deptCode != ''">#{deptCode},</if>
@@ -110,18 +120,22 @@
         <if test="supId != null and supId != ''">#{supId},</if>
         <if test="described != null and described != ''">#{described},</if>
         <if test="remark != null and remark != ''">#{remark},</if>
-        <if test="address != null and address != ''">#{address}</if>
+        <if test="address != null and address != ''">#{address},</if>
+        <if test="isLeaf != null and isLeaf != ''">#{isLeaf},</if>
+        <if test="sequence != null and sequence != ''">#{sequence}</if>
     </trim>)
     </insert>
 
-    <insert id="saveDepartment" parameterType="pd" useGeneratedKeys="true" keyProperty="DEPT_ID">
+    <insert id="saveDepartment" parameterType="pd" useGeneratedKeys="true" keyProperty="deptId">
         insert into T_Department (<trim suffixOverrides=",">
         <if test="deptCode != null and deptCode != ''">DEPT_CODE,</if>
         <if test="deptName != null and deptName != ''">DEPT_NAME,</if>
         <if test="supId != null and supId != ''">SUP_ID,</if>
         <if test="described != null and described != ''">DESCRIBED,</if>
         <if test="remark != null and remark != ''">REMARK,</if>
-        <if test="address != null and address != ''">ADDRESS</if>
+        <if test="address != null and address != ''">ADDRESS,</if>
+        <if test="isLeaf != null and address != ''">IS_LEAF,</if>
+        <if test="sequence != null and address != ''">SEQUENCE</if>
     </trim>)
         values(<trim suffixOverrides=",">
         <if test="deptCode != null and deptCode != ''">#{deptCode},</if>
@@ -129,7 +143,9 @@
         <if test="supId != null and supId != ''">#{supId},</if>
         <if test="described != null and described != ''">#{described},</if>
         <if test="remark != null and remark != ''">#{remark},</if>
-        <if test="address != null and address != ''">#{address}</if>
+        <if test="address != null and address != ''">#{address},</if>
+        <if test="isLeaf != null and isLeaf != ''">#{isLeaf},</if>
+        <if test="sequence != null and sequence != ''">#{sequence}</if>
     </trim>)
     </insert>
 
@@ -141,7 +157,9 @@
             <if test="supId != null and supId != ''">SUP_ID=#{supId},</if>
             <if test="described != null and described != ''">DESCRIBED=#{described},</if>
             <if test="remark != null and remark != ''">REMARK=#{remark},</if>
-            <if test="address != null and address != ''">ADDRESS=#{address}</if>
+            <if test="address != null and address != ''">ADDRESS=#{address},</if>
+            <if test="isLeaf != null and isLeaf != ''">IS_LEAF=#{isLeaf},</if>
+            <if test="sequence != null and sequence != ''">SEQUENCE=#{sequence}</if>
         </set>
         where DEPT_ID = #{deptId}
     </update>

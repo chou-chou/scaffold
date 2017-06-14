@@ -11,6 +11,9 @@
 
     <context:property-placeholder location="classpath:config/system.properties" ignore-unresolvable="true"/>
 
+    <!-- Shiro生命周期处理器  保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
     <!-- ========================================== 会话管理 ========================================== -->
     <!-- 会话ID生成器 -->
     <bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
@@ -19,7 +22,8 @@
     <!-- 指定本系统SESSIONID, 默认为: JSESSIONID 问题: 与SERVLET容器名冲突, 如JETTY, TOMCAT 等默认JSESSIONID,
         当跳出SHIRO SERVLET时如ERROR-PAGE容器会为JSESSIONID重新分配值导致登录会话丢失! -->
     <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
-        <constructor-arg value="${shiro.uid.cookie.name}"/>
+        <!--<constructor-arg value="${shiro.uid.cookie.name}"/>-->
+        <property name="name" value="${shiro.uid.cookie.name}" />
         <property name="httpOnly" value="${shiro.uid.cookie.httpOnly}"/>
         <!-- maxAge=-1表示浏览器关闭时失效此Cookie -->
         <property name="maxAge" value="${shiro.uid.cookie.maxAge}"/>
@@ -173,6 +177,8 @@
                 /plugins/**                 = anon
                 /static/** 			        = anon
                 /swagger/**                 = anon
+                /api-docs = anon
+                /api-docs/** = anon
                 /img/**                     = anon
                 /uploadFiles/**             = anon
 
@@ -207,11 +213,5 @@
             </map>
         </property>
 	</bean>
-
-    <!-- Shiro生命周期处理器  保证实现了Shiro内部lifecycle函数的bean执行 -->
-    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
-
-    <!-- 开启Shiro注解(写在这里才有效，spring-shiro.xml无效) -->
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
 </beans>

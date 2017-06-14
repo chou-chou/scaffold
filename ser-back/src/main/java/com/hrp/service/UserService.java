@@ -21,11 +21,12 @@ public interface UserService {
 
     /**
      * 登录判断
-     * @param pd
+     * @param username
+     * @param password
      * @return
      * @throws Exception
      */
-    public PageData getUserByNameAndPwd(PageData pd)throws Exception;
+    public User getUserByNameAndPwd(String username, String password) throws Exception;
 
     /**
      * 根据用户名获取用户信息
@@ -115,7 +116,7 @@ public interface UserService {
      * @param USER_IDS
      * @throws Exception
      */
-    public void deleteAllU(String[] USER_IDS)throws Exception;
+    public boolean deleteAllU(String[] USER_IDS)throws Exception;
 
     /**
      * 用户列表(全部)
@@ -143,5 +144,15 @@ public interface UserService {
     public void desconnectUserAndRole(String userId, Set<Integer> roleIds);
 
     public void update(User user);
+    //新增用户
+    public Object addUser(User user) throws Exception;
+
+    //更新用户
+    public boolean updateUser(PageData pd) throws Exception;
+
+
+    public User getByUserId(PageData pd) throws Exception;
+
+
 
 }

@@ -69,7 +69,7 @@ public class ShiroRealm extends AuthorizingRealm {
 				//return new SimpleAuthenticationInfo(user, password, username);
                 // 可以交给AuthenticatingRealm使用CredentialsMatcher进行密码匹配，也可以自定义实现
                 SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
-                        user.getUsername(), //用户名
+                        user.getUserName(), //用户名
                         user.getPassword(), //密码
                         ByteSource.Util.bytes(username + Constant.salt), // salt = username + salt
                         getName()  //realm name

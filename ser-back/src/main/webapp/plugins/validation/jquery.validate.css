@@ -1,0 +1,95 @@
+i.fv-error {
+    color: #FF8585;
+    font-style: normal;
+}
+
+.checkbox.fv-error input[type="checkbox"]:checked + .checked,
+.radio.fv-error input[type="checkbox"]:checked + .checked,
+.checkbox.fv-error input[type="radio"]:checked + .checked,
+.radio.fv-error input[type="radio"]:checked + .checked,
+.checkbox.fv-error input[type="checkbox"]:checked:focus + .checked,
+.radio.fv-error input[type="checkbox"]:checked:focus + .checked,
+.checkbox.fv-error input[type="radio"]:checked:focus + .checked,
+.radio.fv-error input[type="radio"]:checked:focus + .checked {
+    color: #4db6ac;
+}
+
+.checkbox.fv-error input[type="checkbox"]:focus + .checked,
+.radio.fv-error input[type="checkbox"]:focus + .checked,
+.checkbox.fv-error input[type="radio"]:focus + .checked,
+.radio.fv-error input[type="radio"]:focus + .checked {
+    color: #FF8585;
+}
+
+.checkbox.fv-error input[type="checkbox"].disabled + .checked,
+.radio.fv-error input[type="checkbox"].disabled + .checked,
+.checkbox.fv-error input[type="radio"].disabled + .checked,
+.radio.fv-error input[type="radio"].disabled + .checked,
+.checkbox.fv-error input[type="checkbox"][disabled] + .checked,
+.radio.fv-error input[type="checkbox"][disabled] + .checked,
+.checkbox.fv-error input[type="radio"][disabled] + .checked,
+.radio.fv-error input[type="radio"][disabled] + .checked,
+fieldset[disabled] .checkbox.fv-error input[type="checkbox"] + .checked,
+fieldset[disabled] .radio.fv-error input[type="checkbox"] + .checked,
+fieldset[disabled] .checkbox.fv-error input[type="radio"] + .checked,
+fieldset[disabled] .radio.fv-error input[type="radio"] + .checked {
+    color: #ffb8b8;
+    cursor: not-allowed;
+}
+
+.checkbox.fv-error .checked,
+.radio.fv-error .checked {
+    color: #FF8585;
+}
+
+.form-control.fv-error:focus,
+.form-control.fv-error {
+    background-color: #fff;
+    color: #555555;
+    border-color: #FF8585;
+    box-shadow: none;
+}
+
+.image-upload-view.fv-error .view-item-add {
+    border: 1px solid #FF8585;
+}
+
+.image-upload-view.fv-error .view-act-add {
+    color: #FF8585;
+}
+
+.image-upload-view.fv-error .view-act-add:hover,
+.image-upload-view.fv-error .view-act-add:focus {
+    color: #ff1f1f;
+}
+
+.image-upload-view.fv-error .view-act-add:active {
+    color: #FF8585;
+}
+
+label.error, label.valid, label.focus, label.normal {
+    background: url(/icon/icon_warn.png) no-repeat 4px -197px;
+    font: 12px/1 verdana, simsun, sans-serif;
+    margin: 0;
+    padding: 4px 0px 4px 23px;
+}
+
+label.normal {
+    background-position: 4px -197px;
+    color: #999999;
+}
+
+label.error {
+    background-position: 4px -253px;
+    color: #B52726;
+}
+
+label.valid {
+    background-position: 4px 3px;
+    color: #2666AF;
+}
+
+label.focus {
+    background-position: 4px -365px;
+    color: #999999;
+}

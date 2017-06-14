@@ -27,4 +27,5 @@
 
 <link rel="stylesheet" href="<%=basePath%>/plugins/zTree/3.5/metro.css" />
 <link rel="stylesheet" href="<%=basePath%>/plugins/layer/skin/default/layer.css" />
+<link rel="stylesheet" href="<%=basePath%>/plugins/validation/jquery.validate.css"/>
 

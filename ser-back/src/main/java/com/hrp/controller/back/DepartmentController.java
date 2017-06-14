@@ -28,7 +28,10 @@ import java.util.List;
 public class DepartmentController extends BaseController {
 
     // menu模块基础路径
+
+
     private final static String BASE_PATH = "back/system/department/";  // --> WEB-INF/views/back/system/department/
+
 
     PageData pd = new PageData();
 
@@ -95,6 +98,7 @@ public class DepartmentController extends BaseController {
 
         try {
             deptment = this.departmentService.getByDeptId(pd);
+            logger.info(deptment.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -129,7 +133,10 @@ public class DepartmentController extends BaseController {
                             ? String.valueOf(request.getParameter("address")) : "";
                     String remark = StringUtil.isNotNullOrBlank(request.getParameter("remark"))
                             ? request.getParameter("remark") : "";
-
+                    String isLeaf = StringUtil.isNotNullOrBlank(request.getParameter("isLeaf"))
+                            ? request.getParameter("isLeaf") : "";
+                    String sequence = StringUtil.isNotNullOrBlank(request.getParameter("sequence"))
+                            ? request.getParameter("sequence") : "";
                     Department department = new Department();
                     department.setDeptCode(deptCode);
                     department.setDeptName(deptName);
@@ -138,10 +145,11 @@ public class DepartmentController extends BaseController {
                     department.setAddress(address);
                     department.setDescribed(described);
                     department.setRemark(remark);
+                    department.setLeaf(isLeaf);
+                    department.setLeaf(sequence);
+                    Integer res = (Integer) this.departmentService.saveDepartment(department);  // mybatis insert后Department会获取实体数据，包括新增的id
 
-                    Integer res = (Integer) this.departmentService.saveDepartment(department);  // mybatis insert后department会获取实体数据，包括新增的id
                     Department supDep = this.departmentService.getBySupDep(supId);  // 有可能是根级root -> -1
-
                     department.setSupDepartment(supDep);  // 父级bean
                     if (res > 0) {
                         rc.setCode("0");
@@ -174,7 +182,7 @@ public class DepartmentController extends BaseController {
                 break;
             default: break;
         }
-
+        //
         JsonUtil.writeJsonToResponse(response, rc, JsonUtil.OBJECT_TYPE_BEAN);
     }
 

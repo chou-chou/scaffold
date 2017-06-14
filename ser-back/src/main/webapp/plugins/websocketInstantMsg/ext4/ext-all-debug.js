@@ -70021,7 +70021,7 @@ Ext.define('Ext.util.Inflector', {
         "species",
         "money",
         "rice",
-        "business",
+         "business",
         "equipment",
         "grass",
         "mud",

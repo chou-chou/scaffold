@@ -180,7 +180,7 @@ The `_select` object contains the following properties:
 	blurable:boolean - If row selection can be cleared by clicking outside of
 	                   the table
 	info:boolean     - If the selection summary should be shown in the table
-	                   business elements
+ business elements
 }
 ```
 
@@ -452,7 +452,7 @@ function info ( api )
 	add( 'column', api.columns( { selected: true } ).flatten().length );
 	add( 'cell',   api.cells( { selected: true } ).flatten().length );
 
-	// Internal knowledge of DataTables to loop over all business elements
+    // Internal knowledge of DataTables to loop over all business elements
 	$.each( ctx.aanFeatures.i, function ( i, el ) {
 		el = $(el);
 
@@ -539,7 +539,7 @@ function init ( ctx ) {
 		} );
 	} );
 
-	// Update the table business element with selected item summary
+    // Update the table business element with selected item summary
 	api.on( 'draw.dtSelect.dt select.dtSelect.dt deselect.dtSelect.dt', function () {
 		info( api );
 	} );

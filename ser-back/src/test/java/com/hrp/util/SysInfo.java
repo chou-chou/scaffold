@@ -6,6 +6,8 @@ import com.hrp.utils.MD5;
 import com.hrp.utils.io.DesUtil;
 import com.hrp.utils.io.SigarUtil;
 import org.junit.Test;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  * SysInfo
@@ -30,4 +32,20 @@ public class SysInfo extends BaseDemo {
 
         logger.info("是否有效： " + flag);
     }
+    @Test
+    public void test() throws Exception {
+        Date a=new Date();
+        System.currentTimeMillis();
+        //System.out.print(a);
+       // String str=System.getProperty("java.library.path");
+       // System.out.print(str);
+        int b = 8;
+        int c=b<<3;
+        System.out.print(c);
+        Integer as=0;
+        System.out.print(as);
+
+    }
+
+
 }

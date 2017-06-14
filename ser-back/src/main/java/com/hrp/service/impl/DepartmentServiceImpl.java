@@ -46,7 +46,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Department getBySupDep(String supId) throws Exception {
-        return (Department) baseDao.findForObject("DepartmentMapper.getBySupCode", supId);
+        return (Department) baseDao.findForObject("DepartmentMapper.getBySupId", supId);
     }
 
     @Override

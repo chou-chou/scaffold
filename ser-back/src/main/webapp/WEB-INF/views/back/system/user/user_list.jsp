@@ -15,6 +15,8 @@
 
     <%@ include file="../../../comm/default_header.jsp" %>
 
+    <link rel="stylesheet" href="<%=basePath%>/plugins/validation/jquery.validate.css"/>
+
     <!-- datatables相关css/js -->
     <script type="text/javascript">
         if ('ontouchstart' in document.documentElement) document.write("<script src='<%=basePath%>/plugins/jquery/jquery.mobile.custom.min.js'>" + "<" + "/script>")
@@ -29,6 +31,62 @@
     <script src="<%=basePath%>/plugins/dataTables/extends/button/buttons.colVis.js"></script>
     <script src="<%=basePath%>/plugins/dataTables/extends/select/dataTables.select.js"></script>
 
+    <script type="text/javascript">
+        /*$.validator.setDefaults({
+         submitHandler: function() {
+         alert("提交事件!");
+         }
+         })*/
+
+        //手机验证规则
+        /*jQuery.validator.addMethod("mobile", function (value, element) {
+         var mobile = /^1[3|4|5|7|8]\d{9}$/;
+         return this.optional(element) || (mobile.test(value));
+         }, "手机格式不对");*/
+
+        $().ready(function () {
+            //让当前表单调用validate方法，实现表单验证功能
+            $("#userForm").validate({
+//            var validation = new Validation({
+                //debug:true, //调试模式，即使验证成功也不会跳转到目标页面
+                //onkeyup:null, //当丢失焦点时才触发验证请求
+                rules: { //配置验证规则，key就是被验证的dom对象，value就是调用验证的方法(也是json格式)
+                    account: {
+                        required: true, //必填。如果验证方法不需要参数，则配置为true
+                        remote: {  // 返回值只能是true或false
+                            url: "<%=basePath%>b/user/checkoutAccount.do",
+                            type: "GET",   //数据发送方式
+                            dataType: "json",  //接受数据格式
+                            data: {   //要传递的数据，默认已传递应用此规则的表单项
+                                account: function () {
+                                    $("#account").val()
+                                }
+                            }
+                        }
+                    },
+                    email: {
+                        email: true
+                    },
+                    telephone: {
+                        mobile: true
+                    }
+                },
+                messages: {
+                    account: {
+                        required: "请输入用户名",
+                        remote: "该用户名已存在！"
+                    },
+
+                    email: {
+                        email: "邮箱格式不正确"
+                    },
+                    telephone: {
+                        mobile: "手机格式不对"
+                    }
+                }
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="main-container">
@@ -137,7 +195,7 @@
                                                                         </a>
                                                                     </c:if>
                                                                     <c:if test="${QX.edit == 1 }">
-                                                                        <a class="btn btn-xs btn-success" title="编辑"
+                                                                        <a class="btn btn-xs btn-success"  data-toggle="modal" data-target="#userModal"  title="编辑"
                                                                            onclick="editUser('${user.USER_ID}');">
                                                                             <i class="ace-icon fa fa-pencil-square-o bigger-120"
                                                                                title="编辑"></i>
@@ -145,7 +203,7 @@
                                                                     </c:if>
                                                                     <c:if test="${QX.del == 1 }">
                                                                         <a class="btn btn-xs btn-danger"
-                                                                           onclick="delUser('${user.USER_ID }','${user.USERNAME }');">
+                                                                           onclick="delUser(${user.USER_ID });">
                                                                             <i class="ace-icon fa fa-trash-o bigger-120"
                                                                                title="删除"></i>
                                                                         </a>
@@ -188,8 +246,7 @@
                                                                                 <li>
                                                                                     <a style="cursor:pointer;"
                                                                                        onclick="editUser('${user.USER_ID}');"
-                                                                                       class="tooltip-success"
-                                                                                       data-rel="tooltip" title="修改">
+                                                                                       class="tooltip-success" data-toggle="modal" data-target="#userModal"  title="修改">
 																	<span class="green">
 																		<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
 																	</span>
@@ -199,7 +256,7 @@
                                                                             <c:if test="${QX.del == 1 }">
                                                                                 <li>
                                                                                     <a style="cursor:pointer;"
-                                                                                       onclick="delUser('${user.USER_ID }','${user.USERNAME }');"
+                                                                                       onclick="delUser(${user.USER_ID });"
                                                                                        class="tooltip-error"
                                                                                        data-rel="tooltip" title="删除">
 																	<span class="red">
@@ -235,7 +292,7 @@
                                             <tr>
                                                 <td style="vertical-align: top;">
                                                     <c:if test="${QX.add == 1}">
-                                                        <a class="btn btn-mini btn-success" onclick="add();">新增</a>
+                                                        <a class="btn btn-mini btn-success"  data-toggle="modal" data-target="#userModal" onclick="add();">新增</a>
                                                     </c:if>
                                                     <c:if test="${QX.email == 1 }">
                                                         <a id="userEmailBtn" title="批量发送电子邮件" class="btn btn-mini btn-info"
@@ -251,7 +308,7 @@
                                                     </c:if>
                                                     <c:if test="${QX.del == 1 }">
                                                         <a id="userDeleteBtn" title="批量删除" class="btn btn-mini btn-danger"
-                                                           onclick="makeAll('确定要删除选中的数据吗?');">
+                                                           onclick="batchDeleteUser('确定要删除选中的数据吗?');">
                                                             <i class='ace-icon fa fa-trash-o bigger-120'></i>
                                                         </a>
                                                     </c:if>
@@ -283,6 +340,93 @@
     </a>
 </div><!-- /.main-container -->
 
+<div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true" aria-describedby="新增/编辑界面">
+    <div class="modal-dialog" role="document" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="关闭">×</button>
+                <h4 class="modal-title" id="userModalLabel">编辑</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" role="form" id="userForm">
+                            <input type="hidden"  id="tag" name="code" value="ADD"/>
+                            <input type="hidden"  id="userId" name="userId" value=""/>
+                            <div class="form-group">
+                                <label for="userName" class="col-sm-3 control-label no-padding-right"><span
+                                        class="required-item">*</span>&nbsp;用户名:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="userName" name="userName" value="" class="col-xs-10 col-sm-5"
+                                           placeholder="请输入用户名">
+                                </div>
+                            </div>
+
+                            <div class="form-group" <%--tabindex="1"--%>>
+                                <label for="account" class="col-sm-3 control-label no-padding-right"><span
+                                        class="required-item">*</span>&nbsp;登录账户:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="account" name="account" value="" class="col-xs-10 col-sm-5"
+                                           placeholder="请输入登录账户">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="isEnabled">
+                                    是否激活:
+                                </label>
+                                <div class="col-sm-9 checkbox no-padding-left">
+                                    <label>
+                                        <input id="isEnabled" name="isEnabled" value="1"
+                                               class="ace ace-checkbox-2" type="checkbox"
+                                               <c:if test="${user.enabled == 1}">checked</c:if>/>
+                                        <span class="lbl" style="color:#2B6EA1;">  注: 勾选即激活 </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right"
+                                       for="telephone">电话号码:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="telephone" name="telephone"
+                                           placeholder="电话号码" class="col-xs-10 col-sm-5"
+                                           value=""/>
+                                    <label id="teleHint" name="hint" style="color:red;visibility:hidden;"></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right"
+                                       for="email">电子邮箱:</label>
+                                <div class="col-sm-9">
+                                    <input type="email" id="email" name="email"
+                                           placeholder="电子邮箱" class="col-xs-10 col-sm-5"
+                                           value="" required data-rule-email="true" data-msg-required="请输入email地址" data-msg-email="请输入正确的email地址"/>
+                                    <label id="emailHint" name="hint" style="color:red; visibility:hidden;"></label>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="remark">备注:</label>
+                                <div class="col-sm-9">
+                                    <textarea id="remark" name="remark" class="form-control"
+                                              placeholder="备注信息"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="off()">关闭</button>
+                <button type="button"  id="saveChange" class="btn btn-primary" onclick="saveChange()">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
 <script type="text/javascript">
     jQuery(function ($) {
         //initiate dataTables plugin
@@ -413,8 +557,277 @@
             e.stopPropagation();
             e.preventDefault();
         })
-
     });
+</script>
+
+<script type="text/javascript">
+
+    function off(){
+        $("#accHint").css( "visibility","hidden");
+        $("#teleHint").css( "visibility","hidden");
+        $("#emailHint").css( "visibility","hidden");
+
+    }
+    function add(){
+        $('h4').html("新增");1
+        $("#tag").val("ADD");
+        var  tag=$("#tag").val();
+        document.getElementById("userForm").reset();
+        $("#account").val("");
+        $("[name=isEnabled]:checkbox").prop("checked", false);
+        off();
+    }
+
+    //验证登录账户是否已存在
+    /*$("#account").blur(function () {
+        var account = $("#account").val();
+        alert(" --- " + account);
+        if (account == '') {
+            $("#accHint").html("登录账户名不为空");
+            $("#accHint").css( "visibility","visible");
+            $("#saveChange").attr("disabled", true);
+            checkoutAll();
+            return false;
+        }
+        $.ajax({
+            type: "GET",
+     url: "%=basePath%>b/user/checkoutAccount.do",
+            dataType: "json",
+            async: true,
+            data: {
+                account: account
+            },
+            success: function (rc) {
+                if (rc.code == '0') {
+                    $("#accHint").css( "visibility","visible");
+                    $("#accHint").html("登录账户已存在");
+                } else {
+                    $("#accHint").css( "visibility","hidden");
+
+                }
+                checkoutAll();
+            }
+
+        })
+
+     });*/
+    //验证手机格式
+    /*$("#telephone").blur(function () {
+        var telephone=$("#telephone").val();
+        if(""!=telephone){
+            var myreg=/^(13+\d{9})|(159+\d{8})|(153+\d{8})$/;
+            if(!myreg.test(telephone)){
+                $("#teleHint").css( "visibility","visible");
+                $("#teleHint").html("手机格式不正确");
+            }else{
+                $("#teleHint").css( "visibility","hidden");
+            }
+        }else{
+            $("#teleHint").css( "visibility","hidden");
+        }
+        checkoutAll();
+     });*/
+
+    //验证邮箱格式
+    /*$("#email").blur(function () {
+        var email=$("#email").val();
+        if(""!=email){
+            var myreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+            if(!myreg.test(email)){
+                $("#emailHint").css( "visibility","visible");
+                $("#emailHint").html("邮箱格式不正确");
+            }else{
+                $("#emailHint").css( "visibility","hidden");
+            }
+        }else{
+            $("#emailHint").css( "visibility","hidden");
+        }
+        checkoutAll();
+
+     });*/
+
+    function checkoutAll(){
+        $("label[name='hint']").each(function(){
+            if($(this).is(":hidden")){
+                $("#saveChange").attr("disabled", false);
+            }else{
+                $("#saveChange").attr("disabled", true);
+                return false;
+            }
+
+        })
+    }
+
+    // 编辑角色
+    function editUser(userId){
+        $('h4').html("编辑");
+        $("#tag").val("EDIT");
+        var tag=  $("#tag").val();
+        if (userId == '') {
+            layer.msg("编辑操作出错！");
+            return false;
+        }
+        $.ajax({
+            type: "GET",
+            url: "b/user/editUser.do",
+            dataType: "json",
+            async: true,
+            data: {
+                userId: userId
+            },
+            success: function (user) {
+
+                $("#userName").val(user.username);
+                $("#account").val(user.account);
+                if (user.enabled == '1') {
+                    $("#isEnabled").attr("checked", 'true');
+                } else {
+                    $("#isEnabled").attr("checked", 'false');
+                }
+                $("#remark").val(user.remark);
+                $("#email").val(user.email);
+                $("#telephone").val(user.telephone);
+                $("#userId").val(user.userId);
+
+
+            }
+        });
+
+    }
+
+    //单个删除用户
+    function delUser(userId){
+        layer.confirm('您确定要删除该字典数据？', {
+            btn: ['确定', '暂时不要']  // 按钮
+        }, function(){
+            layer.msg('您点击了确定', {icon:1});
+
+            if (userId == '') {
+                layer.msg("删除操作出错！");
+                return false;
+            }
+
+            // 执行异步删除动作
+            $.ajax({
+                type: "POST",
+                url:"<%=basePath%>/b/user/deleteUsers.do",
+                dataType: "json",
+                async: true,
+                data: {
+                    userIds: userId
+                },
+                success: function (rc) {
+                    if (rc.code == '0') {
+                        layer.msg('已为您删除该字典数据', {icon:1});
+                        setTimeout(function () {
+                            location.reload();
+                        },1000);
+                    } else
+                        layer.msg('删除操作出错![' + rc.message + ']');
+                }
+            });
+            return true;
+        }, function() {
+            return true;
+        });
+
+        return false;
+
+    };
+
+    //批量删除用户
+    function batchDeleteUser(hint){
+        layer.confirm(hint, {
+            btn: ['确定', '暂时不要']  // 按钮
+        }, function(){
+            layer.msg('您点击了确定', {icon:1});
+            var userIds = "";
+            $('input:checkbox[name=ids]:checked').each(function(i){
+                if(0==i){
+                    userIds = $(this).val();
+                }else{
+                    userIds += (","+$(this).val());
+                }
+            });
+            if (userIds == '') {
+                layer.msg("请选择要删除的信息!");
+                return false;
+            }
+
+            // 执行异步删除动作
+            $.ajax({
+                type: "POST",
+                url: "<%=basePath%>/b/user/deleteUsers.do",
+                dataType: "json",
+                async: true,
+                data: {
+                    userIds: userIds
+                },
+                success: function (rc) {
+                    if (rc.code == '0') {
+                        layer.msg('已为您删除该字典数据', {icon:1});
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+
+                    } else
+                        layer.msg('删除操作出错![' + rc.message + ']');
+                }
+            });
+
+            return true;
+        }, function() {
+
+            return true;
+        });
+
+        return false;
+
+
+    };
+
+    <!-- 提交form -->
+    function saveChange() {
+        var  tag=$("#tag").val();
+        var userName = $("#userName").val();
+        var account = $("#account").val();
+        if($("input[type='checkbox']").is(':checked')){
+            var isEnabled ="1"
+        } else {
+            var isEnabled ="0"
+        }
+        if(tag=="EDIT"){
+            var userId = $("#userId").val();
+        }else {
+            var userId = "";
+        }
+        var remark = $("#remark").val();
+        var telephone = $("#telephone").val();
+        var email = $("#email").val();
+        if (remark == undefined || remark == null)  remark = "";
+        $.ajax({
+            type: "POST",
+            url: "<%=basePath%>/b/user/editUser.do",
+            dataType: "json",
+            async: true,
+            data: {
+                tag:tag,
+                userName:userName,
+                account: account,
+                isEnabled: isEnabled,
+                telephone: telephone,
+                email: email,
+                remark: remark
+            },
+            success: function (rc) {
+                if (rc.code == '0') {
+                    alert(rc.message);
+                    location.reload();
+                }
+            }
+        });
+    }
+
 </script>
 
 </body>

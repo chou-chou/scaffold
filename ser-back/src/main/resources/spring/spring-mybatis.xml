@@ -2,30 +2,24 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 						http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 						http://www.springframework.org/schema/aop 
 						http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
-						http://www.springframework.org/schema/context 
-						http://www.springframework.org/schema/context/spring-context-4.3.xsd
 						http://www.springframework.org/schema/tx 
-						http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+						http://www.springframework.org/schema/tx/spring-tx-4.3.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<description>mybatis 主配置</description>
 
+    <context:component-scan base-package="com.hrp.dao"/>
+
     <!-- 属性和配置文件读入 ,多个用逗号隔开 数据库参数和系统参数 -->
-    <bean name="customName" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
+    <bean name="customName" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location">
             <value>classpath:config/system.properties</value>
         </property>
     </bean>
-
-    <context:annotation-config />
-    <context:component-scan base-package="com.hrp.dao">
-        <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
-    </context:component-scan>
 
     <!-- 阿里 druid数据库连接池 -->
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
@@ -73,13 +67,15 @@
 		<constructor-arg ref="sqlSessionFactory" />
 	</bean>
 
+    <!--<context:component-scan base-package="com.hrp.dao" />-->
+
     <!-- ==========================================事务配置========================================== -->
     <!-- 事务管理器 -->
     <bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"></property>
     </bean>
 
-    <!-- 配置哪些方法要加入事务控制 -->
+    <!-- XML AOP事务管理  配置哪些方法要加入事务控制 -->
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="delete*" propagation="REQUIRED" read-only="false"
@@ -96,13 +92,12 @@
     <!-- 配置AOP，Spring是通过AOP来进行事务管理的，面向接口注入 -->
     <aop:config>
         <aop:pointcut id="point" expression="execution(* com.hrp.service..*(..))" />
-        <aop:advisor pointcut-ref="point" advice-ref="txAdvice" />
+        <aop:advisor pointcut-ref="point" advice-ref="txAdvice" order="1"/>
     </aop:config>
 
-    <!-- 启用对事务注解的支持 -->
-    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
-
+    <!-- 启用对事务注解的支持  基于注解的AOP事务管理 -->
     <!-- 当proxy-target-class为false时使用JDK动态代理，为true时使用cglib代理，cglib无法拦截接口方法 -->
-    <aop:aspectj-autoproxy proxy-target-class="true" />
+    <!--<tx:annotation-driven transaction-manager="transactionManager" />-->
+    <!--<aop:aspectj-autoproxy />-->
 
 </beans>

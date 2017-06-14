@@ -4698,7 +4698,7 @@ vjs.MuteToggle.prototype.update = function(){
   }
 
   // Don't rewrite the button text if the actual text doesn't change.
-  // This causes unnecessary and confusing business for screen reader users.
+    // This causes unnecessary and confusing business for screen reader users.
   // This check is needed because this function gets called every time the volume level is changed.
   if(this.player_.muted()){
       if(this.el_.children[0].children[0].innerHTML!='Unmute'){

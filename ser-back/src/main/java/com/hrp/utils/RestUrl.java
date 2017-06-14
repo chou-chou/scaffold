@@ -8,5 +8,6 @@ package com.hrp.utils;
  */
 public class RestUrl {
 
+    public static final String test = "test";
     public static final String getProduct = "getProduct.do";
 }

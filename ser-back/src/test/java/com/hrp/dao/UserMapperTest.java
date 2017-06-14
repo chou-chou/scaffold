@@ -2,16 +2,10 @@ package com.hrp.dao;
 
 import com.hrp.entity.system.User;
 import com.hrp.utils.PageData;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.Rollback;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * UserMapperTest
@@ -27,14 +21,12 @@ public class UserMapperTest extends BaseDaoTest {
     public void getUserInfo() throws Exception {
         PageData pd = new PageData();
 
-        pd.put("ACCOUNT", "admin");
-        pd.put("PASSWORD", "02040703080500070a020906020a0105090c0107");
+        pd.put("username", "admin");
+        pd.put("password", "0b018efd04c9eed97e04d18e3baee171");
 
-        List<PageData> pdList = (ArrayList<PageData>) dao.findForList("UserMapper.getUserInfo", pd);
+        User user = (User) dao.findForObject("UserMapper.getUserInfo", pd);
 
-        for (PageData p : pdList){
-            p.print();
-        }
+        if (user != null) logger.info(user.toString());
     }
 
     @Test
@@ -43,7 +35,7 @@ public class UserMapperTest extends BaseDaoTest {
 
         for (int i=0; i< 100; i++) {
             User user = new User();
-            user.setUsername("kv" + i%2 + "in" + i/2);
+            user.setUserName("kv" + i%2 + "in" + i/2);
             user.setPassword("0c030b060c0d050c0c0903020109010901030f0a");
             user.setAccount("kv" + i%2 + "in" + i);
             user.setEnabled(i%2 == 1);
@@ -88,7 +80,7 @@ public class UserMapperTest extends BaseDaoTest {
     public void inserUser() throws Exception {
 
         User user = new User();
-        user.setUsername("yueliang");
+        user.setUserName("yueliang");
         user.setPassword("123456");
         user.setAccount("592774130" );
         user.setEnabled(true);

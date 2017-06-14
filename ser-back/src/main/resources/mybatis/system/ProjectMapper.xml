@@ -58,25 +58,25 @@
 
     <insert id="saveProjectBean" parameterType="Project" useGeneratedKeys="true" keyProperty="id">
         insert into TB_PROJECT (<trim suffixOverrides=",">
-        <if test="proCode != null and code != ''">PRO_CODE,</if>
-        <if test="proName != null and roleName != ''">PRO_NAME,</if>
-        <if test="reportor != null and isSys != ''">REPORTOR,</if>
-        <if test="reportTime != null and supId != ''">REPORT_TIME,</if>
-        <if test="proType != null and orders != ''">PRO_TYPE,</if>
-        <if test="declareFunds != null and remark != ''">DECLARE_FUNDS</if>
+        <if test="proCode != null and proCode != ''">PRO_CODE,</if>
+        <if test="proName != null and proName != ''">PRO_NAME,</if>
+        <if test="reportor != null and reportor != ''">REPORTOR,</if>
+        <if test="reportTime != null and reportTime != ''">REPORT_TIME,</if>
+        <if test="proType != null and proType != ''">PRO_TYPE,</if>
+        <if test="declareFunds != null and declareFunds != ''">DECLARE_FUNDS</if>
     </trim>)
         values(<trim suffixOverrides=",">
-        <if test="proCode != null and code != ''">#{proCode},</if>
-        <if test="proName != null and roleName != ''">#{proName},</if>
-        <if test="reportor != null and isSys != ''">#{reportor},</if>
-        <if test="reportTime != null and supId != ''">#{reportTime},</if>
-        <if test="proType != null and orders != ''">#{proType},</if>
-        <if test="declareFunds != null and remark != ''">#{declareFunds}</if>
+        <if test="proCode != null and proCode != ''">#{proCode},</if>
+        <if test="proName != null and proName != ''">#{proName},</if>
+        <if test="reportor != null and reportor != ''">#{reportor},</if>
+        <if test="reportTime != null and reportTime != ''">#{reportTime},</if>
+        <if test="proType != null and proType != ''">#{proType},</if>
+        <if test="declareFunds != null and declareFunds != ''">#{declareFunds}</if>
     </trim>)
     </insert>
 
     <update id="updateProject" parameterType="pd">
-        update T_ROLE
+        update TB_PROJECT
         <set>
             <if test="proCode != null and proCode != ''">PRO_CODE=#{proCode},</if>
             <if test="proName != null and proName != ''">PRO_NAME=#{proName},</if>
@@ -85,7 +85,7 @@
             <if test="proType != null and proType != ''">PRO_TYPE=#{proType},</if>
             <if test="declareFunds != null and declareFunds != ''">DECLARE_FUNDS=#{declareFunds}</if>
         </set>
-        where ROLE_ID = #{roleId}
+        where ID = #{id}
     </update>
 
     <!-- 获取用户总数 -->
@@ -101,7 +101,7 @@
         delete from
         <include refid="tableName"></include>
         where  ID  in
-        <foreach collection="array" item="roleIds" open="(" separator="," close=")">
+        <foreach collection="array" item="ids" open="(" separator="," close=")">
             #{ids}
         </foreach>
     </delete>

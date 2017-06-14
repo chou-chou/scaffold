@@ -39,9 +39,9 @@ public class ProjectController extends BaseController {
     private ProjectService projectService;
 
     /**
-     * 角色列表
+     * 查询所有记录
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/list")
+    @RequestMapping(method = RequestMethod.GET, value = "/list.do")
     @MvcMapping(url = "/b/project/list.do", path = BASE_PATH + "project_list", type = MvcMapping.ViewType.JSP)
     private ModelAndView list() {
         ModelAndView mv = this.getModelAndView();
@@ -77,27 +77,27 @@ public class ProjectController extends BaseController {
     }
 
     /**
-     * 编辑页面
+     * 编辑项目
      *
      * @param request
      * @param response
      */
     @RequestMapping(value = "/editProject.do", method = RequestMethod.GET)
     public void editProject(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
-        String proIds = request.getParameter("proIds");//获取角色id
+        String id = request.getParameter("proIds");//获取项目id
         String tag = request.getParameter("tag");
 
         PageData pd = this.getPageData();
-        pd.put("proIds", proIds);
-        TbProject project = null;
+        pd.put("id", id);
+        TbProject pro = null;
         try {
-            project = this.projectService.getByProjectId(pd);//查询角色信息返回页面
-            logger.info(project.toString());
+            pro = this.projectService.getByProjectId(pd);//查询项目信息返回页面
+            logger.info(pro.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        JsonUtil.writeJsonToResponse(response, project, JsonUtil.OBJECT_TYPE_BEAN);
+        JsonUtil.writeJsonToResponse(response, pro, JsonUtil.OBJECT_TYPE_BEAN);
     }
 
     /**
@@ -154,7 +154,9 @@ public class ProjectController extends BaseController {
                     System.out.print(request.getParameter("id"));
                     TbProject project = new TbProject();
                     Date reportTime=new Date();
+                    System.out.print(Double.valueOf(pd.getString("declareFunds")));
                     pd.put("reportTime",reportTime);
+                    pd.put("declareFunds", Double.valueOf(pd.getString("declareFunds")));
                     Boolean success = this.projectService.updateProject(pd);
                     if (success) {
                         rc.setCode("0");

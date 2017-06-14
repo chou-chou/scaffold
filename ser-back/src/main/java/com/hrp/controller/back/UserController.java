@@ -3,10 +3,10 @@ package com.hrp.controller.back;
 import com.hrp.annotation.MvcMapping;
 import com.hrp.controller.common.BaseController;
 import com.hrp.entity.system.Menu;
+import com.hrp.entity.system.User;
+import com.hrp.pojo.Result;
 import com.hrp.service.UserService;
-import com.hrp.utils.AppUtil;
-import com.hrp.utils.Jurisdiction;
-import com.hrp.utils.PageData;
+import com.hrp.utils.*;
 import com.hrp.utils.lang.StringUtil;
 import com.hrp.utils.plugins.Page;
 import org.springframework.stereotype.Controller;
@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -191,6 +193,154 @@ public class UserController extends BaseController {
         ModelAndView mv = this.getModelAndView();
 
         return mv;
+    }
+
+    /**
+     * 编辑页面
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/editUser.do", method = RequestMethod.GET)
+    public void editUser(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+        String userId = request.getParameter("userId");//获取用户id
+        String tag = request.getParameter("tag");
+
+        PageData pd = this.getPageData();
+        pd.put("userId", userId);
+        User user = null;
+        try {
+            user = this.userService.getByUserId(pd);//查询用户信息返回页面
+            logger.info(user.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JsonUtil.writeJsonToResponse(response, user, JsonUtil.OBJECT_TYPE_BEAN);
+    }
+
+    /**
+     * 编辑页面
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/checkoutAccount.do", method = RequestMethod.GET)
+    public void checkoutAccount(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+        String account = request.getParameter("account");//获取用户登录名
+        Boolean rc = false;
+
+        User user = null;
+        try {
+            user = this.userService.getUserByLoginName(account);//查询用户信息返回页面
+            if(null != user &&  !"".equals(user)){
+                rc = true;
+            }
+            response.getWriter().print(rc ? "true" : "false");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //JsonUtil.writeJsonToResponse(response, rc, JsonUtil.OBJECT_TYPE_BEAN);
+    }
+
+    /**
+     * 删除
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/deleteUsers.do", method = RequestMethod.POST)
+    public void removeUser(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+        String userIds = request.getParameter("userIds");
+        String[] userIdsArr= userIds.split(",");
+        Result rc = new Result();
+        try {
+            Boolean success = this.userService.deleteAllU(userIdsArr);
+            if (success) {
+                rc.setCode("0");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JsonUtil.writeJsonToResponse(response, rc, JsonUtil.OBJECT_TYPE_BEAN);
+    }
+
+    /**
+     * 新增/修改（For 新增/编辑）
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/editUser.do", method = RequestMethod.POST)
+    public void editUserPost(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+        String tag = request.getParameter("tag");
+        Result rc = new Result();
+        PageData pd = this.getPageData();
+
+        switch (tag) {
+            case "ADD": // 新增
+                try {
+                    String userName = StringUtil.isNotNullOrBlank(request.getParameter("userName"))
+                            ? request.getParameter("userName") : "";
+                    String account = StringUtil.isNotNullOrBlank(request.getParameter("account"))
+                            ? request.getParameter("account") : "";
+                    String isEnabled = StringUtil.isNotNullOrBlank(request.getParameter("isEnabled"))
+                            ? request.getParameter("isEnabled") : "";
+                    String telephone = StringUtil.isNotNullOrBlank(request.getParameter("telephone"))
+                            ? request.getParameter("telephone") : "0";
+                    String email = StringUtil.isNotNullOrBlank(request.getParameter("email"))
+                            ? String.valueOf(request.getParameter("email")) : "";
+                    String remark = StringUtil.isNotNullOrBlank(request.getParameter("remark"))
+                            ? request.getParameter("remark") : "";
+                    boolean  enabled=false;
+                    if("1".equals(isEnabled)){
+                      enabled = true;
+                    }
+                    String password = "888888";//初始密码
+                    String passwordMD5 = EncryptUtil.md5Password(userName, password);//加密的密码
+                    User user = new User();
+                    user.setUserName(userName);
+                    user.setAccount(account);
+                    user.setPassword(passwordMD5);
+                    user.setEnabled(enabled);
+                    user.setEmail(email);
+                    user.setRemark(remark);
+                    user.setTelephone(telephone);
+                    Integer res = (Integer) this.userService.addUser(user);  // 新增用户插入数据库
+
+                    if (res > 0) {
+                        rc.setCode("0");
+                        rc.setMessage("新增用户成功");
+                        rc.setData(tag);
+                        rc.setSuccess(true);
+                    } else {
+                        rc.setCode("1");
+                        rc.setMessage("新增失败");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "EDIT": // 编辑
+                try {
+                    System.out.print(request.getParameter("userId"));
+                    Boolean  success=this.userService.updateUser(pd);
+                    if (success) {
+                        rc.setCode("0");
+                        rc.setMessage("更新成功");
+                        rc.setSuccess(true);
+                        rc.setData(request.getParameter("userId"));
+
+                    } else {
+                        rc.setCode("1");
+                        rc.setMessage("更新失败");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            default: break;
+        }
+
+        JsonUtil.writeJsonToResponse(response, rc, JsonUtil.OBJECT_TYPE_BEAN);
     }
 
 }

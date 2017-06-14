@@ -4,8 +4,7 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
 		    http://www.springframework.org/schema/mvc
@@ -13,38 +12,32 @@
 		    http://www.springframework.org/schema/context
 		    http://www.springframework.org/schema/context/spring-context-4.3.xsd
 	        http://www.springframework.org/schema/util
-		    http://www.springframework.org/schema/util/spring-util-4.3.xsd
-		    http://www.springframework.org/schema/aop
-		    http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+		    http://www.springframework.org/schema/util/spring-util-4.3.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <description>Spring MVC配置</description>
 
     <context:property-placeholder location="classpath:config/system.properties" ignore-unresolvable="true"/>
 
-    <!-- ==========================================shiro注解========================================== -->
-    <!-- 开启Shiro注解(写在这里才有效，spring-shiro.xml无效) -->
-    <!--<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>-->
-    <!-- 开启shiro注解支持 -->
-    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
-        <property name="securityManager" ref="securityManager"/>
-    </bean>
-
     <!-- 启用 Spring MVC 注解 -->
-    <context:annotation-config/>
+    <context:annotation-config />
 
     <!-- 自动扫描的包名 -->
-    <context:component-scan base-package="com.hrp">
-        <context:include-filter type="regex" expression="com.hrp.controller.*"/>
+    <context:component-scan base-package="com.hrp.controller, com.hrp.utils.log">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:include-filter type="annotation" expression="org.aspectj.lang.annotation.Aspect"/>
         <context:include-filter type="annotation" expression="com.hrp.annotation.MvcMapping" />
+
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
     </context:component-scan>
 
     <!-- Controller测试的时候使用，发布可以注释掉 -->
-    <bean class="org.springframework.mock.web.MockServletContext"/>
+    <!--<bean class="org.springframework.mock.web.MockServletContext"/>-->
 
     <util:list id="supportedMediaTypes">
         <value>application/json</value>
         <value>text/plain;charset=UTF-8</value>
-        <value>text/html;charset=UTF-8</value>
+        <value>text/html;charset=UTF-8</value> <!--  避免IE出现下载JSON文件的情况  -->
     </util:list>
 
     <bean id="customJsonDateConverter" class="com.hrp.utils.convert.CustomJsonDateConverter" />
@@ -53,9 +46,16 @@
     <mvc:annotation-driven>
         <!-- 消息转换器,解决中文返回乱码问题-->
         <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+            <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>
             <bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
-                <constructor-arg value="UTF-8"/>
-                <!--<property name="supportedMediaTypes" value="supportedMediaTypes" />-->
+                <property name="writeAcceptCharset" value="false"/>
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/plain;charset=UTF-8</value>
+                        <value>*/*;charset=UTF-8</value>
+                    </list>
+                </property>
             </bean>
             <!--json日期处理 -->
             <bean id="jsonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"
@@ -81,14 +81,7 @@
     <mvc:resources mapping="/static/**" location="/static/"/>
     <mvc:resources mapping="/plugins/**" location="/plugins/"/>
     <mvc:resources mapping="/uploadFiles/**" location="/uploadFiles/"/>
-
-    <!-- 访问拦截 多个拦截器，顺序执行 -->
-    <!--<mvc:interceptors>
-      <mvc:interceptor>
-          <mvc:mapping path="/**/**"/>
-          <bean class="com.hrp.interceptor.LoginHandlerInterceptor"/>
-      </mvc:interceptor>
-  </mvc:interceptors>-->
+    <mvc:resources mapping="/swagger/**" location="/WEB-INF/swagger/"/>
 
     <!-- 配置SpringMVC的视图解析器 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -112,14 +105,11 @@
         </property>
     </bean>
 
-    <!--json日期处理 -->
-    <!--<bean id="customObjectMapper" class="com.hrp.utilss.CustomJsonDateConverter"></bean>-->
-
     <bean id="exceptionResolver" class="com.hrp.resolver.MyExceptionResolver"/>
 
-    <!-- 如果被代理的目标实现了至少一个接口，则会使用JDK动态代理,所有该目标类型实现的接口都将被代理。 -->
-    <!-- 如果用JDK动态代理，就必须为被代理的目标实现一个接口（要注意的地方是：需要将ctx.getBean()方法的返回值用接口类型接收）； -->
-    <!-- 如果使用CGLIB强制代理，就必选事先将CGLIB包导入项目， 设置beanNameAutoProxyCreator的proxyTargetClass属性为true。 -->
-    <!--<aop:aspectj-autoproxy  proxy-target-class="true"/>-->
+    <!-- 日志切面 -->
+    <aop:aspectj-autoproxy/>
+    <context:component-scan base-package="com.hrp.utils.log"/>
+
 
 </beans>

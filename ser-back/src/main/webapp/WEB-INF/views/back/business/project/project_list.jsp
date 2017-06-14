@@ -105,7 +105,7 @@
                                                     <td class="center">${pro.proCode}</td>
                                                     <td class="center">${pro.proName}</td>
                                                     <td class="center">${pro.reportor}</td>
-                                                    <td class="center">${pro.reportorTime}</td>
+                                                    <td class="center"><fmt:formatDate value="${pro.reportTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>:
                                                     <td class="center">${pro.proType}</td>
                                                     <td class="center">${pro.declareFunds}</td>
                                                     <td class="center">
@@ -117,12 +117,12 @@
                                                         <div class="hidden-sm hidden-xs btn-group">
 
                                                             <c:if test="${QX.edit == 1 }">
-                                                                <a class="btn btn-xs btn-success" data-toggle="modal" data-target="#myModal" title="编辑" onclick="editRole('${pro.id}');">
+                                                                <a class="btn btn-xs btn-success" data-toggle="modal" data-target="#myModal" title="编辑" onclick="editProject('${pro.id}');">
                                                                     <i class="ace-icon fa fa-pencil-square-o bigger-120" title="编辑"></i>
                                                                 </a>
                                                             </c:if>
                                                             <c:if test="${QX.del == 1 }">
-                                                                <a class="btn btn-xs btn-danger" onclick="delRole('${pro.id }');">
+                                                                <a class="btn btn-xs btn-danger" onclick="delProject('${pro.id }');">
                                                                     <i class="ace-icon fa fa-trash-o bigger-120" title="删除"></i>
                                                                 </a>
                                                             </c:if>
@@ -137,7 +137,7 @@
 
                                                                     <c:if test="${QX.edit == 1 }">
                                                                         <li>
-                                                                            <a style="cursor:pointer;" onclick="editRole('${pro.id}');" class="tooltip-success" data-rel="tooltip" title="修改">
+                                                                            <a style="cursor:pointer;" onclick="editProject('${pro.id}');" class="tooltip-success" data-rel="tooltip" title="修改">
 																	<span class="green">
 																		<i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
 																	</span>
@@ -146,7 +146,7 @@
                                                                     </c:if>
                                                                     <c:if test="${QX.del == 1 }">
                                                                         <li>
-                                                                            <a style="cursor:pointer;" onclick="delRole('${pro.id }');" class="tooltip-error" data-rel="tooltip" title="删除">
+                                                                            <a style="cursor:pointer;" onclick="delProject('${pro.id }');" class="tooltip-error" data-rel="tooltip" title="删除">
 																	<span class="red">
 																		<i class="ace-icon fa fa-trash-o bigger-120"></i>
 																	</span>
@@ -226,7 +226,7 @@
                     <div class="col-xs-12">
                         <form class="form-horizontal" role="form">
                             <input type="hidden"  id="tag" name="code" value="ADD"/>
-                            <input type="hidden"  id="proId" name="roleId" value=""/>
+                            <input type="hidden"  id="proId" name="proId" value=""/>
                             <div class="form-group">
                                 <label for="proCode" class="col-sm-3 control-label no-padding-right">项目编码:</label>
                                 <div class="col-sm-9">
@@ -251,17 +251,6 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="id-date-picker-1" class="col-sm-3 control-label no-padding-right">申报日期：</label>
-                                <div class="col-sm-9">
-                                    <div class="input-group col-xs-10 col-sm-5">
-                                        <input class="form-control date-picker" id="id-date-picker-1" type="text" data-date-format="yyyy-mm-dd" />
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-calendar bigger-110"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="form-group">
                                 <label for="proType" class="col-sm-3 control-label no-padding-right">项目类型:</label>
                                 <div class="col-sm-9">
@@ -312,19 +301,16 @@
     function addTag(){
         $('h4').html("新增");
         $("#tag").val("ADD");
-        var  tag=$("#tag").val();
-        $("#code").val("");
-        $("#roleName").val("");
-        $("[name=isSys]:checkbox").prop("checked", false);
-        $("#roleId").val("");
-        $("#remark").val("");
-        $("#orders").val("");
-        var code=$("#code").val();
-        alert(tag+code);
+        var  tag = $("#tag").val();
+        $("#proCode").val("");
+        $("#proName").val("");
+        $("#reportor").val("");
+        $("#proType").val("");
+        $("#declareFunds").val("");
     }
 
     <!--编辑项目-->
-    function editRole(id){
+    function editProject(id){
         $('h4').html("编辑");
         $("#tag").val("EDIT");
         var tag=  $("#tag").val();
@@ -334,36 +320,26 @@
         }
         $.ajax({
             type: "GET",
-            url: "role/editRole.do",
+            url: "b/project/editProject.do",
             dataType: "json",
             async: true,
             data: {
-                roleIds: id
+               proIds: id
             },
-            success: function (role) {
-                if (role.supId !== undefined && role.supId !== null) {
-                    $("#supId").val(role.supId).trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
-                } else {
-                    $("#supId").val('-1').trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
-                }
-                $("#roleId").val(role.roleId);
-                $("#code").val(role.code);
-                $("#roleName").val(role.roleName);
-                if (role.isSys == '0') {
-                    $("#isSys").attr("checked", 'true');
-                } else {
-                    $("#isSys").attr("checked", 'false');
-                }
-                $("#remark").val(role.remark);
-                $("#orders").val(role.orders);
-
+            success: function (pro) {
+                $("#proId").val(pro.id);
+                $("#proCode").val(pro.proCode);
+                $("#proName").val(pro.proName);
+                $("#reportor").val(pro.reportor);
+                $("#proType").val(pro.proType);
+                $("#declareFunds").val(pro.declareFunds);
             }
         });
 
     }
 
     //单个删除
-    function delRole(id){
+    function delProject(id){
         layer.confirm('您确定要删除该字典数据？', {
             btn: ['确定', '暂时不要']  // 按钮
         }, function(){
@@ -378,18 +354,18 @@
             // 执行异步删除动作
             $.ajax({
                 type: "POST",
-                url: "role/deleteRoles.do",
+                url: "b/project/deleteProjects.do",
                 dataType: "json",
                 async: true,
                 data: {
-                    roleIds: id
+                    proIds: id
                 },
                 success: function (rc) {
                     if (rc.code == '0') {
                         layer.msg('已为您删除该字典数据', {icon:1});
                         setTimeout(function () {
                             location.reload();
-                        },1000);
+                        },500);
                     } else
                         layer.msg('删除操作出错![' + rc.message + ']');
                 }
@@ -411,15 +387,15 @@
             btn: ['确定', '暂时不要']  // 按钮
         }, function(){
             layer.msg('您点击了确定', {icon:1});
-            var roleIds = "";
+            var proIds = "";
             $('input:checkbox[name=ids]:checked').each(function(i){
                 if(0==i){
-                    roleIds = $(this).val();
-                }else{
-                    roleIds += (","+$(this).val());
+                    proIds = $(this).val();
+                }else{I
+                    proIds += (","+$(this).val());
                 }
             });
-            if (roleIds == '') {
+            if (proIds == '') {
                 layer.msg("请选择要删除的信息!");
                 return false;
             }
@@ -428,18 +404,18 @@
             // 执行异步删除动作
             $.ajax({
                 type: "POST",
-                url: "role/deleteRoles.do",
+                url: "b/project/deleteProjects.do",
                 dataType: "json",
                 async: true,
                 data: {
-                    roleIds: roleIds
+                    proIds: proIds
                 },
                 success: function (rc) {
                     if (rc.code == '0') {
                         layer.msg('已为您删除该字典数据', {icon:1});
                         setTimeout(function () {
                             location.reload();
-                        }, 1000);
+                        }, 500);
 
                     } else
                         layer.msg('删除操作出错![' + rc.message + ']');
@@ -460,40 +436,35 @@
     <!-- 提交form -->
     function saveChange() {
         var  tag=$("#tag").val();
-        var code = $("#code").val();
-        var roleName = $("#roleName").val();
-       if($("input[type='checkbox']").is(':checked')){
-           var isSys ="0"
-       } else {
-           var isSys ="1"
-       }
+        var proCode = $("#proCode").val();
+        var proName = $("#proName").val();
+
         if(tag=="EDIT"){
-            var roleId = $("#roleId").val();
+            var proId = $("#proId").val();
         }else {
-            var roleId = "";
+            var proId = "";
         }
-        var remark = $("#remark").val();
-        var supId = $("#supId").val();
-        var orders = $("#orders").val();
-        if (code == null || code == '') {
+        var proType = $("#proType").val();
+        var reportor = $("#reportor").val();
+        var declareFunds = $("#declareFunds").val();
+        if (proCode == null || proCode == '') {
             layer.msg('请正确填写字典编码!');
             return false;
         }
-        if (remark == undefined || remark == null)  remark = "";
+
         $.ajax({
             type: "POST",
-            url: "/role/editRole.do",
+            url:"<%=basePath%>/b/project/editProject.do",
             dataType: "json",
             async: true,
             data: {
                 tag:tag,
-                roleId:roleId,
-                code: code,
-                roleName: roleName,
-                isSys: isSys,
-                supId: supId,
-                orders: orders,
-                remark: remark
+                id:proId,
+                proCode: proCode,
+                proName: proName,
+                proType: proType,
+                reportor: reportor,
+                declareFunds: declareFunds
             },
             success: function (rc) {
                 if (rc.code == '0') {

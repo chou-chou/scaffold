@@ -1,17 +1,20 @@
 package com.hrp.entity.system;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * LogItem
+ * SysLog
  * 操作日志类
  * @author KVLT
  * @date 2017-03-14.
  */
-public class LogItem implements Serializable {
+public class SysLog implements Serializable {
 
     private static final long serialVersionUID = -5034052907038321178L;
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /*** 日志ID */
     private Integer logId;
@@ -20,7 +23,7 @@ public class LogItem implements Serializable {
     private String username;
 
     /*** 创建时间 */
-    private Date createdate;
+    private Date createDate;
 
     /*** 操作 */
     private String handle;
@@ -63,12 +66,12 @@ public class LogItem implements Serializable {
         this.username = username;
     }
 
-    public Date getCreatedate() {
-        return createdate;
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setCreatedate(Date createdate) {
-        this.createdate = createdate;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     public String getHandle() {
@@ -125,5 +128,21 @@ public class LogItem implements Serializable {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    @Override
+    public String toString() {
+        return "SysLog{" +
+                "logId=" + logId +
+                ", username='" + username + '\'' +
+                ", createDate=" + createDate +
+                ", handle='" + handle + '\'' +
+                ", url='" + url + '\'' +
+                ", method='" + method + '\'' +
+                ", parameter='" + parameter + '\'' +
+                ", ip='" + ip + '\'' +
+                ", beginDate='" + beginDate + '\'' +
+                ", endDate='" + endDate + '\'' +
+                '}';
     }
 }

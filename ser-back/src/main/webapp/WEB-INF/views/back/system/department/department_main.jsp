@@ -69,11 +69,14 @@
                                 <!-- 工具按钮 新增/编辑/删除 -->
                                 <div>
                                     <p>
-                                        <button id="departmentAddBtn" class="inCtrl btn btn-sm btn-primary" onclick="">新增
+                                        <button id="departmentAddBtn" class="inCtrl btn btn-sm btn-primary" onclick="">
+                                            新增
                                         </button>
-                                        <button id="departmentModifyBtn" class="inCtrl btn btn-sm btn-primary" onclick="">编辑
+                                        <button id="departmentModifyBtn" class="inCtrl btn btn-sm btn-primary"
+                                                onclick="">编辑
                                         </button>
-                                        <button id="departmentDeleteBtn" class="inCtrl btn btn-sm btn-primary" onclick="">删除
+                                        <button id="departmentDeleteBtn" class="inCtrl btn btn-sm btn-primary"
+                                                onclick="">删除
                                         </button>
                                     </p>
                                 </div>
@@ -151,10 +154,33 @@
 
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label no-padding-right"
+                                                           for="sequence">排序:</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" id="sequence" name="sequence"
+                                                               placeholder="排序" class="col-xs-10 col-sm-5"
+                                                               value="${dept.sequence}"/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label no-padding-right"
                                                            for="address">地址:</label>
                                                     <div class="col-sm-10">
                                                         <textarea id="address" name="address" class="form-control"
                                                                   placeholder="地址">${dept.address}</textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label no-padding-right"
+                                                           for="isLeaf">
+                                                        是否为子节点:
+                                                    </label>
+                                                    <div class="col-sm-10 checkbox">
+                                                        <label>
+                                                            <input id="isLeaf" name="isLeaf" value="1"
+                                                                   class="ace ace-checkbox-2" type="checkbox"/>
+                                                            <span class="lbl">  注: 勾选即为子节点 </span>
+                                                        </label>
                                                     </div>
                                                 </div>
 
@@ -196,7 +222,6 @@
 
 <script type="text/javascript">
     var zTree;
-    var demoIframe;
 
     function addHoverDom(treeId, treeNode) {
         var sObj = $("#" + treeNode.tId + "_span");
@@ -228,7 +253,6 @@
         var removeBtn = $("#removeBtn_" + treeNode.tId);
         if (removeBtn)
             removeBtn.bind("click", function () {
-                alert(treeNode.name)
                 return removeDepartment(treeNode.id, treeNode.name);
             });
 
@@ -326,7 +350,6 @@
             },
             success: function (data) {
                 //var result = eval("(" + data + ")");  // 这个data不能直接使用，需要转化一下
-
                 t = $.fn.zTree.init(t, setting, data);
             }
         });
@@ -342,7 +365,13 @@
         var address = $("#address").val();
         var remark = $("#remark").val();
         var tag = $("#tag").val();
-
+        var sequence = $("#sequence").val();
+        var tempId = $("#deptId").val();
+        if ($("input[type='checkbox']").is(':checked')) {
+            var isLeaf = "0"
+        } else {
+            var isLeaf = "1"
+        }
         if (supId == '') {
             layer.msg("请选择一个合适的上级部门!");
             return false;
@@ -361,35 +390,44 @@
                 described: described,
                 address: address,
                 remark: remark,
-                tag: tag
+                tag: tag,
+                isLeaf: isLeaf,
+                sequence: sequence,
+                tempId: deptId
             },
             success: function (rc) {
                 if (rc.code == '0') {
                     var zTree = $.fn.zTree.getZTreeObj("departmentTree");
-                    alert(rc.message);
 
                     if (tag == "ADD") {
-                        var supId = null;
+//                        location.reload();
+                        var supNode = null;
                         if (rc.data != null && rc.data.supId != null) {
-                            supId = zTree.getNodeByTId("departmentTree_" + rc.data.supId.deptId);  // 父级
+                            supNode = zTree.getNodeByParam("code", rc.data.supDepartment.deptCode, null);
                         }
 
-                        if (supId != undefined && supId != null) {
-                            zTree.addNodes(supId, -1, {
+                        if (supNode != undefined && supNode != null) {
+                            var treeNode_N = [{
                                 id: rc.data.deptId,
-                                pId: rc.data.deptCode,
+                                tId: rc.data.deptId,
+                                pId: rc.data.supId,
                                 code: rc.data.deptCode,
-                                name: rc.data.deptName
-                            });
-                            var n = zTree.getNodeByParam("id", rc.data.deptId, null);  // 根据新的id找到新添加的节点
-                            zTree.selectNode(n);  // 让新添加的节点处于选中状态
-                        }
-                    }
+                                name: rc.data.deptName,
+                                isParent: false
+                            }];
 
-                    if (tag == "EDIT") {
-                        var node = zTree.getNodeByParam("id", rc.data, null);
-                        node.name = deptName;
-                        zTree.updateNode(node);
+                            zTree.addNodes(supNode, treeNode_N);
+
+                            //var n = zTree.getNodeByParam("id", rc.data.deptId, null);  // 根据新的id找到新添加的节点
+                            //zTree.selectNode(n);  // 让新添加的节点处于选中状态
+//                        }
+                        }
+
+                        if (tag == "EDIT") {
+                            var node = zTree.getNodeByParam("id", rc.data, null);
+                            node.name = deptName;
+                            zTree.updateNode(node);
+                        }
                     }
                 }
             }
@@ -403,13 +441,12 @@
         $("#described").empty();
         $("#address").empty();
         $("#remark").empty();
+        $("#sequence").empty();
+        $("[name=isLeaf]:checkbox").prop("checked", false);
     }
 
     // 新增Form/编辑Form
     function editDepartment(deptId, tag) {
-
-        alert(deptId + " " + tag);
-
         $.ajax({
             type: "GET",
             url: "<%=basePath%>b/department/editDepartment.do",
@@ -420,8 +457,6 @@
                 tag: tag
             },
             success: function (dept) {
-                alert(dept);
-
                 if (tag == 'ADD') {
                     $("#supCode").val(dept.deptCode).trigger('change.select2');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
 
@@ -431,6 +466,8 @@
                     $("#deptName").val("");
                     $("#address").val("");
                     $("#remark").val("");
+                    $("#sequence").val("");
+                    $("[name=isLeaf]:checkbox").prop("checked", false);
                 }
 
                 if (tag == 'EDIT') {
@@ -440,13 +477,18 @@
                         $("#supCode").val('-1').trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
                     }
 
-                    $("#supCode").attr("value", dept.supId);
                     $("#deptId").val(dept.deptId);
                     $("#described").val(dept.described);
                     $("#deptCode").val(dept.deptCode);
                     $("#deptName").val(dept.deptName);
                     $("#address").val(dept.address);
                     $("#remark").val(dept.remark);
+                    if (dept.isLeaf == '0') {
+                        $("#isLeaf").attr("checked", 'true');
+                    } else {
+                        $("#isLeaf").attr("checked", 'false');
+                    }
+                    $("#sequence").val(dept.sequence);
                 }
             }
         });

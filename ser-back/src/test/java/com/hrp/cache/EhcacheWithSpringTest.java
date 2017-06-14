@@ -61,13 +61,19 @@ public class EhcacheWithSpringTest extends BaseMvcTest {
         logger.info(" ------ 第二次查询 ------ ");
         menus = menuService.listAllMenu();
 
-
         // 在classpath:config/ehcache.xml中，设置了userCache的缓存时间为3000 ms, 这里设置等待
         Thread.sleep(3000);
 
         logger.info("\n缓存过期，再次查询!");
         logger.info(" ------ 第三次查询 ------ ");
         menus = menuService.listAllMenu();
+
+        Menu menu = new Menu();
+        menu.setMenuUrl("#####");
+        menu.setMenuName("测试");
+        menu.setRemark("32323");
+
+        menuService.saveMenu(menu);
     }
 
 }

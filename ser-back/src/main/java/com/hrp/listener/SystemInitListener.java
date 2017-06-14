@@ -21,12 +21,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * WebApplicationListener
+ * SystemInitListener
  * 系统初始化监听器
  * @author KVLT
  * @date 2017-05-25.
  */
-public class WebApplicationListener implements ServletContextListener {
+public class SystemInitListener implements ServletContextListener {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -109,13 +109,6 @@ public class WebApplicationListener implements ServletContextListener {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * 系统映射
-     */
-    public void mvcMapping() {
-
     }
 
 }

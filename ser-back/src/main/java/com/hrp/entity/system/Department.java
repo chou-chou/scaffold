@@ -16,13 +16,13 @@ public class Department implements Serializable {
     private String deptName;  // 部门名称
     private String supId;  // 上级编码
     private Integer sequence = 0;  // 顺序
-    private Boolean isLeaf;  // 是否叶子结点
+    private String  isLeaf;  // 是否叶子结点
     private String described;  // 部门职能描述
     private String address;  // 地址
     private String remark;  // 备注
 
     private Department supDepartment;  // 父部门
-    private List<Department> subDepartments;  // 子部门集合
+    private List<Department> supDepartments;  // 子部门集合
 
     public Integer getDeptId() {
         return deptId;
@@ -88,12 +88,12 @@ public class Department implements Serializable {
         this.supDepartment = supDepartment;
     }
 
-    public List<Department> getSubDepartments() {
-        return subDepartments;
+    public List<Department> getSupDepartments() {
+        return supDepartments;
     }
 
-    public void setSubDepartments(List<Department> subDepartments) {
-        this.subDepartments = subDepartments;
+    public void setSubDepartments(List<Department> supDepartments) {
+        this.supDepartments = supDepartments;
     }
 
     public Integer getSequence() {
@@ -104,11 +104,11 @@ public class Department implements Serializable {
         this.sequence = sequence;
     }
 
-    public Boolean getLeaf() {
+    public String  getLeaf() {
         return isLeaf;
     }
 
-    public void setLeaf(Boolean leaf) {
+    public void setLeaf(String   leaf) {
         isLeaf = leaf;
     }
 }

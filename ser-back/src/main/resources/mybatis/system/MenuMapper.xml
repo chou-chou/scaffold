@@ -99,7 +99,7 @@
     <!-- 新增菜单 -->
     <insert id="saveMenu" parameterType="Menu" useGeneratedKeys="true" keyProperty="menuId">
         insert into T_MENU (<trim suffixOverrides=",">
-            <if test="menuName != null and menuName != ''">MENU_ID,</if>
+            <if test="menuName != null and menuName != ''">MENU_NAME,</if>
             <if test="menuUrl != null and menuUrl != ''">MENU_URL,</if>
             <if test="isLeaf != null and isLeaf != ''">IS_LEAF,</if>
             <if test="rank != null and rank != ''">RANK,</if>

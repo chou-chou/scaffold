@@ -29,7 +29,7 @@
     <script src="<%=basePath%>/plugins/dataTables/extends/button/buttons.colVis.js"></script>
     <script src="<%=basePath%>/plugins/dataTables/extends/select/dataTables.select.js"></script>
 
-    <link rel="stylesheet" href="<%=basePath%>plugins/select2/css/select2.min.css"></link>
+    <link rel="stylesheet" href="<%=basePath%>plugins/select2/css/select2.min.css"/>
     <script src="<%=basePath%>/plugins/select2/js/select2.full.js"></script>
     <script src="<%=basePath%>/plugins/select2/js/i18n/zh-CN.js"></script>
 
@@ -103,10 +103,10 @@
                                                     <td class="center">${role.code}</td>
                                                     <td class="center">${role.roleName}</td>
                                                     <td style="width:120px;" class="center">
-                                                        <c:if test="${role.isSys == 0}">
+                                                        <c:if test="${role.isSys == 1}">
                                                             <span class="label label-success arrowed">是</span>
                                                         </c:if>
-                                                        <c:if test="${role.isSys == 1}">
+                                                        <c:if test="${role.isSys == 0}">
                                                             <span class="label label-important arrowed-in">否</span>
                                                         </c:if>
                                                     </td>
@@ -348,7 +348,7 @@
         }
         $.ajax({
             type: "GET",
-            url: "/b/role/editRole.do",
+            url: "b/role/editRole.do",
             dataType: "json",
             async: true,
             data: {
@@ -363,7 +363,7 @@
                 $("#roleId").val(role.roleId);
                 $("#code").val(role.code);
                 $("#roleName").val(role.roleName);
-                if (role.isSys == '0') {
+                if (role.isSys == '1') {
                     $("#isSys").attr("checked", 'true');
                 } else {
                     $("#isSys").attr("checked", 'false');
@@ -377,93 +377,93 @@
     }
 
     //单个删除
-    function delRole(id){
-        layer.confirm('您确定要删除该字典数据？', {
-            btn: ['确定', '暂时不要']  // 按钮
-        }, function(){
-            layer.msg('您点击了确定', {icon:1});
+        function delRole(id){
+            layer.confirm('您确定要删除该角色数据？', {
+                btn: ['确定', '暂时不要']  // 按钮
+            }, function(){
+                layer.msg('您点击了确定', {icon:1});
 
-            if (id == '') {
-                layer.msg("删除操作出错！");
-                return false;
-            }
-
-            // 执行异步删除动作
-            $.ajax({
-                type: "POST",
-                url: "/b/role/deleteRoles.do",
-                dataType: "json",
-                async: true,
-                data: {
-                    roleIds: id
-                },
-                success: function (rc) {
-                    if (rc.code == '0') {
-                        layer.msg('已为您删除该字典数据', {icon:1});
-                        setTimeout(function () {
-                            location.reload();
-                        },1000);
-                    } else
-                        layer.msg('删除操作出错![' + rc.message + ']');
+                if (id == '') {
+                    layer.msg("删除操作出错！");
+                    return false;
                 }
+
+                // 执行异步删除动作
+                $.ajax({
+                    type: "POST",
+                    url: "<%=basePath%>/b/role/deleteRoles.do",
+                    dataType: "json",
+                    async: true,
+                    data: {
+                        roleIds: id
+                    },
+                    success: function (rc) {
+                        if (rc.code == '0') {
+                            layer.msg('已为您删除该角色数据', {icon:1});
+                            setTimeout(function () {
+                                location.reload();
+                            },1000);
+                        } else
+                            layer.msg('删除操作出错![' + rc.message + ']');
+                    }
+                });
+
+                return true;
+            }, function() {
+
+                return true;
             });
 
-            return true;
-        }, function() {
+            return false;
 
-            return true;
-        });
+        };
 
-        return false;
-
-    };
-
-    //批量删除
-    function makeAll(){
-        layer.confirm('您确定要删除该字典数据？', {
-            btn: ['确定', '暂时不要']  // 按钮
-        }, function(){
-            layer.msg('您点击了确定', {icon:1});
-            var roleIds = "";
-            $('input:checkbox[name=ids]:checked').each(function(i){
-                if(0==i){
-                    roleIds = $(this).val();
-                }else{
-                    roleIds += (","+$(this).val());
+        //批量删除
+        function makeAll(){
+            layer.confirm('您确定要删除该角色数据？', {
+                btn: ['确定', '暂时不要']  // 按钮
+            }, function(){
+                layer.msg('您点击了确定', {icon:1});
+                var roleIds = "";
+                $('input:checkbox[name=ids]:checked').each(function(i){
+                    if(0==i){
+                        roleIds = $(this).val();
+                    }else{
+                        roleIds += (","+$(this).val());
+                    }
+                });
+                if (roleIds == '') {
+                    layer.msg("请选择要删除的信息!");
+                    return false;
                 }
+
+
+                // 执行异步删除动作
+                $.ajax({
+                    type: "POST",
+                    url: "<%=basePath%>/b/role/deleteRoles.do",
+                    dataType: "json",
+                    async: true,
+                    data: {
+                        roleIds: roleIds
+                    },
+                    success: function (rc) {
+                        if (rc.code == '0') {
+                            layer.msg('已为您删除该角色数据', {icon:1});
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000);
+
+                        } else
+                            layer.msg('删除操作出错![' + rc.message + ']');
+                    }
+                });
+
+                return true;
+            }, function() {
+
+                return true;
             });
-            if (roleIds == '') {
-                layer.msg("请选择要删除的信息!");
-                return false;
-            }
-
-
-            // 执行异步删除动作
-            $.ajax({
-                type: "POST",
-                url: "/b/role/deleteRoles.do",
-                dataType: "json",
-                async: true,
-                data: {
-                    roleIds: roleIds
-                },
-                success: function (rc) {
-                    if (rc.code == '0') {
-                        layer.msg('已为您删除该字典数据', {icon:1});
-                        setTimeout(function () {
-                            location.reload();
-                        }, 1000);
-
-                    } else
-                        layer.msg('删除操作出错![' + rc.message + ']');
-                }
-            });
-
-            return true;
-        }, function() {
-
-            return true;
-        });
 
         return false;
 
@@ -476,9 +476,9 @@
         var code = $("#code").val();
         var roleName = $("#roleName").val();
        if($("input[type='checkbox']").is(':checked')){
-           var isSys ="0"
-       } else {
            var isSys ="1"
+       } else {
+           var isSys ="0"
        }
         if(tag=="EDIT"){
             var roleId = $("#roleId").val();
@@ -489,13 +489,13 @@
         var supId = $("#supId").val();
         var orders = $("#orders").val();
         if (code == null || code == '') {
-            layer.msg('请正确填写字典编码!');
+            layer.msg('请正确填写角色编码!');
             return false;
         }
         if (remark == undefined || remark == null)  remark = "";
         $.ajax({
             type: "POST",
-            url: "/b/role/editRole.do",
+            url: "<%=basePath%>/b/role/editRole.do",
             dataType: "json",
             async: true,
             data: {

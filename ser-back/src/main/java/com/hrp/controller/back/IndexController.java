@@ -104,7 +104,7 @@ public class IndexController extends BaseController {
 
             // TODO 转换为json
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
         return menuList;
@@ -373,7 +373,7 @@ public class IndexController extends BaseController {
         if (user == null) {
             map.put("valid", true);
         } else {
-            if(!StringUtil.isEmpty(userId )&& userId.equals(user.getUsername())){
+            if(!StringUtil.isEmpty(userId )&& userId.equals(user.getUserName())){
                 map.put("valid",true);
             }else {
                 map.put("valid", false);

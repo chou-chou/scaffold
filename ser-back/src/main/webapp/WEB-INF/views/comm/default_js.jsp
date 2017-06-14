@@ -37,6 +37,8 @@
 
 <script type="text/javascript" src="<%=basePath%>/plugins/zTree/3.5/jquery.ztree.all-3.5.min.js" ></script>
 <script type="text/javascript" src="<%=basePath%>/plugins/layer/layer.js" ></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/validation/jquery.validate.js"></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/validation/jquery.validate.messages_zh.js"></script>
 
 <script type="text/javascript">
     // Select2 --> Tree

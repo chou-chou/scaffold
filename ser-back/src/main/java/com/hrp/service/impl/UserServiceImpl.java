@@ -37,8 +37,12 @@ public class UserServiceImpl implements UserService {
         subject.logout();
     }
 
-    public PageData getUserByNameAndPwd(PageData pd) throws Exception {
-        return (PageData) dao.findForObject("UserMapper.getUserInfo", pd);
+    public User getUserByNameAndPwd(String username, String password) throws Exception {
+        PageData pd = new PageData();
+        pd.put("username", username);
+        pd.put("password", password);
+
+        return (User) dao.findForObject("UserMapper.getUserInfo", pd);
     }
 
     public User getUserByLoginName(String account) throws Exception {
@@ -84,8 +88,9 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    public void deleteAllU(String[] USER_IDS) throws Exception {
-
+    public boolean deleteAllU(String[] USER_IDS) throws Exception {
+        Integer result = (Integer) dao.delete("UserMapper.batchDeleteUser", USER_IDS);
+        return (result > 0) ? true : false;
     }
 
     public List<PageData> listAllUser(PageData pd) throws Exception {
@@ -157,6 +162,17 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    public Object addUser(User user) throws Exception {
+        return dao.save("UserMapper.saveUser",user);
+    }
+
+    @Override
+    public boolean updateUser(PageData pd) throws Exception {
+        Integer result = (Integer) dao.update("UserMapper.updateUser", pd);
+        return (result > 0) ? true : false;
+
+    }
+
     /**
      * 用户列表
      * @param page
@@ -166,5 +182,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<PageData> listPdPageUser(Page page) throws Exception {
         return (List<PageData>) dao.findForList("UserMapper.userListPage", page);
+    }
+
+    @Override
+    public User getByUserId(PageData pd) throws Exception {
+        return (User) dao.findForObject("UserMapper.getByUserId", pd);
     }
 }

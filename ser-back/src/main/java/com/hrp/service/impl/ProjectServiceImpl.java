@@ -64,7 +64,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     public boolean deleteProjectById(int[] ids) throws Exception {
-        Integer result = (Integer) baseDao.delete("RoleMapper.batchDeleteProject", ids);
+        Integer result = (Integer) baseDao.delete("ProjectMapper.batchDeleteProject", ids);
         return (result > 0) ? true : false;
     }
 
@@ -72,7 +72,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public TbProject getByProjectId(PageData pd) throws Exception {
-        return (TbProject) baseDao.findForObject("ProjectMapper.getByProject", pd);
+        return (TbProject) baseDao.findForObject("ProjectMapper.getByProjectId", pd);
     }
     @Override
     public boolean updateProject(PageData pd) throws Exception {

@@ -34,8 +34,8 @@ public class PasswordMaker {
 
     @Test
     public void md5Password() {
-        String username = "kevin";
-        String password = "kevin";
+        String username = "admin";
+        String password = "admin";
 
         String s = EncryptUtil.md5Password(username, password);
         System.out.println(s);

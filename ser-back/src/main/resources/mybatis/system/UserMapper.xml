@@ -6,7 +6,7 @@
 
     <resultMap type="User" id="userMap">
         <id column="USER_ID" property="userId"/>
-        <result column="USERNAME" property="username"/>
+        <result column="USERNAME" property="userName"/>
         <result column="PASSWORD" property="password"/>
         <result column="LOCKED" property="locked"/>
         <result column="EXPIRED" property="expired"/>
@@ -14,6 +14,9 @@
         <result column="ENABLED" property="enabled"/>
         <result column="ACCOUNT" property="account"/>
         <result column="NICKNAME" property="nickname"/>
+        <result column="EMAIL" property="email"/>
+        <result column="TELEPHONE" property="telephone"/>
+
     </resultMap>
 
     <resultMap type="User" id="userRoleMap" extends="userMap">
@@ -38,32 +41,32 @@
 
     <!-- 字段 -->
     <sql id="field">
-        USER_ID, ACCOUNT, USERNAME, NICKNAME, PASSWORD, ENABLED, LOCKED, EXPIRED, LAST_LOGIN, REMARK
+        USER_ID, ACCOUNT, USERNAME, NICKNAME, PASSWORD, ENABLED, LOCKED, EXPIRED, LAST_LOGIN, REMARK,EMAIL,TELEPHONE
     </sql>
 
     <!-- 字段值 -->
     <sql id="fieldValue">
-        #{USER_ID}, #{ACCOUNT}, #{USERNAME}, #{NICKNAME}, #{PASSWORD}, #{ENABLED}, #{LOCKED}, #{EXPIRED}, #{LAST_LOGIN}, #{REMARK}
+        #{USER_ID}, #{ACCOUNT}, #{USERNAME}, #{NICKNAME}, #{PASSWORD}, #{ENABLED}, #{LOCKED}, #{EXPIRED}, #{LAST_LOGIN}, #{REMARK}, #{EMAIL}, #{TELEPHONE}
     </sql>
 
     <!-- 属性值 -->
     <sql id="propertyValue">
-        #{userId},#{account},#{username},#{password},#{enabled},#{locked},#{expired},#{lastLogin},#{remark}
+        #{userId},#{account},#{userName},#{password},#{enabled},#{locked},#{expired},#{lastLogin},#{remark},#{email}, #{telephone}
     </sql>
 
     <!-- 用户登录 -->
-    <select id="getUserInfo" parameterType="pd" resultType="pd">
+    <select id="getUserInfo" parameterType="pd" resultMap="userMap">
         select <include refid="field"></include> from <include refid="tableName"></include>
         where 1=1
-        <if test="ACCOUNT!=null and PASSWORD!=null">
-            and ACCOUNT = #{ACCOUNT} and PASSWORD = #{PASSWORD}
+        <if test="userName!=null and password!=null">
+            and USERNAME = #{userName} and PASSWORD = #{password}
         </if>
         <if test="USER_ID!=null">
-            and USER_ID = #{USER_ID}
+            and USER_ID = #{userId}
         </if>
     </select>
 
-    <select id="getByUserId" parameterType="User" resultMap="userMap">
+    <select id="getByUserId" parameterType="pd" resultMap="userMap">
         SELECT
           <include refid="field"></include>
         FROM
@@ -171,7 +174,7 @@
         </selectKey>
         insert into T_USER (<trim suffixOverrides=",">
             <if test="userId != null and userId != ''">USER_ID,</if>
-            <if test="username != null and username != ''">USERNAME,</if>
+            <if test="userName != null and userName != ''">USERNAME,</if>
             <if test="account != null and account != ''">ACCOUNT,</if>
             <if test="nickname != null and nickname != ''">NICKNAME,</if>
             <if test="password != null and password != ''">PASSWORD,</if>
@@ -179,10 +182,12 @@
             <if test="locked != null and locked != ''">LOCKED,</if>
             <if test="enabled != null and enabled != ''">ENABLED,</if>
             <if test="remark != null and remark != ''">REMARK,</if>
-            <if test="lastLogin != null and lastLogin != ''">LAST_LOGIN</if></trim>)
+            <if test="lastLogin != null and lastLogin != ''">LAST_LOGIN</if></trim>),
+            <if test="email != null and email != ''">EMAI</if>,
+            <if test="telephone != null and telephone != ''">TELEPHONE</if>
         values(<trim suffixOverrides=",">
-            <if test="userId != null and username != ''">#{userId},</if>
-            <if test="username != null and username != ''">#{username},</if>
+            <if test="userId != null and userId != ''">#{userId},</if>
+            <if test="userName != null and userName != ''">#{userName},</if>
             <if test="account != null and account != ''">#{account},</if>
             <if test="nickname != null and nickname != ''">#{nickname},</if>
             <if test="password != null and password != ''">#{password},</if>
@@ -190,13 +195,15 @@
             <if test="locked != null and locked != ''">#{locked},</if>
             <if test="enabled != null and enabled != ''">#{enabled},</if>
             <if test="remark != null and remark != ''">#{remark},</if>
-            <if test="lastLogin != null and lastLogin != ''">#{lastLogin}</if></trim>)
+            <if test="lastLogin != null and lastLogin != ''">#{lastLogin}</if></trim>),
+            <if test="email != null and email != ''">#{email}</if>,
+            <if test="telephone != null and telephone != ''">#{telephone}</if>
     </insert>
 
-    <update id="updateUser" parameterType="User">
+    <update id="updateUser" parameterType="pd">
         update T_USER
         <set>
-            <if test="username != null and username != ''">USERNAME=#{username},</if>
+            <if test="userName != null and userName != ''">USERNAME=#{userName},</if>
             <if test="account != null and account != ''">ACCOUNT=#{account},</if>
             <if test="nickname != null and nickname != ''">NICKNAME=#{nickname},</if>
             <if test="password != null and password != ''">PASSWORD=#{password},</if>
@@ -204,7 +211,9 @@
             <if test="locked != null and locked != ''">LOCKED=#{locked},</if>
             <if test="enabled != null and enabled != ''">ENABLED=#{enabled},</if>
             <if test="remark != null and remark != ''">REMARK=#{remark},</if>
-            <if test="lastLogin != null and lastLogin != ''">LAST_LOGIN=#{lastLogin}</if>
+            <if test="lastLogin != null and lastLogin != ''">LAST_LOGIN=#{lastLogin},</if>
+            <if test="email != null and email != ''">EMAIL=#{email}</if>,
+            <if test="telephone != null and telephone != ''">TELEPHONE=#{telephone}</if>
         </set>
         where USER_ID = #{userId}
     </update>
@@ -229,7 +238,7 @@
     <delete id="batchDeleteUser" parameterType="String">
         delete from
         <include refid="tableName"></include>
-        where  id  in
+        where  USER_ID  in
         <foreach item="userId" collection="array" open="(" separator="," close=")">
             #{userId}
         </foreach>

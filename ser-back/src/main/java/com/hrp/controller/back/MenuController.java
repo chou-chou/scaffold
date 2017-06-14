@@ -158,7 +158,7 @@ public class MenuController extends BaseController {
         logBefore(logger, Jurisdiction.getUsername()+"修改菜单");
         ModelAndView mv = this.getModelAndView();
         try{
-            menuService.edit(menu);
+            menuService.updateMenu(menu);
         } catch(Exception e){
             logger.error(e.toString(), e);
         }

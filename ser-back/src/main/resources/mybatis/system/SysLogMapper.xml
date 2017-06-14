@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+    <mapper namespace="SysLogMapper">
+
+    <resultMap type="SysLog" id="sysLogMap">
+        <id column="LOG_ID" property="logId"/>
+        <result column="USERNAME" property="username"/>
+        <result column="CREATE_DATE" property="createDate"/>
+        <result column="HANDLE" property="handle"/>
+        <result column="url" property="url"/>
+        <result column="METHOD" property="method"/>
+        <result column="PARAMETER" property="parameter"/>
+        <result column="IP" property="ip"/>
+        <result column="BEGIN_DATE" property="beginDate"/>
+        <result column="END_DATE" property="endDate"/>
+    </resultMap>
+
+    <!-- 查询日志 -->
+    <select id="getLogInfo" parameterType="pd" resultType="pd">
+        select * from T_SYS_LOG
+        where 1=1
+        <if test="USERNAME!=null and USERNAME!=''">
+            and USERNAME = #{USERNAME}
+        </if>
+    </select>
+
+    <!-- 新增日志 -->
+    <insert id="saveSysLog" parameterType="SysLog" useGeneratedKeys="true" keyProperty="logId">
+        insert into T_SYS_LOG (<trim suffixOverrides=",">
+        <if test="username != null and username != ''">USERNAME,</if>
+        <if test="createDate != null and createDate != ''">CREATE_DATE,</if>
+        <if test="handle != null and handle != ''">HANDLE,</if>
+        <if test="url != null and url != ''">URL,</if>
+        <if test="method != null and method != ''">METHOD,</if>
+        <if test="parameter != null and parameter != ''">PARAMETER,</if>
+        <if test="ip != null and ip != ''">IP,</if>
+        <if test="beginDate != null and beginDate != ''">BEGIN_DATE,</if>
+        <if test="endDate != null and endDate != ''">END_DATE</if>
+    </trim>)
+        values(<trim suffixOverrides=",">
+        <if test="username != null and username != ''">#{username},</if>
+        <if test="createDate != null and createDate != ''">#{createDate},</if>
+        <if test="handle != null and handle != ''">#{handle},</if>
+        <if test="url != null and url != ''">#{url},</if>
+        <if test="method != null and method != ''">#{method},</if>
+        <if test="parameter != null and parameter != ''">#{parameter},</if>
+        <if test="ip != null and ip != ''">#{ip},</if>
+        <if test="beginDate != null and beginDate != ''">#{beginDate},</if>
+        <if test="endDate != null and endDate != ''">#{endDate}</if>
+    </trim>)
+    </insert>
+
+    <insert id="batchSave" parameterType="java.util.List">
+        insert into T_SYS_LOG (USERNAME, CREATE_DATE, HANDLE, URL, METHOD, PARAMETER, IP, BEGIN_DATE, END_DATE)
+        values
+        <foreach collection="list" item="sysLog" index="index" separator=",">
+            (#{sysLog.username}, #{sysLog.createDate}, #{sysLog.handle}, #{sysLog.url}, #{sysLog.method},
+            #{sysLog.parameter},
+            #{sysLog.ip}, #{sysLog.beginDate}, #{sysLog.endDate})
+        </foreach>
+    </insert>
+
+    <!-- 批量删除 -->
+    <delete id="batchDeleteUser" parameterType="String">
+        delete from T_SYS_LOG
+        where id  in
+        <foreach item="logId" collection="logIds" open="(" separator="," close=")">
+            #{logId}
+        </foreach>
+    </delete>
+
+</mapper>

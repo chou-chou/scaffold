@@ -11,6 +11,9 @@
 
     <context:property-placeholder location="classpath:config/system.properties" ignore-unresolvable="true"/>
 
+    <!-- Shiro生命周期处理器  保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
     <!-- ========================================== 会话管理 ========================================== -->
     <!-- 会话ID生成器 -->
     <bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
@@ -173,6 +176,8 @@
                 /plugins/**                 = anon
                 /static/** 			        = anon
                 /swagger/**                 = anon
+                /api-docs = anon
+                /api-docs/** = anon
                 /img/**                     = anon
                 /uploadFiles/**             = anon
 
@@ -207,8 +212,5 @@
             </map>
         </property>
 	</bean>
-
-    <!-- Shiro生命周期处理器  保证实现了Shiro内部lifecycle函数的bean执行 -->
-    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
 
 </beans>

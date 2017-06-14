@@ -16,6 +16,7 @@
         <typeAlias type="com.hrp.utils.plugins.Page" alias="Page"/>
 
         <!-- system -->
+        <typeAlias type="com.hrp.entity.system.SysLog" alias="SysLog" />
         <typeAlias type="com.hrp.entity.system.TreeNode" alias="TreeNode"/>
         <typeAlias type="com.hrp.entity.system.Authority" alias="Authority"/>
 		<typeAlias type="com.hrp.entity.system.User" alias="User"/>

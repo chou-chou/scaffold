@@ -14,7 +14,7 @@ import java.util.List;
 public class User implements Serializable {
 
     private String userId;  // 用户编码
-    private String username;  // 用户名称（中文）
+    private String userName;  // 用户名称（中文）
     private String account;  // 用户账号（英文）
     private String nickname;  // 昵称
     private String password;  // 面貌
@@ -27,6 +27,25 @@ public class User implements Serializable {
 
     private String salt; // 盐钥
     private String credentialsSalt;
+    private String email;//邮箱
+    private String telephone;//号码
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelephone() {
+
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
 
     private List<Role> roleList;  // 所属角色
     private List<Department> deptList;  // 管辖部门
@@ -39,12 +58,12 @@ public class User implements Serializable {
         this.userId = userId;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getAccount() {
@@ -112,7 +131,7 @@ public class User implements Serializable {
     }
 
     public String getSalt() {
-        return username + Constant.salt;
+        return userName + Constant.salt;
     }
 
     public void setSalt(String salt) {
@@ -144,7 +163,7 @@ public class User implements Serializable {
     }
 
     public String getCredentialsSalt() {
-        return username + salt;
+        return userName + salt;
     }
 
     public void setCredentialsSalt(String credentialsSalt) {
@@ -155,7 +174,7 @@ public class User implements Serializable {
     public String toString() {
         return "User{" +
                 "userId='" + userId + '\'' +
-                ", username='" + username + '\'' +
+                ", username='" + userName + '\'' +
                 ", account='" + account + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", password='" + password + '\'' +
