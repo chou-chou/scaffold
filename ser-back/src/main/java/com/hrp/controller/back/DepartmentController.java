@@ -42,7 +42,7 @@ public class DepartmentController extends BaseController {
      * 部门模块主页面
      */
     @RequestMapping(value = "/main.do", method = RequestMethod.GET)
-    @MvcMapping(url = "/b/department/main.do", path = BASE_PATH + "department_main", type = MvcMapping.ViewType.JSP)
+    @MvcMapping(tag = "department:main", path = BASE_PATH + "department_main", type = MvcMapping.ViewType.JSP)
     public ModelAndView list(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mv = this.getModelAndView(BASE_PATH + "department_main");
 
@@ -76,7 +76,7 @@ public class DepartmentController extends BaseController {
         try {
             deptList = this.departmentService.selectDepartmentCascade(pd);
         } catch (Exception e) {
-            logger.info("获取字典数据列表出错...");
+            logger.info("获取部门数据列表出错...");
             e.printStackTrace();
         }
 
@@ -114,6 +114,9 @@ public class DepartmentController extends BaseController {
     @RequestMapping(value = "/editDepartment.do", method = RequestMethod.POST)
     public void editDepartmentPost(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
         String tag = request.getParameter("tag");
+        if ("".equals(tag)){
+            tag="ADD";
+        }
         Result rc = new Result();
 
         pd = this.getPageData();
@@ -146,7 +149,7 @@ public class DepartmentController extends BaseController {
                     department.setDescribed(described);
                     department.setRemark(remark);
                     department.setLeaf(isLeaf);
-                    department.setLeaf(sequence);
+                    department.setSequence(Integer.valueOf(sequence));
                     Integer res = (Integer) this.departmentService.saveDepartment(department);  // mybatis insert后Department会获取实体数据，包括新增的id
 
                     Department supDep = this.departmentService.getBySupDep(supId);  // 有可能是根级root -> -1
@@ -215,5 +218,7 @@ public class DepartmentController extends BaseController {
 
         JsonUtil.writeJsonToResponse(response, rc, JsonUtil.OBJECT_TYPE_BEAN);
     }
+
+
 
 }

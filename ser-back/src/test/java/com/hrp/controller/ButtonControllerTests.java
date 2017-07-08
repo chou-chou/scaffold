@@ -71,7 +71,7 @@ public class ButtonControllerTests extends BaseMvcTest {
                 for (Method method : methods) {
                     if (method.isAnnotationPresent(MvcMapping.class)) {
                         MvcMapping mvcMapping = method.getAnnotation(MvcMapping.class);
-                        String url = mvcMapping.url();
+                        String url = mvcMapping.tag();
                         String path = mvcMapping.type().getPrefix() + mvcMapping.path() + mvcMapping.type().getSuffix();
                         mvcMap.put(url, path);
                     }

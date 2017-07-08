@@ -4,6 +4,7 @@ import com.hrp.dao.BaseDao;
 import com.hrp.entity.system.Department;
 import com.hrp.entity.system.Dictionary;
 import com.hrp.entity.system.TreeNode;
+import com.hrp.entity.system.UserDept;
 import com.hrp.service.DepartmentService;
 import com.hrp.utils.PageData;
 import org.springframework.stereotype.Service;
@@ -59,9 +60,25 @@ public class DepartmentServiceImpl implements DepartmentService {
     public Object saveDepartment(Department dep) throws Exception {
         return baseDao.save("DepartmentMapper.saveDepartmentBean", dep);
     }
+
     @Override
     public Boolean deleteByIds(PageData pd) throws Exception {
         Integer result = (Integer) baseDao.delete("DepartmentMapper.deleteDepartment", pd);
         return (result > 0) ? true : false;
+    }
+
+    @Override
+    public UserDept getUserDept(PageData pd) throws Exception {
+        return (UserDept) baseDao.findForObject("DepartmentMapper.getUserDept", pd);
+    }
+
+    @Override
+    public Object upadteUserDept(UserDept userDept) throws Exception {
+        return baseDao.update("DepartmentMapper.updateUserDept", userDept);
+    }
+
+    @Override
+    public Object insUserDept(UserDept userDept) throws Exception {
+        return baseDao.save("DepartmentMapper.saveUserDept", userDept);
     }
 }

@@ -8,7 +8,7 @@
     <!--****************作业*************************** -->
     <!-- 删除日志 -->
     <bean id="removeLogDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
-        <property name="jobClass" value="com.hrp.task.RemoveLogJob" />
+        <property name="jobClass" value="com.hrp.task.RemoveLogTask"/>
         <property name="durability" value="true"></property>
     </bean>
     

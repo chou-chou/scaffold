@@ -37,9 +37,9 @@
             <!-- 系统设置面板 -->
             <%--<%@include file="setting_panel.jsp" %>--%>
 
-            <div class="content-iframe" style="overflow: hidden;">
+            <div class="content-iframe" style="overflow: visible;">
                 <div class="mainContent" id="content-main" style="margin: 10px; margin-bottom: 0px; padding: 0;">
-                    <iframe class="LRADMS_iframe" width="100%" height="100%" src="c/system/mapping.do"
+                    <iframe class="LRADMS_iframe" width="100%" height="100%" src="<%=basePath%>c/system/mapping.do"
                             frameborder="0" data-id=""></iframe><!-- default.html -->
                 </div>
             </div><!-- /.content-iframe -->

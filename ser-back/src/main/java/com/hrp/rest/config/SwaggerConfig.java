@@ -1,12 +1,16 @@
 package com.hrp.rest.config;
 
-import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
-import com.mangofactory.swagger.models.dto.ApiInfo;
-import com.mangofactory.swagger.plugin.EnableSwagger;
-import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * SwaggerConfig
@@ -15,35 +19,45 @@ import org.springframework.context.annotation.Configuration;
  * @author KVLT
  * @date 2017-06-02.
  */
-@Configuration
-@EnableSwagger
-public class SwaggerConfig {
+//@Configuration
+@EnableWebMvc
+@EnableSwagger2
+public class SwaggerConfig extends WebMvcConfigurerAdapter {
 
-    private SpringSwaggerConfig springSwaggerConfig;
-
-    @Autowired
-    public void setSpringSwaggerConfig(SpringSwaggerConfig springSwaggerConfig) {
-        this.springSwaggerConfig = springSwaggerConfig;
+    @Bean
+    public Docket defaultApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .genericModelSubstitutes(DeferredResult.class)
+                .useDefaultResponseMessages(false)
+                .forCodeGeneration(true)
+                .pathMapping("/")
+                .select()
+                .paths(PathSelectors.regex("/r/.*"))  // 过滤的接口
+                .build()
+                .apiInfo(serApiInfo());
     }
 
     @Bean
-    public SwaggerSpringMvcPlugin customImplementation() {
-        return new SwaggerSpringMvcPlugin(this.springSwaggerConfig)
-                .apiInfo(apiInfo())
-                .apiVersion("0.1")
-                .includePatterns(".*?")
-                .swaggerGroup("api-docs")
-                .build();
+    public Docket serApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("ser")
+                .genericModelSubstitutes(DeferredResult.class)
+                .useDefaultResponseMessages(false)
+                .forCodeGeneration(true)
+                .pathMapping("/")
+                .select()
+                .paths(PathSelectors.regex("/r/.*"))  // 过滤的接口
+                .build()
+                .apiInfo(serApiInfo());
     }
 
-    private ApiInfo apiInfo() {
-        ApiInfo apiInfo = new ApiInfo(
-                "Restful API",
-                "关于基础框架相关接口API",
-                "My Apps API terms of service",
-                "My Apps API Contact Email",
-                "My Apps API Licence Type",
-                "My Apps API License URL");
-        return apiInfo;
+    private ApiInfo serApiInfo() {
+        Contact contact = new Contact("hrp", "", "");
+        return new ApiInfoBuilder()
+                .title("API接口列表")
+                .description("Restful风格API")
+                .version("0.1")
+                .contact(contact)
+                .build();
     }
 }

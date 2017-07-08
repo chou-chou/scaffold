@@ -13,7 +13,7 @@
     <description>spring主配置文件</description>
 
     <!-- 启动组件扫描 com.hrp包下面注解 -->
-    <context:component-scan base-package="com.hrp.service, com.hrp.utils.log">
+    <context:component-scan base-package="com.hrp.service, com.hrp.utils.log" use-default-filters="false">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository" />
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
 
@@ -37,7 +37,6 @@
     <!--<import resource="classpath:spring/spring-oauth.xml" />-->
     <!--<import resource="classpath:spring/spring-quartz.xml" />-->
     <!--<import resource="classpath:spring/spring-redis.xml" />-->
-    <import resource="classpath:spring/spring-rest.xml" />
     <import resource="classpath:spring/spring-shiro.xml" />
 
     <!-- url-path映射列表处理 -->

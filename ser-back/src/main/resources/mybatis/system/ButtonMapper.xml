@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-    <mapper namespace="ButtonMapper">
+<mapper namespace="ButtonMapper">
 
     <resultMap type="Button" id="buttonMap">
         <id column="ID" property="id" />
@@ -12,11 +12,17 @@
         <result column="BTN_TITLE" property="btnTitle"/>
         <result column="BTN_CLASS" property="btnClass"/>
         <result column="BTN_TEXT" property="btnText"/>
-        <result column="DISABLED" property="disabled"/>
+        <result column="ENABLED" property="enabled"/>
         <result column="VISIBLE" property="visible" />
         <result column="REMARK" property="remark"/>
         <result column="MENU_ID" property="menuId"/>
     </resultMap>
+
+    <resultMap type="Button" id="buttonExtendMap" extends="buttonMap">
+        <!-- 查询父字典 -->
+        <association column="MENU_ID" property="menu" select="MenuMapper.getMenuById"/>
+    </resultMap>
+
     <!-- 表名 -->
     <sql id="tableName">
         T_BUTTON
@@ -24,27 +30,21 @@
 
     <!-- 字段 -->
     <sql id="field">
-        ID, BTN_TAG, BTN_ID, BTN_TYPE, BTN_TITLE, BTN_CLASS, BTN_TEXT, MENU_ID, DISABLED, VISIBLE, REMARK
+        ID, BTN_TAG, BTN_ID, BTN_TYPE, BTN_TITLE, BTN_CLASS, BTN_TEXT, MENU_ID, ENABLED, VISIBLE, REMARK
     </sql>
 
     <!-- 字段值 -->
     <sql id="fieldValue">
-        #{id}, #{btnTag}, #{btnId}, #{btnType}, #{btnTitle}, #{btnClass}, #{btnText}, #{menuId}, #{disabled}, #{visible}, #{remark}
+        #{id}, #{btnTag}, #{btnId}, #{btnType}, #{btnTitle}, #{btnClass}, #{btnText}, #{menuId}, #{enabled}, #{visible}, #{remark}
     </sql>
 
     <!-- 获取菜单按钮 -->
-    <select id="getButtonInfo" parameterType="pd" resultType="pd">
-        select <include refid="field"></include> from <include refid="tableName"></include>
+    <select id="getButtonInfo" parameterType="Integer" resultMap="buttonExtendMap">
+        select top 1 <include refid="field"></include> from <include refid="tableName"></include>
         where 1=1
-        <if test="id!=null and id != ''">
+        <!--<if test="id != null and id != ''">-->
             and ID = #{id}
-        </if>
-        <if test="menuId!=null">
-            and MENU_ID = #{menuId}
-        </if>
-        <if test="disabled!=null">
-            and DISABLED = #{disabled}
-        </if>
+        <!--</if>-->
     </select>
 
     <!-- 更新按钮是否可用 -->
@@ -52,7 +52,7 @@
         update
         <include refid="tableName"></include>
         SET
-        DISABLED = #{disabled}
+        ENABLED = #{enabled}
         where BTN_ID = #{btnId}
     </update>
 
@@ -73,7 +73,7 @@
             <if test="btnTitle != null and btnTitle != ''">BTN_TITLE,</if>
             <if test="btnClass != null and btnClass != ''">BTN_CLASS,</if>
             <if test="menuId != null and menuId != ''">MENU_ID,</if>
-            <if test="disabled != null and disabled != ''">DISABLED,</if>
+            <if test="enabled != null and enabled != ''">ENABLED,</if>
             <if test="visible != null and visible != ''">VISIBLE,</if>
             <if test="btnText != null and btnText != ''">BTN_TEXT,</if>
             <if test="remark != null and remark != ''">REMARK</if>
@@ -85,7 +85,7 @@
             <if test="btnTitle != null and btnTitle != ''">#{btnTitle},</if>
             <if test="btnClass != null and btnClass != ''">#{btnClass},</if>
             <if test="menuId != null and menuId != ''">#{menuId},</if>
-            <if test="disabled != null and disabled != ''">#{disabled},</if>
+            <if test="enabled != null and enabled != ''">#{enabled},</if>
             <if test="visible != null and visible != ''">#{visible},</if>
             <if test="btnText != null and btnText != ''">#{btnText},</if>
             <if test="remark != null and remark != ''">#{remark}</if>
@@ -105,7 +105,7 @@
             <if test="btnTitle != null and btnTitle != ''">BTN_TITLE=#{btnTitle},</if>
             <if test="btnClass != null and btnClass != ''">BTN_CLASS=#{btnClass},</if>
             <if test="menuId != null and menuId != ''">MENU_ID=#{menuId},</if>
-            <if test="disabled != null and disabled != ''">DISABLED=#{disabled},</if>
+            <if test="enabled != null and enabled != ''">ENABLED=#{enabled},</if>
             <if test="visible != null and visible != ''">VISIBLE=#{visible},</if>
             <if test="btnText != null and btnText != ''">BTN_TEXT=#{btnText},</if>
             <if test="remark != null and remark != ''">REMARK=#{remark}</if>
@@ -125,14 +125,17 @@
     <select id="getButtonList" parameterType="pd" resultMap="buttonMap">
         SELECT <include refid="field"></include> from <include refid="tableName"></include>
         WHERE 1=1
+        <if test="btnId != null and btnId != ''">
+            AND BTN_ID = #{btnId}
+        </if>
         <if test="menuId != null and menuId != ''">
             AND MENU_ID = #{menuId}
         </if>
         <if test="btnTag != null and btnTag != ''">
             AND BTN_TAG = #{btnTag}
         </if>
-        <if test="disabled != null and disabled != ''">
-            AND DISABLED = #{disabled}
+        <if test="enabled != null and enabled != ''">
+            AND ENABLED = #{enabled}
         </if>
         <if test="visible != null and visible != ''">
             AND VISIBLE = #{visible}
@@ -140,6 +143,22 @@
         <if test="sort != null and sort != ''">
             ORDER BY #{sort}
         </if>
+    </select>
+
+    <!-- 根据用户ID获取该用户可以操作的button信息 -->
+    <select id="getButtonByUserId" parameterType="java.lang.String" resultMap="buttonMap">
+        SELECT
+            b.*
+        FROM
+            T_BUTTON b,
+            T_ROLE_BTN rb,
+            T_ROLE r,
+            T_USER_ROLE ur
+        WHERE
+            b.ID = rb.BTN_ID
+        AND rb.ROLE_ID = ur.ROLE_ID
+        AND
+          ur.USER_ID = #{userId}
     </select>
 
     <!-- 支持批量删除 -->

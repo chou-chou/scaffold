@@ -25,7 +25,11 @@
 
 <link rel="stylesheet" href="<%=basePath%>/static/css/index.css" />
 
-<link rel="stylesheet" href="<%=basePath%>/plugins/zTree/3.5/metro.css" />
+<link rel="stylesheet" href="<%=basePath%>/plugins/zTree/3.5/metroStyle.css"/>
+
 <link rel="stylesheet" href="<%=basePath%>/plugins/layer/skin/default/layer.css" />
+
 <link rel="stylesheet" href="<%=basePath%>/plugins/validation/jquery.validate.css"/>
+
+<link rel="stylesheet" href="<%=basePath%>plugins/select2/css/select2.min.css"/>
 

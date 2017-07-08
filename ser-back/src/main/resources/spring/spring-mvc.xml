@@ -22,10 +22,12 @@
     <context:annotation-config />
 
     <!-- 自动扫描的包名 -->
-    <context:component-scan base-package="com.hrp.controller, com.hrp.utils.log">
+    <context:component-scan base-package="com.hrp.controller, com.hrp.utils.log, com.hrp.exception">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
         <context:include-filter type="annotation" expression="org.aspectj.lang.annotation.Aspect"/>
         <context:include-filter type="annotation" expression="com.hrp.annotation.MvcMapping" />
+        <context:include-filter type="annotation"
+                                expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
 
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
@@ -81,7 +83,7 @@
     <mvc:resources mapping="/static/**" location="/static/"/>
     <mvc:resources mapping="/plugins/**" location="/plugins/"/>
     <mvc:resources mapping="/uploadFiles/**" location="/uploadFiles/"/>
-    <mvc:resources mapping="/swagger/**" location="/WEB-INF/swagger/"/>
+    <mvc:resources mapping="/swagger/**" location="/WEB-INF/docApi/"/>
 
     <!-- 配置SpringMVC的视图解析器 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -105,11 +107,19 @@
         </property>
     </bean>
 
-    <bean id="exceptionResolver" class="com.hrp.resolver.MyExceptionResolver"/>
+    <bean id="exceptionResolver" class="com.hrp.exception.PlatformMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="com.hrp.exception.BusinessException">error/500</prop>
+                <prop key="java.lang.Exception">error/500</prop>
+            </props>
+        </property>
+    </bean>
 
     <!-- 日志切面 -->
     <aop:aspectj-autoproxy/>
     <context:component-scan base-package="com.hrp.utils.log"/>
 
+    <import resource="classpath:spring/spring-rest.xml"/>
 
 </beans>

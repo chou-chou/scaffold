@@ -14,15 +14,15 @@ import java.io.Serializable;
 public class Button implements Serializable, Comparable<Button> {
 
     private Integer id;  // 按钮ID
-    private String btnTag;  // 按钮标记 button a input
-    private String btnId;  // 按钮ID
-    private String btnType;  // 按钮类型
+    private String btnTag;  // 按钮标记 类似 sys:user:add / sys:user:edit
+    private String btnId;  // 按钮ID，对应页面元素的id
+    private String btnType;  // 按钮类型 button a input
     private String btnTitle;  // 标题
     private String btnText;  // 内容
     private String btnClass;  // class
     private Integer menuId;  // 按钮所属菜单
-    private boolean visible = true;  // 是否可见， 默认可见
-    private boolean disabled = false;  // 是否可用，默认可用
+    private boolean visible;  // 是否可见， 默认可见
+    private boolean enabled;  // 是否可用，默认可用
     private String remark;  // 备注
     private Menu menu;  // 按钮所属菜单
 
@@ -82,12 +82,12 @@ public class Button implements Serializable, Comparable<Button> {
         this.menuId = menuId;
     }
 
-    public boolean isDisabled() {
-        return disabled;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getRemark() {
@@ -164,7 +164,7 @@ public class Button implements Serializable, Comparable<Button> {
                 ", btnClass='" + btnClass + '\'' +
                 ", menuId=" + menuId +
                 ", visible=" + visible +
-                ", disabled=" + disabled +
+                ", enabled=" + enabled +
                 ", remark='" + remark + '\'' +
                 ", menu=" + menu +
                 '}';

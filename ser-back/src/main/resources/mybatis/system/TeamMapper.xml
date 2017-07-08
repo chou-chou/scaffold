@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+    <mapper namespace="TeamMapper">
+
+    <resultMap type="Team" id="teamMap">
+        <id column="TEAM_ID" property="teamId"/>
+        <result column="TEAM_CODE" property="teamCode"/>
+        <result column="TEAM_NAME" property="teamName"/>
+        <result column="TEAM_TYPE" property="teamType"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="REMARK" property="remark"/>
+        <result column="USER_ID" property="userId"/>
+    </resultMap>
+
+    <resultMap id="userTeamMap" type="UserTeam">
+        <id column="ID" property="id"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="TEAM_ID" property="teamId"/>
+    </resultMap>
+
+    <!-- 表名 -->
+    <sql id="tableName">
+        TB_TEAM
+    </sql>
+
+    <!-- 字段 -->
+    <sql id="field">
+        TEAM_ID, TEAM_CODE, TEAM_NAME, TEAM_TYPE, CREATE_TIME, REMARK, USER_ID
+    </sql>
+
+    <!-- 字段值 -->
+    <sql id="fieldValue">
+        #{TEAM_ID}, #{TEAM_CODE}, #{TEAM_NAME}, #{TEAM_TYPE}, #{CREATE_TIME}, #{REMARK}, #{USER_ID}
+    </sql>
+
+    <!-- 属性值 -->
+    <sql id="propertyValue">
+        #{teamId},#{teamCode},#{teamName},#{teamType},#{createTime},#{remark},#{userId}
+    </sql>
+
+    <select id="getByTeamId" parameterType="pd" resultMap="teamMap">
+        select top 1 <include refid="field"></include> from <include refid="tableName"></include>
+        where TEAM_ID = #{teamId}
+    </select>
+
+
+    <select id="listAllTeam" parameterType="pd" resultMap="teamMap">
+        SELECT
+        <include refid="field"></include>
+        FROM
+        <include refid="tableName"></include>
+        WHERE
+        1=1
+        <if test="teamInfo != null and teamInfo != ''"><!-- 关键词检索 -->
+            AND (
+            TEAM_CODE LIKE '%'+#{teamInfo}+'%'
+            OR
+            TEAM_NAME LIKE '%'+#{teamInfo}+'%'
+            )
+        </if>
+   </select>
+
+    <insert id="saveTeamBean" parameterType="Team" useGeneratedKeys="true" keyProperty="id">
+        insert into TB_TEAM (<trim suffixOverrides=",">
+        <if test="teamCode != null and teamCode != ''">TEAM_CODE,</if>
+        <if test="teamName != null and teamName != ''">TEAM_NAME,</if>
+        <if test="teamType != null and teamType != ''">TEAM_TYPE,</if>
+        <if test="createTime != null and createTime != ''">CREATE_TIME,</if>
+        <if test="remark != null and remark != ''">REMARK</if>
+    </trim>)
+        values(<trim suffixOverrides=",">
+        <if test="teamCode != null and teamCode != ''">#{teamCode},</if>
+        <if test="teamName != null and teamName != ''">#{teamName},</if>
+        <if test="teamType != null and teamType != ''">#{teamType},</if>
+        <if test="createTime != null and createTime != ''">#{createTime},</if>
+        <if test="remark != null and remark != ''">#{remark}</if>
+    </trim>)
+    </insert>
+
+    <update id="updateTeam" parameterType="pd">
+        update TB_TEAM
+        <set>
+            <if test="teamCode != null and teamCode != ''">TEAM_CODE=#{teamCode},</if>
+            <if test="teamName != null and teamName != ''">TEAM_NAME=#{teamName},</if>
+            <if test="teamType != null and teamType != ''">TEAM_TYPE=#{teamType},</if>
+            <if test="createTime != null and createTime != ''">CREATE_TIME=#{createTime},</if>
+            <if test="remark != null and remark != ''">REMARK=#{remark}</if>
+        </set>
+        where TEAM_ID = #{teamId}
+    </update>
+
+    <!-- 获取用户总数 -->
+    <select id="getUserCount" parameterType="String" resultType="pd">
+        SELECT
+            count(USER_ID) userCount
+        FROM
+            <include refid="tableName"></include>
+    </select>
+
+    <!-- 批量删除 -->
+    <delete id="batchDeleteTeam" parameterType="int">
+        delete from
+        <include refid="tableName"></include>
+        where  TEAM_ID  in
+        <foreach collection="array" item="teamId" open="(" separator="," close=")">
+            #{teamId}
+        </foreach>
+    </delete>
+
+    <select id="getUserByTeamId" parameterType="int" resultMap="userTeamMap" >
+        SELECT ID,TEAM_ID,USER_ID
+        FROM  T_USER_TEAM
+        WHERE  TEAM_ID=#{teamId}
+    </select>
+
+    <insert id ="insertUserTeam" parameterType="java.util.List">
+        insert into T_USER_TEAM
+                (TEAM_ID, USER_ID )
+        values
+          <foreach collection ="list" item="userTeam" index= "index" separator =",">
+                  ( #{userTeam.teamId}, #{userTeam.userId})
+          </foreach >
+    </insert >
+
+    <!-- 批量删除成员-->
+    <delete id="batchDeleteUserTeam" parameterType="java.util.List">
+        DELETE FROM T_USER_TEAM WHERE ID IN
+        <foreach  collection="list"  item="userTeam" open="(" separator="," close=")">
+            #{userTeam}
+        </foreach>
+    </delete>
+
+    <delete id="DeleteUserTeam" parameterType="int">
+
+        DELETE FROM T_USER_TEAM WHERE TEAM_ID =#{teamId}
+
+    </delete>
+
+</mapper>

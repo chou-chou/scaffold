@@ -581,6 +581,8 @@
                 } else {
                     elements
                         .removeClass(this.settings.errorClass)
+                        .removeClass(this.settings.signClass)
+                        .removeClass(this.settings.focusClass)
                         .removeClass(this.settings.validClass);
                 }
             },
@@ -602,10 +604,11 @@
             },
 
             hideErrors: function () {
-                this.addWrapper(this.toHide).removeClass(this.settings.errorClass)
+                this.addWrapper(this.toHide)
+                    .removeClass(this.settings.errorClass)
                     .removeClass(this.settings.normalClass)
-                    .removeClass(this.settings.focusClass)
-                    .addClass(this.settings.validClass).html("输入正确");
+                    .removeClass(this.settings.focusClass);
+                //.addClass(this.settings.validClass).html("输入正确");
 
                 // this.hideThese( this.toHide );
             },

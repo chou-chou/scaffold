@@ -3,8 +3,11 @@ package com.hrp.controller.back;
 import com.hrp.annotation.MvcMapping;
 import com.hrp.controller.common.BaseController;
 import com.hrp.entity.system.Menu;
+import com.hrp.entity.system.Role;
 import com.hrp.entity.system.User;
+import com.hrp.entity.system.UserRoleLink;
 import com.hrp.pojo.Result;
+import com.hrp.service.RoleService;
 import com.hrp.service.UserService;
 import com.hrp.utils.*;
 import com.hrp.utils.lang.StringUtil;
@@ -20,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,12 +43,14 @@ public class UserController extends BaseController {
 
     @Resource(name = "userService")
     private UserService userService;
+    @Resource(name = "roleService")
+    private RoleService roleService;
 
     /**
      * 角色列表
      */
     @RequestMapping(value = "/list.do", method = RequestMethod.GET)
-    @MvcMapping(url = "/b/user/list.do", path = BASE_PATH + "user_list", type = MvcMapping.ViewType.JSP)
+    @MvcMapping(tag = "userlist", path = BASE_PATH + "user_list", type = MvcMapping.ViewType.JSP)
     private ModelAndView list() {
         ModelAndView mv = this.getModelAndView();
         Page page = this.getPage();
@@ -57,6 +63,7 @@ public class UserController extends BaseController {
             }
             page.setPd(pd);
             List<PageData> userList = this.userService.listPdPageUser(page);
+            List<Role> roleList = this.roleService.listAllRolesByPId(pd);
 
             Map<String, String> QX = new HashMap<String, String>();
             QX.put("add", "1");
@@ -67,6 +74,7 @@ public class UserController extends BaseController {
             QX.put("edit", "1");
 
             mv.addObject("userList", userList);
+            mv.addObject("roleList", roleList);
             mv.addObject("pd", pd);
             mv.addObject("page", page);
             mv.addObject("QX", QX);
@@ -204,10 +212,10 @@ public class UserController extends BaseController {
     public void editUser(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
         String userId = request.getParameter("userId");//获取用户id
         String tag = request.getParameter("tag");
-
         PageData pd = this.getPageData();
         pd.put("userId", userId);
         User user = null;
+
         try {
             user = this.userService.getByUserId(pd);//查询用户信息返回页面
             logger.info(user.toString());
@@ -226,14 +234,32 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/checkoutAccount.do", method = RequestMethod.GET)
     public void checkoutAccount(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
         String account = request.getParameter("account");//获取用户登录名
+        String userId = request.getParameter("userId");
         Boolean rc = false;
-
-        User user = null;
+        PageData pd = new PageData();
+        pd.put("userId",userId);
+        User accountUser = null;
+        User idUser = null;
         try {
-            user = this.userService.getUserByLoginName(account);//查询用户信息返回页面
-            if(null != user &&  !"".equals(user)){
-                rc = true;
+            if(null !=userId && !"".equals(userId)){
+                idUser = this.userService.getByUserId(pd);
+                String dbAcction = idUser.getAccount();
+                if (dbAcction.equals(account)){
+                    rc = true;
+                }else{
+                    accountUser = this.userService.getUserByLoginName(account);//查询用户信息返回页面
+                    if(null == accountUser ||  "".equals(accountUser)){
+                        rc = true;
+                    }
+                }
+            }else{
+                accountUser = this.userService.getUserByLoginName(account);//查询用户信息返回页面
+                if(null == accountUser ||  "".equals(accountUser)){
+                    rc = true;
+                }
             }
+
+
             response.getWriter().print(rc ? "true" : "false");
         } catch (Exception e) {
             e.printStackTrace();
@@ -338,6 +364,74 @@ public class UserController extends BaseController {
                 }
                 break;
             default: break;
+        }
+
+        JsonUtil.writeJsonToResponse(response, rc, JsonUtil.OBJECT_TYPE_BEAN);
+    }
+
+    /**
+     * 设置角色
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/setRole.do", method = RequestMethod.GET)
+    public void setRole(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+        String userId = request.getParameter("userId");//获取用户id
+        String tag = request.getParameter("tag");
+
+        PageData pd = this.getPageData();
+        pd.put("userId", userId);
+        List<UserRoleLink> userRoleLinkList = null;
+        Result rc = new Result();
+        String roleIds="";
+        UserRoleLink userRoleLink=new UserRoleLink();
+        try {
+            userRoleLinkList = this.userService.findRoleIdByUserId(pd);//查询用户角色id信息返回页面
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JsonUtil.writeJsonToResponse(response, userRoleLinkList, JsonUtil.OBJECT_TYPE_LIST);
+    }
+
+    @RequestMapping(value = "saveRole.do" ,method =RequestMethod.POST )
+    public  void  saveRole(HttpServletRequest request, HttpServletResponse response){
+        Result rc = new Result();
+        String userId = request.getParameter("userId");//获取用户id
+        String roleIds=request.getParameter("roleIds");//获取设置的角色id
+        String[] roleidArr=roleIds.split(",");
+        List<UserRoleLink> userRoleLinkList=new ArrayList<UserRoleLink>();
+        //List a=new com.sun.tools.javac.util.List();
+        UserRoleLink userRoleLink=null;
+        boolean success=true;
+        try {
+            if(null==userId || "".equals(userId)){
+                success=false;
+            }else{
+                userService.deleteUserRole(userId);
+                if(roleidArr.length>0){
+                    for(int i=0;i<roleidArr.length;i++){
+                        userRoleLink=new UserRoleLink();
+                        userRoleLink.setUserId(userId);
+                        userRoleLink.setRoleId(Integer.valueOf(roleidArr[i]));
+                        userRoleLink.setEnabled(true);
+                        userRoleLinkList.add(userRoleLink);//整理用户插入的角色信息
+                    }
+                    userService.insertUserRole(userRoleLinkList);//批量插入角色信息
+                }
+            }
+
+            if (success) {
+                rc.setCode("0");
+                rc.setMessage("设置角色成功成功");
+                rc.setSuccess(true);
+            }else{
+                rc.setCode("1");
+                rc.setMessage("设置角色失败");
+                rc.setSuccess(false);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
         JsonUtil.writeJsonToResponse(response, rc, JsonUtil.OBJECT_TYPE_BEAN);

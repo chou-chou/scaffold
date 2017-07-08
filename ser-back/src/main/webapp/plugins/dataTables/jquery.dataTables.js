@@ -588,7 +588,7 @@
 			browser.bScrollOversize = inner[0].offsetWidth === 100 && outer[0].clientWidth !== 100;
 	
 			// In rtl text layout, some browsers (most, but not all) will place the
-			// scrollbar on the left, rather than the right.
+            // scrollbar on the left, rather than the shiro.
 			browser.bScrollbarLeft = Math.round( inner.offset().left ) !== 1;
 	
 			// IE8- don't provide height and width for getBoundingClientRect
@@ -1009,7 +1009,7 @@
 					}
 					else if ( typeof aTargets[j] === 'number' && aTargets[j] < 0 )
 					{
-						/* Negative integer, right to left column counting */
+                        /* Negative integer, shiro to left column counting */
 						fn( columns.length+aTargets[j], def );
 					}
 					else if ( typeof aTargets[j] === 'string' )
@@ -8288,9 +8288,9 @@
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	 * Columns
 	 *
-	 * {integer}           - column index (>=0 count from left, <0 count from right)
-	 * "{integer}:visIdx"  - visible column index (i.e. translate to column index)  (>=0 count from left, <0 count from right)
-	 * "{integer}:visible" - alias for {integer}:visIdx  (>=0 count from left, <0 count from right)
+     * {integer}           - column index (>=0 count from left, <0 count from shiro)
+     * "{integer}:visIdx"  - visible column index (i.e. translate to column index)  (>=0 count from left, <0 count from shiro)
+     * "{integer}:visible" - alias for {integer}:visIdx  (>=0 count from left, <0 count from shiro)
 	 * "{string}:name"     - column name
 	 * "{string}"          - jQuery selector on column header nodes
 	 *
@@ -8332,7 +8332,7 @@
 			if ( selInt !== null ) {
 				return [ selInt >= 0 ?
 					selInt : // Count from left
-					columns.length + selInt // Count from right (+ because its a negative value)
+                    columns.length + selInt // Count from shiro (+ because its a negative value)
 				];
 			}
 			
@@ -8361,7 +8361,7 @@
 						var idx = parseInt( match[1], 10 );
 						// Visible index given, convert to column index
 						if ( idx < 0 ) {
-							// Counting from the right
+                            // Counting from the shiro
 							var visColumns = $.map( columns, function (col,i) {
 								return col.bVisible ? i : null;
 							} );
@@ -10114,7 +10114,7 @@
 		 *   <ul>
 		 *     <li>a string - class name will be matched on the TH for the column</li>
 		 *     <li>0 or a positive integer - column index counting from the left</li>
-		 *     <li>a negative integer - column index counting from the right</li>
+         *     <li>a negative integer - column index counting from the shiro</li>
 		 *     <li>the string "_all" - all columns (i.e. assign a default)</li>
 		 *   </ul>
 		 *  @member
@@ -13064,7 +13064,7 @@
 			"bScrollOversize": false,
 	
 			/**
-			 * Determine if the vertical scrollbar is on the right or left of the
+             * Determine if the vertical scrollbar is on the shiro or left of the
 			 * scrolling container - needed for rtl language layout, although not
 			 * all browsers move the scrollbar (Safari).
 			 *  @type boolean

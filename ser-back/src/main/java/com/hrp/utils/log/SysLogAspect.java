@@ -3,10 +3,7 @@ package com.hrp.utils.log;
 import com.hrp.entity.system.SysLog;
 import org.apache.shiro.SecurityUtils;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
@@ -80,6 +77,11 @@ public class SysLogAspect {
     public void deleteCell() {
     }
 
+    @Pointcut("execution(* com.hrp.controller.*.*(..))")
+    public void exceptionCell() {
+
+    }
+
 
     /**
      * 用户登录切入点
@@ -90,7 +92,7 @@ public class SysLogAspect {
     @AfterReturning(value = "loginCell()", returning = "rtv")
     public void loginLog(JoinPoint joinPoint, Object rtv) {
         logger.info("登陆操作!");
-        autoFinish(joinPoint, "登陆系统");
+        autoFinish(joinPoint, "登录系统", "");
     }
 
     /**
@@ -98,7 +100,7 @@ public class SysLogAspect {
      */
     @Before(value = "logoutCell()")
     public void logoutLog() {
-        autoFinish(null, "退出系统");
+        autoFinish(null, "退出系统", "");
     }
 
     /**
@@ -110,7 +112,7 @@ public class SysLogAspect {
      */
     @AfterReturning(value = "inseretCell()", returning = "rtv")
     public void insertLog(JoinPoint joinPoint, Object rtv) throws Throwable {
-        autoFinish(joinPoint, "新增操作");
+        autoFinish(joinPoint, "新增操作", "");
     }
 
     /**
@@ -122,7 +124,7 @@ public class SysLogAspect {
      */
     @AfterReturning(value = "updateCell()", returning = "rtv")
     public void updateLog(JoinPoint joinPoint, Object rtv) throws Throwable {
-        autoFinish(joinPoint, "更新操作");
+        autoFinish(joinPoint, "更新操作", "");
     }
 
     /**
@@ -134,7 +136,36 @@ public class SysLogAspect {
      */
     @AfterReturning(value = "deleteCell()", returning = "rtv")
     public void deleteLog(JoinPoint joinPoint, Object rtv) throws Throwable {
-        autoFinish(joinPoint, "删除操作");
+        autoFinish(joinPoint, "删除操作", "");
+    }
+
+    /**
+     * 处理异常
+     *
+     * @param joinPoint
+     * @param ex
+     */
+    @AfterThrowing(value = "exceptionCell()", throwing = "ex")
+    public void afterThrow(JoinPoint joinPoint, Exception ex) {
+        logger.info("进入切面AfterThrow方法中...");
+
+        // 判断日志输出级别
+        if (logger.isInfoEnabled()) {
+            logger.info("afterThrow " + joinPoint + "\t" + ex.getMessage());
+        }
+
+        // 详细错误信息
+        String errorMsg = "";
+        StackTraceElement[] trace = ex.getStackTrace();
+        for (StackTraceElement stackTraceElement : trace) {
+            errorMsg += "\tat " + stackTraceElement + "\r\n";
+        }
+
+        logger.info("具体异常信息： " + errorMsg);
+        logger.info("afterThrow异常方法名 " + joinPoint + "\t" + ex.getMessage());
+        logger.info("进入切面AfterThrowing方法结束！！！");
+
+        autoFinish(joinPoint, "系统异常", errorMsg);
     }
 
     //////////////////////////////////// 方法区 ///////////////////////////////////////
@@ -193,7 +224,7 @@ public class SysLogAspect {
      * @param handle
      * @return
      */
-    private void autoFinish(JoinPoint joinPoint, String handle) {
+    private void autoFinish(JoinPoint joinPoint, String handle, String errorMsg) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
         logger.info(" --------------- 填充日志数据 -------------");
@@ -202,6 +233,7 @@ public class SysLogAspect {
         sysLog.setUsername(username == null ? "失去帐号信息" : username);
         sysLog.setCreateDate(new Date());
         sysLog.setIp(getIpAddr(request));
+        sysLog.setMessage(errorMsg);
         if (joinPoint != null) {
             sysLog.setUrl(joinPoint.getSignature().toString());
             //获取方法名

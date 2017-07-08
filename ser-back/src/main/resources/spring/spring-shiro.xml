@@ -177,12 +177,14 @@
                 /plugins/**                 = anon
                 /static/** 			        = anon
                 /swagger/**                 = anon
-                /api-docs = anon
-                /api-docs/** = anon
+                /v2/api-docs = anon
+                /v2/api-docs/** = anon
+                /swagger-ui.html = anon
                 /img/**                     = anon
                 /uploadFiles/**             = anon
 
                 <!-- 不需要验证　-->
+                # = anon
                 /#                          = anon
                 /authorization.do           = anon
                 /locked.do                  = anon

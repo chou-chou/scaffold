@@ -42,7 +42,7 @@ public class DictionaryController extends BaseController {
      * 字典模块主页面
      */
     @RequestMapping(method = RequestMethod.GET, value = "/main.do")
-    @MvcMapping(url = "/b/dictionary/main.do", path = BASE_PATH + "dictionary_main", type = MvcMapping.ViewType.JSP)
+    @MvcMapping(tag = "dictionary:main", path = BASE_PATH + "dictionary_main", type = MvcMapping.ViewType.JSP)
     public ModelAndView list(HttpServletRequest request, HttpServletResponse response) {
         ModelAndView mv = this.getModelAndView(BASE_PATH + "dictionary_main");
 
@@ -114,6 +114,9 @@ public class DictionaryController extends BaseController {
     @RequestMapping(value = "/editDictionary.do", method = RequestMethod.POST)
     public void editDictionaryPost(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
         String tag = request.getParameter("tag");
+        if ("".equals(tag)){
+            tag="ADD";
+        }
         Result rc = new Result();
 
         pd = this.getPageData();

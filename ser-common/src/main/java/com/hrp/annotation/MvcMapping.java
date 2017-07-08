@@ -24,7 +24,7 @@ public @interface MvcMapping {
      * action中的url（对应GET方法）
      * @return
      */
-    String url();
+    String tag();
 
     /**
      * action中url对应的视图路径（对应到具体的物理路径）

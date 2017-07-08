@@ -15,11 +15,7 @@
 
     <%@ include file="../../../comm/default_header.jsp" %>
 
-    <%--<link rel="stylesheet" href="<%=basePath%>/static/css/bootstrap-multiselect.min.css"/>
-    <script type="text/javascript" src="<%=basePath%>/static/js/bootstrap-multiselect.min.js"></script>--%>
-
     <link rel="stylesheet" href="<%=basePath%>/plugins/select2/css/select2.min.css"/>
-
     <script type="text/javascript" src="<%=basePath%>/static/js/pinyin.js"></script>
     <script type="text/javascript" src="<%=basePath%>/plugins/select2/js/select2.full.js"></script>
     <script type="text/javascript" src="<%=basePath%>/plugins/select2/js/i18n/zh-CN.js"></script>
@@ -64,22 +60,8 @@
                     <div class="col-xs-12">
 
                         <div class="row">
-                            <!-- 字典树 -->
+                            <!-- 部门树 -->
                             <div class="col-sm-4">
-                                <!-- 工具按钮 新增/编辑/删除 -->
-                                <div>
-                                    <p>
-                                        <button id="departmentAddBtn" class="inCtrl btn btn-sm btn-primary" onclick="">
-                                            新增
-                                        </button>
-                                        <button id="departmentModifyBtn" class="inCtrl btn btn-sm btn-primary"
-                                                onclick="">编辑
-                                        </button>
-                                        <button id="departmentDeleteBtn" class="inCtrl btn btn-sm btn-primary"
-                                                onclick="">删除
-                                        </button>
-                                    </p>
-                                </div>
 
                                 <div class="widget-box widget-color-blue2">
                                     <div class="widget-header">
@@ -399,35 +381,47 @@
                 if (rc.code == '0') {
                     var zTree = $.fn.zTree.getZTreeObj("departmentTree");
 
-                    if (tag == "ADD") {
+                    if ("ADD" == tag || ""==tag) {
 //                        location.reload();
                         var supNode = null;
                         if (rc.data != null && rc.data.supId != null) {
-                            supNode = zTree.getNodeByParam("code", rc.data.supDepartment.deptCode, null);
-                        }
+                            if (rc.data.supDepartment != null){
+                                supNode = zTree.getNodeByParam("code", rc.data.supDepartment.deptCode, null);
+                            }
 
-                        if (supNode != undefined && supNode != null) {
-                            var treeNode_N = [{
-                                id: rc.data.deptId,
-                                tId: rc.data.deptId,
-                                pId: rc.data.supId,
-                                code: rc.data.deptCode,
-                                name: rc.data.deptName,
-                                isParent: false
-                            }];
-
-                            zTree.addNodes(supNode, treeNode_N);
-
-                            //var n = zTree.getNodeByParam("id", rc.data.deptId, null);  // 根据新的id找到新添加的节点
-                            //zTree.selectNode(n);  // 让新添加的节点处于选中状态
+                            if (supNode != undefined && supNode != null) {
+                                var treeNode_N = [{
+                                    id: rc.data.deptId,
+                                    tId: rc.data.deptId,
+                                    pId: rc.data.supId,
+                                    code: rc.data.deptCode,
+                                    name: rc.data.deptName,
+                                    isParent: false
+                                }];
+                                zTree.addNodes(supNode, treeNode_N);
+                            }else{
+                                var treeNode_N = [{
+                                    id: rc.data.deptId,
+                                    tId: rc.data.deptId,
+                                    code: rc.data.deptCode,
+                                    name: rc.data.deptName,
+                                    isParent: false
+                                }];
+                                zTree.addNodes(null, treeNode_N);
+                            }
+                            layer.msg('新增部门数据成功');
+                            var n = zTree.getNodeByParam("id", rc.data.deptId, null);  // 根据新的id找到新添加的节点
+                            zTree.selectNode(n);  // 让新添加的节点处于选中状态
 //                        }
                         }
 
-                        if (tag == "EDIT") {
-                            var node = zTree.getNodeByParam("id", rc.data, null);
-                            node.name = deptName;
-                            zTree.updateNode(node);
-                        }
+
+                    }
+                    if (tag == "EDIT") {
+                        layer.msg('编辑部门数据成功');
+                        var node = zTree.getNodeByParam("id", rc.data, null);
+                        node.name = deptName;
+                        zTree.updateNode(node);
                     }
                 }
             }
@@ -497,7 +491,7 @@
     }
 
     function removeDepartment(deptId, name) {
-        layer.confirm('您确定要删除该字典数据？', {
+        layer.confirm('您确定要删除该部门数据？', {
             btn: ['确定', '暂时不要']  // 按钮
         }, function () {
             layer.msg('您点击了确定', {icon: 1});
@@ -518,7 +512,7 @@
                         var node = zTree.getNodeByParam("id", rc.data, null);
                         zTree.removeNode(node);
 
-                        layer.msg('已为您删除该字典数据[' + deptId + ']', {icon: 1});
+                        layer.msg('已为您删除该部门数据[' + deptId + ']', {icon: 1});
                     } else
                         layer.msg('删除操作出错![' + rc.message + ']');
                 }

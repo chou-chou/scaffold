@@ -1,11 +1,15 @@
 package com.hrp.dao;
 
+import com.hrp.entity.system.Button;
+import com.hrp.entity.system.Menu;
+import com.hrp.entity.system.TreeNode;
 import com.hrp.entity.system.User;
 import com.hrp.utils.PageData;
 import org.junit.Test;
 import org.springframework.test.annotation.Rollback;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * UserMapperTest
@@ -15,6 +19,7 @@ import java.util.Date;
  */
 public class UserMapperTest extends BaseDaoTest {
 
+    private static final String userId = "067448C76BC748BAA9EC01BBCB75631D";
 
     @Test
     @SuppressWarnings("unchecked")
@@ -94,4 +99,27 @@ public class UserMapperTest extends BaseDaoTest {
         System.out.println(user.getUserId());
     }
 
+    @Test
+    public void getButtonByUserId() throws Exception {
+        List <Button> list = (List<Button>) dao.findForList("ButtonMapper.getButtonByUserId", userId);
+        for (Button button : list) {
+            logger.info(button.toString());
+        }
+    }
+
+    @Test
+    public void getMenuByUserId() throws Exception {
+        List<Menu> list = (List<Menu>) dao.findForList("MenuMapper.getMenuByUserId", userId);
+        for (Menu menu : list) {
+            logger.info(menu.toString());
+        }
+    }
+
+    @Test
+    public void getMenuTreeByUserId() throws Exception {
+        List<TreeNode> list = (List<TreeNode>) dao.findForList("MenuMapper.getMenuTreeByUserId", userId);
+        for (TreeNode tn : list) {
+            logger.info(tn.toString());
+        }
+    }
 }

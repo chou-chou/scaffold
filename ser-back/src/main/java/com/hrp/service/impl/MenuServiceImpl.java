@@ -5,6 +5,7 @@ import com.hrp.entity.system.Menu;
 import com.hrp.entity.system.TreeNode;
 import com.hrp.service.MenuService;
 import com.hrp.utils.PageData;
+import io.swagger.models.auth.In;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 通过ID获取其子一级菜单
+     *
      * @param parentId
      * @return
      * @throws Exception
@@ -43,6 +45,7 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 通过菜单ID获取数据
+     *
      * @param pd
      * @return
      * @throws Exception
@@ -51,17 +54,24 @@ public class MenuServiceImpl implements MenuService {
         return (PageData) baseDao.findForObject("MenuMapper.getMenuById", pd);
     }
 
+    public Menu getMenuByIds(PageData pd) throws Exception {
+        return (Menu) baseDao.findForObject("MenuMapper.getMenuByIds", pd);
+    }
+
+
     /**
      * 新增菜单
+     *
      * @param menu
      * @throws Exception
      */
-    public void saveMenu(Menu menu) throws Exception {
-        baseDao.save("MenuMapper.saveMenu", menu);
+    public Object saveMenu(Menu menu) throws Exception {
+        return baseDao.save("MenuMapper.saveMenu", menu);
     }
 
     /**
      * 取最大ID
+     *
      * @param pd
      * @return
      * @throws Exception
@@ -72,25 +82,42 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 删除菜单
-     * @param MENU_ID
+     *
+     * @param pd
      * @throws Exception
      */
-    public void deleteMenuById(String MENU_ID) throws Exception {
-        baseDao.save("MenuMapper.deleteMenuById", MENU_ID);
+    public Boolean deleteMenuById(PageData pd) throws Exception {
+        Integer result = (Integer) baseDao.delete("MenuMapper.deleteMenuId", pd);
+        return (result > 0) ? true : false;
     }
 
     /**
      * 编辑
+     *
      * @param menu
      * @return
      * @throws Exception
      */
-    public void updateMenu(Menu menu) throws Exception {
-        baseDao.update("MenuMapper.updateMenu", menu);
+    public Boolean updateMenu(Menu menu) throws Exception {
+        Integer result = (Integer) baseDao.update("MenuMapper.updateMenu", menu);
+        return (result > 0) ? true : false;
+    }
+
+    /**
+     * 编辑
+     *
+     * @param pd
+     * @return
+     * @throws Exception
+     */
+    public Boolean updateMenuPd(PageData pd) throws Exception {
+        Integer result = (Integer) baseDao.update("MenuMapper.updateMenuPd", pd);
+        return (result > 0) ? true : false;
     }
 
     /**
      * 保存菜单图标
+     *
      * @param pd
      * @return
      * @throws Exception
@@ -101,29 +128,31 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 获取所有菜单并填充每个菜单的子菜单列表(菜单管理)(递归处理)
+     *
      * @param MENU_ID
      * @return
      * @throws Exception
      */
     public List<Menu> listAllMenu(String MENU_ID) throws Exception {
         List<Menu> menuList = this.listSubMenuByParentId(MENU_ID);
-        for(Menu menu : menuList){
-            menu.setMenuUrl("menu/toEdit.do?MENU_ID="+menu.getMenuId());
-            menu.setSubMenu(this.listAllMenu(menu.getMenuId()+""));
+        for (Menu menu : menuList) {
+            menu.setMenuUrl("menu/toEdit.do?MENU_ID=" + menu.getMenuId());
+            menu.setSubMenu(this.listAllMenu(menu.getMenuId() + ""));
         }
         return menuList;
     }
 
     /**
      * 获取所有菜单并填充每个菜单的子菜单列表(系统菜单列表)(递归处理)
+     *
      * @param MENU_ID
      * @return
      * @throws Exception
      */
     public List<Menu> listAllMenuQx(String MENU_ID) throws Exception {
         List<Menu> menuList = this.listSubMenuByParentId(MENU_ID);
-        for(Menu menu : menuList){
-            menu.setSubMenu(this.listAllMenuQx(menu.getMenuId()+""));
+        for (Menu menu : menuList) {
+            menu.setSubMenu(this.listAllMenuQx(menu.getMenuId() + ""));
         }
         return menuList;
     }
@@ -139,6 +168,11 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<TreeNode> selectMenuCascade(PageData pd) throws Exception {
-        return null;
+        return (List<TreeNode>) baseDao.findForList("MenuMapper.selectMenuCascade", pd);
+    }
+
+    @Override
+    public Menu getSupMenu(int supId) throws Exception {
+        return (Menu) baseDao.findForObject("MenuMapper.getBySupId", supId);
     }
 }

@@ -42,7 +42,7 @@ public class ProjectController extends BaseController {
      * 查询所有记录
      */
     @RequestMapping(method = RequestMethod.GET, value = "/list.do")
-    @MvcMapping(url = "/b/project/list.do", path = BASE_PATH + "project_list", type = MvcMapping.ViewType.JSP)
+    @MvcMapping(tag = "project:list", path = BASE_PATH + "project_list", type = MvcMapping.ViewType.JSP)
     private ModelAndView list() {
         ModelAndView mv = this.getModelAndView();
         Page page = this.getPage();

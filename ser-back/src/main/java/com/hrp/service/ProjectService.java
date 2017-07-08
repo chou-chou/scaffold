@@ -6,8 +6,8 @@ import com.hrp.utils.PageData;
 import java.util.List;
 
 /**
- * RoleService
- * 角色接口类
+ * ProjectService
+ * 项目接口类
  * @author KVLT
  * @date 2017-03-23.
  */

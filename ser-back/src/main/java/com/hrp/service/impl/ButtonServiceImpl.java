@@ -26,6 +26,11 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     @Override
+    public Button getButtonInfo(Integer id) throws Exception {
+        return (Button) baseDao.findForObject("ButtonMapper.getButtonInfo", id);
+    }
+
+    @Override
     public Boolean saveButton(Button button) throws Exception {
         Integer result = (Integer) baseDao.save("ButtonMapper.saveButton", button);
         return (result > 0) ? true : false;

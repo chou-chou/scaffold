@@ -15,11 +15,12 @@ public class Menu implements Serializable {
     private Integer menuId;  // ID
     private String menuName;  // 菜单名称
     private String menuUrl;  // Action
+    private String menuTag;  // menu标签 类似 user:main
     private Boolean isLeaf;  // 是否叶子节点
     private Integer rank;  // 等级
     private Integer sequence;  // 顺序
     private Integer rootId;  // 根节点ID
-    private String supId;  // 父节点ID
+    private Integer supId;  // 父节点ID
     private String icon;  // 图标
     private boolean enabled;  // 停用标识
     private String remark;  // 备注
@@ -89,11 +90,11 @@ public class Menu implements Serializable {
         this.rootId = rootId;
     }
 
-    public String getSupId() {
+    public Integer getSupId() {
         return supId;
     }
 
-    public void setSupId(String supId) {
+    public void setSupId(Integer supId) {
         this.supId = supId;
     }
 
@@ -167,5 +168,37 @@ public class Menu implements Serializable {
 
     public void setUpdateUserId(String updateUserId) {
         this.updateUserId = updateUserId;
+    }
+
+    public String getMenuTag() {
+        return menuTag;
+    }
+
+    public void setMenuTag(String menuTag) {
+        this.menuTag = menuTag;
+    }
+
+    @Override
+    public String toString() {
+        return "Menu{" +
+                "menuId=" + menuId +
+                ", menuName='" + menuName + '\'' +
+                ", menuUrl='" + menuUrl + '\'' +
+                ", menuTag='" + menuTag + '\'' +
+                ", isLeaf=" + isLeaf +
+                ", rank=" + rank +
+                ", sequence=" + sequence +
+                ", rootId=" + rootId +
+                ", supId=" + supId +
+                ", icon='" + icon + '\'' +
+                ", enabled=" + enabled +
+                ", remark='" + remark + '\'' +
+                ", updateTime=" + updateTime +
+                ", updateUserId='" + updateUserId + '\'' +
+                ", parentMenu=" + parentMenu +
+                ", subMenu=" + subMenu +
+                ", hasMenu=" + hasMenu +
+                ", subButtons=" + subButtons +
+                '}';
     }
 }

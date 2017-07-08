@@ -15,77 +15,72 @@
 
     <%@ include file="../../../comm/default_header.jsp" %>
 
-    <link rel="stylesheet" href="<%=basePath%>/plugins/validation/jquery.validate.css"/>
-
-    <!-- datatables相关css/js -->
     <script type="text/javascript">
-        if ('ontouchstart' in document.documentElement) document.write("<script src='<%=basePath%>/plugins/jquery/jquery.mobile.custom.min.js'>" + "<" + "/script>")
-    </script>
 
-    <script src="<%=basePath%>/plugins/dataTables/jquery.dataTables.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/jquery.dataTables.bootstrap.min.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/extends/button/dataTables.buttons.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/extends/button/buttons.flash.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/extends/button/buttons.html5.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/extends/button/buttons.print.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/extends/button/buttons.colVis.js"></script>
-    <script src="<%=basePath%>/plugins/dataTables/extends/select/dataTables.select.js"></script>
-
-    <script type="text/javascript">
-        /*$.validator.setDefaults({
-         submitHandler: function() {
-         alert("提交事件!");
-         }
-         })*/
-
-        //手机验证规则
-        /*jQuery.validator.addMethod("mobile", function (value, element) {
-         var mobile = /^1[3|4|5|7|8]\d{9}$/;
-         return this.optional(element) || (mobile.test(value));
-         }, "手机格式不对");*/
-
-        $().ready(function () {
-            //让当前表单调用validate方法，实现表单验证功能
-            $("#userForm").validate({
-//            var validation = new Validation({
-                //debug:true, //调试模式，即使验证成功也不会跳转到目标页面
-                //onkeyup:null, //当丢失焦点时才触发验证请求
-                rules: { //配置验证规则，key就是被验证的dom对象，value就是调用验证的方法(也是json格式)
-                    account: {
-                        required: true, //必填。如果验证方法不需要参数，则配置为true
-                        remote: {  // 返回值只能是true或false
-                            url: "<%=basePath%>b/user/checkoutAccount.do",
-                            type: "GET",   //数据发送方式
-                            dataType: "json",  //接受数据格式
-                            data: {   //要传递的数据，默认已传递应用此规则的表单项
-                                account: function () {
-                                    $("#account").val()
-                                }
+        var options = {
+            //debug:true, //调试模式，即使验证成功也不会跳转到目标页面
+            //onkeyup:null, //当丢失焦点时才触发验证请求
+            focusCleanup: true,  // true - 当未通过验证的元素获得焦点时，移除错误提示。避免和focusInvalid一起用
+            focusInvalid: false,
+            rules: { //配置验证规则，key就是被验证的dom对象，value就是调用验证的方法(也是json格式)
+                userName: {
+                    required: true
+                },
+                account: {
+                    required: true, //必填。如果验证方法不需要参数，则配置为true
+                    remote: {  // 返回值只能是true或false
+                        url: "<%=basePath%>b/user/checkoutAccount.do",
+                        type: "GET",   //数据发送方式
+                        dataType: "json",  //接受数据格式
+                        data: {   //要传递的数据，默认已传递应用此规则的表单项
+                            account: function () {
+                                return $("#account").val()
+                            },
+                            userId: function () {
+                                return $("#userId").val()
                             }
+
                         }
-                    },
-                    email: {
-                        email: true
-                    },
-                    telephone: {
-                        mobile: true
                     }
                 },
-                messages: {
-                    account: {
-                        required: "请输入用户名",
-                        remote: "该用户名已存在！"
-                    },
+                email: {
+                    email: true
+                },
+                telephone: {
+                    mobileOrTel: true
+                }
+            },
+            messages: {
+                userName: {
+                    required: "请输入用户名"
+                },
+                account: {
+                    required: "请输入登录账户",
+                    remote: "该登录账户已存在！"
+                }
+            }
+        };
 
-                    email: {
-                        email: "邮箱格式不正确"
-                    },
-                    telephone: {
-                        mobile: "手机格式不对"
-                    }
+        $(document).ready(function () {
+            //让当前表单调用validate方法，实现表单验证功能
+            var validator = $("#userForm").validate(options);
+
+            $("#saveChange").click(function () {
+                if (validator.form()) {
+                    saveChange();
+                } else {
+                    return false;
                 }
             });
+
+            $("#userModal").on('show.bs.modal', function () {
+                // modal 在调用show方法后触发
+                validator.resetForm();
+            });
+
         });
+
+
     </script>
 </head>
 <body>
@@ -103,19 +98,6 @@
             <div class="page-content">
                 <div class="row">
                     <div class="col-xs-12">
-                        <%--<div class="row">
-                            <div class="col-xs-12">
-                                <form id="userSearchFrm" class="form-inline" action="user/list.do" method="get">
-                                    <a class="btn btn-info" href="#" value="">新增</a>
-                                    <label class="inline">用户</label>
-                                    <input type="text" id="userInfo" name="userInfo" value="" class="form-control">
-                                    <button type="submit" class="btn btn-purple btn-sm">
-                                        <span class="ace-icon fa fa-search icon-on-right bigger-110"></span>
-                                        搜索
-                                    </button>
-                                </form>
-                            </div>
-                        </div>--%>
 
                         <div class="space-4"></div>
 
@@ -123,7 +105,7 @@
                             <div class="col-xs-12">
                                 <div>
                                     <table id="user_list" class="table table-striped table-bordered table-hover"
-                                           style="margin-top:5px;"><%-- cellspacing="0"  table table-striped table-bordered table-hover--%>
+                                           style="margin-top:5px;">
                                         <thead>
                                         <tr>
                                             <th class="center" style="width:50px;">
@@ -144,7 +126,6 @@
                                             <th class="center">操作</th>
                                         </tr>
                                         </thead>
-
 
                                         <c:choose>
                                             <c:when test="${not empty userList}">
@@ -208,6 +189,11 @@
                                                                                title="删除"></i>
                                                                         </a>
                                                                     </c:if>
+                                                                    <a class="btn btn-xs btn-success"  data-toggle="modal" data-target="#roleModal"  title="设置角色"
+                                                                       onclick="setRole('${user.USER_ID}');">
+                                                                        <i class="ace-icon fa fa-pencil-square-o bigger-120"
+                                                                           title="设置角色"></i>
+                                                                    </a>
                                                                 </div>
                                                                 <div class="hidden-md hidden-lg">
                                                                     <div class="inline pos-rel">
@@ -421,12 +407,57 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal" onclick="off()">关闭</button>
-                <button type="button"  id="saveChange" class="btn btn-primary" onclick="saveChange()">提交</button>
+                <button type="button" id="saveChange" class="btn btn-primary">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="roleModal" tabindex="-1" role="dialog" aria-labelledby="roleModalLabel" aria-hidden="true" aria-describedby="设置角色">
+    <div class="modal-dialog" role="document" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="关闭">×</button>
+                <h5 class="modal-title" id="roleModalLabel">设置角色</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <c:choose>
+                            <c:when test="${not empty roleList}">
+                                <form class="form-horizontal" role="form" >
+                                    <input type="hidden" id="userIdRole" value="">
+                                    <c:forEach items="${roleList}" var="role" varStatus="vs">
+                                        <div class="checkbox">
+                                            <label class="pos-rel">
+                                                <input type="checkbox" name="roleIds"
+                                                   value="${role.roleId}"
+                                                   id="roleId${role.roleId}" alt="${role.roleId}"
+                                                   class="ace"/>
+                                                <span class="lbl"> &nbsp; &nbsp; &nbsp; &nbsp;${role.roleName}</span>
+                                            </label>
+                                        </div>
+                                    </c:forEach>
+                                </form>
+                            </c:when>
+                            <c:otherwise>
+                                <label class="pos-rel">
+                                    没有相关数据
+                                </label>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="saveRole()">提交</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+
 <script type="text/javascript">
     jQuery(function ($) {
         //initiate dataTables plugin
@@ -434,9 +465,12 @@
             /*"dom": 'Bfrtip',*/
             bAutoWidth: false,
             "aoColumns": [
-                {"bSortable": false},
-                null, null, null, null, null,
-                {"bSortable": false}
+                null, null,
+                {"bSortable": true},
+                {"bSortable": true},
+                {"bSortable": true},
+                {"bSortable": true},
+                null, null
             ],
             "aaSorting": [],
 
@@ -562,7 +596,7 @@
 
 <script type="text/javascript">
 
-    function off(){
+    function clearCss() {
         $("#accHint").css( "visibility","hidden");
         $("#teleHint").css( "visibility","hidden");
         $("#emailHint").css( "visibility","hidden");
@@ -572,94 +606,72 @@
         $('h4').html("新增");1
         $("#tag").val("ADD");
         var  tag=$("#tag").val();
-        document.getElementById("userForm").reset();
+        $("#userForm")[0].reset();
         $("#account").val("");
         $("[name=isEnabled]:checkbox").prop("checked", false);
-        off();
+        clearCss();
     }
 
-    //验证登录账户是否已存在
-    /*$("#account").blur(function () {
-        var account = $("#account").val();
-        alert(" --- " + account);
-        if (account == '') {
-            $("#accHint").html("登录账户名不为空");
-            $("#accHint").css( "visibility","visible");
-            $("#saveChange").attr("disabled", true);
-            checkoutAll();
+    function setRole(userId){
+        if (userId == '') {
+            layer.msg("设置角色操作出错！");
             return false;
         }
+        $('input:checkbox[name=roleIds]:checked').prop("checked",false)
+
         $.ajax({
             type: "GET",
-     url: "%=basePath%>b/user/checkoutAccount.do",
+            url: "b/user/setRole.do",
             dataType: "json",
             async: true,
             data: {
-                account: account
+                userId: userId
             },
-            success: function (rc) {
+            success: function(urList) {
+                $.each(urList, function (index, userRole) {
+                    $("#roleId" + userRole.roleId + "").prop('checked', true);
+                    $("#userIdRole").val( userRole.userId);
+                });
+            }
+        });
+    }
+
+    function saveRole(){
+        var userId=  $("#userIdRole").val();
+        var roleIds="";
+        $('input:checkbox[name=roleIds]:checked').each(function(i){
+            if(0==i){
+                roleIds = $(this).val();
+            }else{
+                roleIds += (","+$(this).val());
+            }
+        });
+        $.ajax({
+            type:"post",
+            url:"b/user/saveRole.do",
+            dataType:"json",
+            data:{
+                userId:userId,
+                roleIds:roleIds
+            },
+            success:function(rc){
                 if (rc.code == '0') {
-                    $("#accHint").css( "visibility","visible");
-                    $("#accHint").html("登录账户已存在");
-                } else {
-                    $("#accHint").css( "visibility","hidden");
-
-                }
-                checkoutAll();
-            }
-
-        })
-
-     });*/
-    //验证手机格式
-    /*$("#telephone").blur(function () {
-        var telephone=$("#telephone").val();
-        if(""!=telephone){
-            var myreg=/^(13+\d{9})|(159+\d{8})|(153+\d{8})$/;
-            if(!myreg.test(telephone)){
-                $("#teleHint").css( "visibility","visible");
-                $("#teleHint").html("手机格式不正确");
-            }else{
-                $("#teleHint").css( "visibility","hidden");
-            }
-        }else{
-            $("#teleHint").css( "visibility","hidden");
-        }
-        checkoutAll();
-     });*/
-
-    //验证邮箱格式
-    /*$("#email").blur(function () {
-        var email=$("#email").val();
-        if(""!=email){
-            var myreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
-            if(!myreg.test(email)){
-                $("#emailHint").css( "visibility","visible");
-                $("#emailHint").html("邮箱格式不正确");
-            }else{
-                $("#emailHint").css( "visibility","hidden");
-            }
-        }else{
-            $("#emailHint").css( "visibility","hidden");
-        }
-        checkoutAll();
-
-     });*/
-
-    function checkoutAll(){
-        $("label[name='hint']").each(function(){
-            if($(this).is(":hidden")){
-                $("#saveChange").attr("disabled", false);
-            }else{
-                $("#saveChange").attr("disabled", true);
-                return false;
+                    layer.msg('设置角色成功');
+                    setTimeout(function () {
+                        location.reload();
+                    },1000);
+                } else
+                    layer.msg('设置角色出错!');
             }
 
         })
     }
 
-    // 编辑角色
+    // 编辑用户
     function editUser(userId){
+        // 去掉提示
+        jQuery.validator.messages.required = "";
+
         $('h4').html("编辑");
         $("#tag").val("EDIT");
         var tag=  $("#tag").val();
@@ -677,7 +689,7 @@
             },
             success: function (user) {
 
-                $("#userName").val(user.username);
+                $("#userName").val(user.userName);
                 $("#account").val(user.account);
                 if (user.enabled == '1') {
                     $("#isEnabled").attr("checked", 'true');
@@ -688,16 +700,13 @@
                 $("#email").val(user.email);
                 $("#telephone").val(user.telephone);
                 $("#userId").val(user.userId);
-
-
             }
         });
-
     }
 
     //单个删除用户
     function delUser(userId){
-        layer.confirm('您确定要删除该字典数据？', {
+        layer.confirm('您确定要删除该用户数据？', {
             btn: ['确定', '暂时不要']  // 按钮
         }, function(){
             layer.msg('您点击了确定', {icon:1});
@@ -718,7 +727,7 @@
                 },
                 success: function (rc) {
                     if (rc.code == '0') {
-                        layer.msg('已为您删除该字典数据', {icon:1});
+                        layer.msg('已为您删除该用户数据', {icon:1});
                         setTimeout(function () {
                             location.reload();
                         },1000);
@@ -732,7 +741,6 @@
         });
 
         return false;
-
     };
 
     //批量删除用户
@@ -765,25 +773,20 @@
                 },
                 success: function (rc) {
                     if (rc.code == '0') {
-                        layer.msg('已为您删除该字典数据', {icon:1});
+                        layer.msg('已为您删除该用户数据', {icon:1});
                         setTimeout(function () {
                             location.reload();
                         }, 1000);
-
-                    } else
-                        layer.msg('删除操作出错![' + rc.message + ']');
+                    } else  layer.msg('删除操作出错![' + rc.message + ']');
                 }
             });
 
             return true;
-        }, function() {
-
+        }, function () {
             return true;
         });
 
         return false;
-
-
     };
 
     <!-- 提交form -->
@@ -826,6 +829,8 @@
                 }
             }
         });
+
+        return false;
     }
 
 </script>

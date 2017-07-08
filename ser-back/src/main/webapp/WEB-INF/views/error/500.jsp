@@ -95,7 +95,7 @@
 
 <script type="text/javascript">
     function showErr() {
-        $("#err").style.display = "display";
+        $("#err").style.display = "block";
     }
 </script>
 

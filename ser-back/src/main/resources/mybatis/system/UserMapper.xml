@@ -16,7 +16,6 @@
         <result column="NICKNAME" property="nickname"/>
         <result column="EMAIL" property="email"/>
         <result column="TELEPHONE" property="telephone"/>
-
     </resultMap>
 
     <resultMap type="User" id="userRoleMap" extends="userMap">
@@ -26,6 +25,13 @@
             <result column="CN_NAME" property="cnName"/>
             <result column="IS_SYS" property="isSys"/>
         </collection>
+    </resultMap>
+
+    <resultMap type="UserRoleLink" id="UserRoleLinkMap">
+        <id column="ROLE_ID" property="roleId"/>
+        <result column="ID" property="id"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="ENABLED" property="enabled"/>
     </resultMap>
 
     <!-- 表名 -->
@@ -114,10 +120,17 @@
     <!-- 获取用户（包含角色信息）列表 -->
     <select id="selectUserRole" parameterType="pd" resultMap="userRoleMap">
         select u.USER_ID, u.USER_NAME, u.LOCKED, u.EXPIRED, u.REMARK,
-          r.ROLE_ID roleId, r.ROLE_NAME roleName, r.CN_NAME cnName, r.IS_SYS isSys
+          r.ROLE_ID roleId, r.ROLE_NAME roleName, r.IS_SYS isSys
         from T_USER u LEFT JOIN T_USER_ROLE ur on u.USER_ID = ur.USER_ID
         LEFT JOIN T_ROLE r ON ur.ROLE_ID = r.ROLE_ID
         WHERE 1=1
+    </select>
+
+    <select id="findRoleIdByUserId" parameterType="pd" resultMap="UserRoleLinkMap">
+        select u.USER_ID userId, ur.ROLE_ID as roleId, ur.ENABLED enabled
+        FROM  T_USER u LEFT JOIN T_USER_ROLE ur on u.USER_ID = ur.USER_ID
+        WHERE
+         u.USER_ID = #{userId}
     </select>
 
     <!-- 列举某角色下的所有用户 -->
@@ -130,13 +143,8 @@
 
     <!-- 用户列表 -->
     <select id="userListPage" parameterType="page" resultType="pd">
-        SELECT u.USER_ID, u.USERNAME, u.PASSWORD, u.LAST_LOGIN, u.ENABLED, u.LOCKED, u.EXPIRED, u.ACCOUNT,
-        r.ROLE_ID, r.ROLENAME
+        SELECT u.USER_ID, u.USERNAME, u.PASSWORD, u.LAST_LOGIN, u.ENABLED, u.LOCKED, u.EXPIRED, u.ACCOUNT
         FROM <include refid="tableName"></include> u
-        LEFT JOIN <include refid="userRoleTableName"></include> ur on
-          u.USER_ID = ur.USER_ID
-        LEFT JOIN <include refid="roleTableName"></include> r on
-          ur.ROLE_ID = r.ROLE_ID
         WHERE
           u.USERNAME != 'admin'
         <if test="pd.ROLE_ID != null and pd.ROLE_ID != ''"><!-- 角色检索 -->
@@ -182,9 +190,9 @@
             <if test="locked != null and locked != ''">LOCKED,</if>
             <if test="enabled != null and enabled != ''">ENABLED,</if>
             <if test="remark != null and remark != ''">REMARK,</if>
-            <if test="lastLogin != null and lastLogin != ''">LAST_LOGIN</if></trim>),
-            <if test="email != null and email != ''">EMAI</if>,
-            <if test="telephone != null and telephone != ''">TELEPHONE</if>
+        <if test="lastLogin != null and lastLogin != ''">LAST_LOGIN,</if>
+        <if test="email != null and email != ''">EMAIL,</if>
+            <if test="telephone != null and telephone != ''">TELEPHONE</if></trim>)
         values(<trim suffixOverrides=",">
             <if test="userId != null and userId != ''">#{userId},</if>
             <if test="userName != null and userName != ''">#{userName},</if>
@@ -195,9 +203,9 @@
             <if test="locked != null and locked != ''">#{locked},</if>
             <if test="enabled != null and enabled != ''">#{enabled},</if>
             <if test="remark != null and remark != ''">#{remark},</if>
-            <if test="lastLogin != null and lastLogin != ''">#{lastLogin}</if></trim>),
-            <if test="email != null and email != ''">#{email}</if>,
-            <if test="telephone != null and telephone != ''">#{telephone}</if>
+            <if test="lastLogin != null and lastLogin != ''">#{lastLogin}，</if>
+            <if test="email != null and email != ''">#{email}，</if>
+            <if test="telephone != null and telephone != ''">#{telephone}</if></trim>)
     </insert>
 
     <update id="updateUser" parameterType="pd">
@@ -243,5 +251,22 @@
             #{userId}
         </foreach>
     </delete>
+
+    <!-- 批量删除用户角色信息-->
+    <delete id="deleteUserRole" parameterType="String">
+        delete from
+        <include refid="userRoleTableName"></include>
+        where  USER_ID = #{userId}
+
+    </delete>
+
+    <!-- 批量插入用户对应的角色信息-->
+    <insert id="insertUserRole" useGeneratedKeys="true" parameterType="java.util.List">
+        insert into  <include refid="userRoleTableName"></include> (USER_ID,ROLE_ID,ENABLED)
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.userId},#{item.roleId},#{item.enabled})
+        </foreach>
+    </insert>
 
 </mapper>

@@ -12,7 +12,7 @@
 
 <html lang="en">
 <head>
-    <base href="<%=basePath%>">
+    <%--<base href="<%=basePath%>">--%>
     <meta charset="utf-8"/>
     <title>科教研管理系统</title>
     <meta name="keywords" content="科教研管理系统" />
@@ -26,7 +26,7 @@
     <%@ include file="../comm/default_header.jsp" %>
 </head>
 
-<body class="skin-1" style="overflow:auto;">
+<body class="skin-1" style="overflow:auto;overflow-x:hidden;">
     <!-- Preloader -->
     <%--<div id="preloader">
         <div id="status">

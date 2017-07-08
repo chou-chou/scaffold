@@ -1,5 +1,6 @@
 package com.hrp.interceptor.shiro;
 
+import com.hrp.entity.system.Button;
 import com.hrp.entity.system.User;
 import com.hrp.service.MenuService;
 import com.hrp.service.UserService;
@@ -20,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -94,24 +97,57 @@ public class ShiroRealm extends AuthorizingRealm {
 	 * 	1、通过xml配置资源的权限
 	 * 	2、通过shiro标签控制权限
 	 * 	3、通过shiro注解控制权限
-	 */
+     *
+     * 	会进入授权方法一共有三种情况：
+     * 	    1、subject.hasRole("admin") 或 subject.isPermitted("admin")
+     * 	    2、@RequiresRoles("admin")
+     * 	    3、<shiro:hasPermission name="sys:role:add"> xxx </shiro:hasPermission>
+     *
+     */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		if (principals == null) {
 			throw new AuthorizationException("parameters principals is null");
 		}
+
+        User user = null;
+        List<Button> btnList = null;
+        Set<String> functionCodes = new HashSet<>();
+
+        Session session = getSession();
+
 		//获取已认证的用户名（登录名）
 		//String username = (String)super.getAvailablePrincipal(pc);
         String username = (String)principals.getPrimaryPrincipal();
 
-		Set<String> roleCodes = userService.findAllRoleNamesByUsername(username);
-		Set<String> functionCodes = menuService.getMenuCodeSet(roleCodes);
+        try {
+//            user = userService.getUserByLoginName(username);
+            user = (User) session.getAttribute(Constant.CURRENT_USER);
 
-		SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-		authorizationInfo.setRoles(roleCodes);  // 查询用户的角色放入凭证中
-		authorizationInfo.setStringPermissions(functionCodes);  // 查询用户权限放入凭证中
-		return authorizationInfo;
-	}
+            Set<String> roleCodes = userService.findAllRoleNamesByUsername(username);
+
+            SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+            authorizationInfo.setRoles(roleCodes);  // 查询用户的角色放入凭证中
+
+            // 获取该用户对应的菜单标识和按钮标识信息
+            if (null != user) {
+                btnList = this.userService.getButtonByUserId(user.getUserId());
+            }
+
+            for (Button button : btnList) {
+                if (button.getBtnTag() != null && !button.getBtnTag().replace(" ", "").equals("")) {
+                    functionCodes.add(button.getBtnTag().replace(" ", "").trim());
+                }
+            }
+
+            authorizationInfo.setStringPermissions(functionCodes);  // 查询用户权限放入凭证中
+            return authorizationInfo;
+        } catch (Exception e) {
+            logger.error("获取用户权限数据失败... \n", e);
+        }
+
+        return null;
+    }
 
 	//是否需要校验密码登录，用于开发环境 0默认为开发环境，其他为正式环境（1，或者不配）
 	public boolean isNeedPassword(){

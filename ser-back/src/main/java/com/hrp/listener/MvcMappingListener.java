@@ -42,9 +42,9 @@ public class MvcMappingListener implements ApplicationListener<ContextRefreshedE
                     // 判断该方法是否有MvcMapping注解
                     if (method.isAnnotationPresent(MvcMapping.class)) {
                         MvcMapping mvcMapping = method.getAnnotation(MvcMapping.class);
-                        String url = mvcMapping.url();
+                        String tag = mvcMapping.tag();
                         String path = mvcMapping.type().getPrefix() + mvcMapping.path() + mvcMapping.type().getSuffix();
-                        mvcMap.put(url, path);
+                        mvcMap.put(tag, path);
                     }
                 }
             }
@@ -67,7 +67,7 @@ public class MvcMappingListener implements ApplicationListener<ContextRefreshedE
             logger.info(" -----------" + path + " ----------------");
 
             String rootPath = System.getProperty("ser.root");
-            logger.info(" ----- 项目根路径： " + rootPath + " -----------");
+            logger.info(" ----- 项目根路径： " +  rootPath + " -----------");
         } catch (Exception e) {
             e.printStackTrace();
         }

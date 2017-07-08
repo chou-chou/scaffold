@@ -46,6 +46,8 @@ public class SysLog implements Serializable {
     /*** 结束时间 */
     private String endDate;
 
+    private String message;
+
     public Integer getLogId() {
         return logId;
     }
@@ -128,6 +130,14 @@ public class SysLog implements Serializable {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Override

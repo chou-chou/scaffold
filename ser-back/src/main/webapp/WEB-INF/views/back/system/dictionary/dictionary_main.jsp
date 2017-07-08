@@ -67,14 +67,6 @@
                         <div class="row">
                             <!-- 字典树 -->
                             <div class="col-sm-4">
-                                <!-- 工具按钮 新增/编辑/删除 -->
-                                <div>
-                                    <p>
-                                        <button class="btn btn-sm btn-primary" onclick="">新增</button>
-                                        <button class="btn btn-sm btn-primary" onclick="">编辑</button>
-                                        <button class="btn btn-sm btn-primary" onclick="">删除</button>
-                                    </p>
-                                </div>
 
                                 <div class="widget-box widget-color-blue2">
                                     <div class="widget-header">
@@ -382,7 +374,7 @@
 
         $.ajax({
             type: "POST",
-            url: "<%=basePath%>b/dictionary/editDictionary.do",
+            url: "b/dictionary/editDictionary.do",
             dataType: "json",
             async: true,
             data: {
@@ -400,21 +392,47 @@
                     var zTree = $.fn.zTree.getZTreeObj("dictionaryTree");
                     alert(rc.message);
 
-                    if (tag == "ADD") {
+                    if (tag == "ADD" || ""==tag) {
                         var supCode = null;
-                        if (rc.data != null && rc.data.supDic != null) {
-                            supCode = zTree.getNodeByTId("dictionaryTree_" + rc.data.supDic.dicId);  // 父级
-                            //supCode = zTree.getNodeByParam("id", rc.data.supDic.dicId, null); // 父级
+                        if (rc.data != null && rc.data.supId != null) {
+                            var supNode = null;
+                            if (rc.data != null && rc.data.supDic != null) {
+                                supNode = zTree.getNodeByParam("code", rc.data.supDic.entryCode, null);
+                            }
+                            if (supNode != undefined && supNode != null) {
+                                var treeNode_N = [{
+                                    id: rc.data.dicId,
+                                    tId: rc.data.dicId,
+                                    pId: rc.data.supCode,
+                                    code: rc.data.entryCode,
+                                    name: rc.data.entryValue,
+                                    isParent: false
+                                }];
+                                layer.msg('新增字典数据成功');
+                                zTree.addNodes(supNode, treeNode_N);
+                                var n = zTree.getNodeByParam("id", rc.data.dicId, null);  // 根据新的id找到新添加的节点
+                                zTree.selectNode(n);  // 让新添加的节点处于选中状态
+                            }else{
+                                var treeNode_N = [{
+                                    id: rc.data.dicId,
+                                    tId: rc.data.dicId,
+                                    code: rc.data.entryCode,
+                                    name: rc.data.entryValue,
+                                    isParent: false
+                                }];
+                                zTree.addNodes(null, treeNode_N);
+                                layer.msg('新增字典数据成功');
+                                var n = zTree.getNodeByParam("id", rc.data.dicId, null);  // 根据新的id找到新添加的节点
+                                zTree.selectNode(n);  // 让新添加的节点处于选中状态
+
+                            }
+
                         }
 
-                        if (supCode != undefined && supCode != null) {
-                            zTree.addNodes(supCode, -1, {id:rc.data.dicId, pId:rc.data.entryCode, code:rc.data.entryCode, name:rc.data.entryValue});
-                            var n = zTree.getNodeByParam("id", rc.data.dicId, null);  // 根据新的id找到新添加的节点
-                            zTree.selectNode(n);  // 让新添加的节点处于选中状态
-                        }
                     }
 
                     if (tag == "EDIT") {
+                        layer.msg('编辑部门数据成功');
                         var node = zTree.getNodeByParam("id", rc.data, null);
                         node.name = entryValue;
                         zTree.updateNode(node);
@@ -438,7 +456,7 @@
 
         $.ajax({
             type: "GET",
-            url: "<%=basePath%>b/dictionary/editDictionary.do",
+            url: "b/dictionary/editDictionary.do",
             dataType: "json",
             async: true,
             data: {
@@ -492,7 +510,7 @@
             // 执行异步删除动作
             $.ajax({
                 type: "POST",
-                url: "<%=basePath%>b/dictionary/removeDictionary.do",
+                url: "b/dictionary/removeDictionary.do",
                 dataType: "json",
                 async: true,
                 data: {

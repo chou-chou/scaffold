@@ -37,7 +37,7 @@
     <div class="main-content">
         <div class="main-content-inner">
             <div class="page-content">
-                <form id="dicFrm" class="form-horizontal" action="#" method="post" name="dicFrm">
+                <form id="menuForm" class="form-horizontal" action="#" method="post" name="menuForm">
                     <div class="form-group">
                         <div class="col-sm-11">
                             <div class="form-inline">
@@ -65,7 +65,7 @@
                         <div class="row">
                             <!-- 菜单树 -->
                             <div class="col-sm-4">
-                                <!-- 工具按钮 新增/编辑/删除 -->
+                                <!-- 工具按钮 新增/编辑/删除
                                 <div>
                                     <p>
                                         <button class="btn btn-sm btn-primary" onclick="">新增</button>
@@ -73,6 +73,7 @@
                                         <button class="btn btn-sm btn-primary" onclick="">删除</button>
                                     </p>
                                 </div>
+                                -->
 
                                 <div class="widget-box widget-color-blue2">
                                     <div class="widget-header">
@@ -95,7 +96,7 @@
                                     <div class="row">
                                         <div class="col-xs-12">
 
-                                            <form class="form-horizontal" role="form">
+                                            <form class="form-horizontal" role="form" id="menuFrom">
 
                                                 <input id="menuId" name="menuId" type="hidden" value="${menu.menuId}"/>
                                                 <input id="tag" name="tag" type="hidden" value="ADD"/>
@@ -104,9 +105,9 @@
                                                     <label class="control-label col-sm-2 col-xs-12 no-padding-right"
                                                            for="supId">上级菜单:</label>
                                                     <div class="col-sm-10 col-xs-12">
-                                                        <select id="supId" name="supId" class="select2"
-                                                                style="max-height:35px; overflow-y:auto; overflow-x: hidden">
-                                                            <option value="-1">请选择</option>
+                                                        <select id="supId" name="supId" class="select2" multiple=""
+                                                                style="max-height:150px; overflow-y:auto; overflow-x: hidden">
+                                                            <option value="0">请选择</option>
                                                             <c:forEach items="${menuList}" var="menu" varStatus="index">
                                                                 <option value="${menu.menuId}">${menu.menuName}</option>
                                                             </c:forEach>
@@ -147,31 +148,32 @@
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label no-padding-right" for="icon">图标:</label>
                                                     <div class="col-sm-10">
-                                                        <input type="text" id="icon_" name="icon_" class="col-xs-10 col-sm-5"
-                                                               value="${menu.icon}" />
-                                                        <button id="icon" type="buton" class="btn btn-primary iconpicker-component">
-                                                            <i class="fa ${menu.icon}"/>
+                                                        <input type="text" id="icon_" name="icon_"
+                                                               class="col-xs-10 col-sm-5"
+                                                               value="${menu.icon}"/>
+                                                        <button id="icon" type="buton"
+                                                                class="btn btn-primary iconpicker-component">
                                                         </button>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label no-padding-right"
-                                                           for="enabled">
-                                                        是否可用:
+                                                           for="isLeaf">
+                                                        是否为子节点:
                                                     </label>
                                                     <div class="col-sm-10 checkbox">
                                                         <label>
-                                                            <input id="enabled" name="enabled" value="1"
-                                                                   class="ace ace-checkbox-2" type="checkbox"
-                                                                   <c:if test="${menu.enabled == true}">checked</c:if>/>
-                                                            <span class="lbl">  注: 勾选即可用 </span>
+                                                            <input id="isLeaf" name="isLeaf" value="1"
+                                                                   class="ace ace-checkbox-2" type="checkbox"/>
+                                                            <span class="lbl">  注: 勾选即子节点 </span>
                                                         </label>
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label class="col-sm-2 control-label no-padding-right" for="remark">备注:</label>
+                                                    <label class="col-sm-2 control-label no-padding-right"
+                                                           for="remark">备注:</label>
                                                     <div class="col-sm-10">
                                                         <textarea id="remark" name="remark" class="form-control"
                                                                   placeholder="备注信息">${menu.remark}</textarea>
@@ -207,10 +209,13 @@
 </div>
 
 <script type="text/javascript">
+
     jQuery(function ($) {
-        $('#icon').iconpicker({
+        $('#icon_').iconpicker({
             selected: false,
-            defaultValue: false,
+            defaultValue: false,theme: 'fip-bootstrap',
+            source: 'fa_icons',
+            searchSource: 'fa_icons',
             templates: {
                 popover: '<div class="iconpicker-popover popover"><div class="arrow"></div>' +
                 '<div class="popover-title"></div><div class="popover-content"></div></div>',
@@ -222,7 +227,7 @@
                 iconpickerItem: '<a role="button" href="#" class="iconpicker-item"><i></i></a>',
             }
         });
-    }
+    })
 
     var zTree;
     var demoIframe;
@@ -242,7 +247,7 @@
         if (addBtn)
             addBtn.bind("click", function () {
                 $("#tag").val("ADD");
-                return editDictionary(treeNode.id, 'ADD'); // , treeNode.id -> 1 / treeNode.tId --> dictionaryTree_1
+                return editMenu(treeNode.id, 'ADD'); // , treeNode.id -> 1 / treeNode.tId -->
             });
 
         // 添加编辑按钮点击操作
@@ -250,14 +255,14 @@
         if (editBtn)
             editBtn.bind("click", function () {
                 $("#tag").val("EDIT");
-                return editDictionary(treeNode.id, 'EDIT');
+                return editMenu(treeNode.id, 'EDIT');
             });
 
         // 添加删除按钮点击操作
         var removeBtn = $("#removeBtn_" + treeNode.tId);
         if (removeBtn)
             removeBtn.bind("click", function () {
-                return removeDictionary(treeNode.id);
+                return removeMenu(treeNode.id);
             });
 
     };
@@ -291,7 +296,7 @@
         },
         callback: {
             beforeClick: function (treeId, treeNode) {
-                var zTree = $.fn.zTree.getZTreeObj("dictionaryTree");
+                var zTree = $.fn.zTree.getZTreeObj("menuTree");
                 if (treeNode.isParent) {
                     zTree.expandNode(treeNode);
                     return false;
@@ -302,7 +307,6 @@
         }/*,
          async: {
          enabled: true,
-         url: "/dictionary/getDicTree.do",
          autoParam: ['code'],
          dataType: "json"
          }*/
@@ -312,7 +316,7 @@
         ajaxFetchData();  // 异步获取字典数据
     });
 
-    $('#supCode').select2({
+    $('.select2').select2({
         width: '235px',
         placeholder: {
             id: '-1',
@@ -348,15 +352,15 @@
     // 业务功能
     // 异步获取字典数据信息，并展示
     function ajaxFetchData() {
-        var t = $("#dictionaryTree");
+        var t = $("#menuTree");
 
         $.ajax({
             type: "POST",
-            url: "<%=basePath%>b/dictionary/getDicTree.do",
+            url: "<%=basePath%>b/menu/getMenuTree.do",
             dataType: "json",
             async: true,
             data: {
-                dicInfo: $("#dicInfo").val()
+                menuInfo: $("#menuInfo").val()
             },
             success: function (data) {
                 //var result = eval("(" + data + ")");  // 这个data不能直接使用，需要转化一下
@@ -372,66 +376,88 @@
     function saveChange() {
 
         var tag = $("#tag").val();
-
-        var supCode = $("#supCode").val();
-        var entryCode = $("#entryCode").val();
-        var entryValue = $("#entryValue").val();
+        var menuId = $("#menuId").val();
+        var supId = $("#supId").val();
+        var menuName = $("#menuName").val();
+        var menuUrl = $("#menuUrl").val();
+        var icon_ = $("#icon_").val();
         var sequence = $("#sequence").val();
-        var enabled = 0;
-        if ($("#enabled").val() !== undefined)  enabled = $("#enabled").val();
+        var isLeaf = 0;
+        if ($("#isLeaf").val() !== undefined) isLeaf = $("#isLeaf").val();
         var remark = $("#remark").val();
 
-        if (supCode == '') {
-            layer.msg("请选择一个合适的上级字典!");
+        if (menuName == null || menuName == '') {
+            layer.msg('请正确菜单名称!');
             return false;
         }
 
-        if (entryCode == null || entryCode == '') {
-            layer.msg('请正确填写字典编码!');
-            return false;
-        }
-
-        if (remark == undefined || remark == null)  remark = "";
+        if (remark == undefined || remark == null) remark = "";
 
         $.ajax({
             type: "POST",
-            url: "<%=basePath%>b/dictionary/editDictionary.do",
+            url: "<%=basePath%>b/menu/editMenu.do",
             dataType: "json",
             async: true,
             data: {
                 tag: $("#tag").val(),
-                dicId: $("#dicId").val(),
-                supCode: supCode,
-                entryCode: entryCode,
-                entryValue: entryValue,
+                menuId: menuId,
+                supId: supId,
+                menuName: menuName,
+                menuUrl: menuUrl,
+                icon: icon_,
                 sequence: sequence,
-                enabled: enabled,
+                isLeaf: isLeaf,
                 remark: remark
             },
             success: function (rc) {
                 if (rc.code == '0') {
-                    var zTree = $.fn.zTree.getZTreeObj("dictionaryTree");
-                    alert(rc.message);
+                    var zTree = $.fn.zTree.getZTreeObj("menuTree");
+                    if (tag == "ADD" || "" == tag) {
+                        if (rc.data != null && rc.data.supId != null) {
+                            var supNode = null;
+                            if (rc.data != null && rc.data.parentMenu != null) {
+                                supNode = zTree.getNodeByParam("id", rc.data.parentMenu.menuId, null);
+                            }
+                            if (supNode != undefined && supNode != null) {
+                                var treeNode_N = [{
+                                    id: rc.data.menuId,
+                                    tId: rc.data.menuId,
+                                    pId: rc.data.supId,
+                                    name: rc.data.menuName,
+                                    isParent: false
+                                }];
+                                layer.msg('新增字典数据成功');
+                                zTree.addNodes(supNode, treeNode_N);
+                                var n = zTree.getNodeByParam("id", rc.data.menuId, null);  // 根据新的id找到新添加的节点
+                                zTree.selectNode(n);  // 让新添加的节点处于选中状态
+                            } else {
+                                var treeNode_N = [{
+                                    id: rc.data.menuId,
+                                    tId: rc.data.menuId,
+                                    name: rc.data.menuName,
+                                    isParent: false
+                                }];
+                                zTree.addNodes(null, treeNode_N);
+                                layer.msg('新增字典数据成功');
+                                var n = zTree.getNodeByParam("id", rc.data.menuId, null);  // 根据新的id找到新添加的节点
+                                zTree.selectNode(n);  // 让新添加的节点处于选中状态
 
-                    if (tag == "ADD") {
-                        var supCode = null;
-                        if (rc.data != null && rc.data.supDic != null) {
-                            supCode = zTree.getNodeByTId("dictionaryTree_" + rc.data.supDic.dicId);  // 父级
-                            //supCode = zTree.getNodeByParam("id", rc.data.supDic.dicId, null); // 父级
+                            }
+
                         }
 
-                        if (supCode != undefined && supCode != null) {
-                            zTree.addNodes(supCode, -1, {id:rc.data.dicId, pId:rc.data.entryCode, code:rc.data.entryCode, name:rc.data.entryValue});
-                            var n = zTree.getNodeByParam("id", rc.data.dicId, null);  // 根据新的id找到新添加的节点
-                            zTree.selectNode(n);  // 让新添加的节点处于选中状态
-                        }
+                        $("#menuFrom")[0].reset();
+                        $("select option[value='0']").attr("select", "selected");
+
                     }
 
                     if (tag == "EDIT") {
                         var node = zTree.getNodeByParam("id", rc.data, null);
-                        node.name = entryValue;
+                        node.name = menuName;
                         zTree.updateNode(node);
                     }
+                } else {
+                    layer.msg(rc.message);
                 }
             }
         });
@@ -439,56 +465,60 @@
 
     // 重置表单
     function resetForm() {
-        $("#entryCode").empty();
-        $("#entryValue").empty();
+        $("#menuName").empty();
+        $("#menuUrl").empty();
         $("#sequence").empty();
-        $("#enabled").empty();
+        $("#isLeaf").empty();
         $("#remark").empty();
+        $("#icon_").empty();
     }
 
     // 新增Form/编辑Form
-    function editDictionary(dicId, tag) {
+    function editMenu(menuId, tag) {
 
         $.ajax({
             type: "GET",
-            url: "<%=basePath%>b/dictionary/editDictionary.do",
+            url: "b/menu/editMenu.do",
             dataType: "json",
             async: true,
             data: {
-                dicId: dicId,
+                menuId: menuId,
                 tag: tag
             },
-            success: function (dic) {
+            success: function (menu) {
 
+                alert(tag);
                 if (tag == "ADD") {
-                    $("#supCode").val(dic.entryCode).trigger('change.select2');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
+                    $("#supId").val(menu.menuId).trigger('change.select2');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
 
-                    $("#dicId").val("");
+                    $("#menuId").val("");
+                    $("#menuName").val("");
+                    $("#menuUrl").val("");
                     $("#sequence").val("");
-                    $("#entryCode").val("");
-                    $("#entryValue").val("");
-                    $("#enabled").attr("checked", 'true');
+                    $("#icon_").val("");
+                    $("#isLeaf").removeAttr("checked");
                     $("#remark").val("");
                 }
 
                 if (tag == 'EDIT') {
-                    if (dic.supDic !== undefined && dic.supDic !== null) {
-                        $("#supCode").val(dic.supDic.entryCode).trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
+                    if (menu.parentMenu !== undefined && menu.parentMenu !== null) {
+                        $("#supId").val(menu.parentMenu.menuId).trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
                     } else {
-                        $("#supCode").val('-1').trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
+                        $("#supId").val('-1').trigger('change');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
                     }
 
-                    $("#dicId").val(dic.dicId);
-                    $("#sequence").val(dic.sequence);
-                    $("#entryCode").val(dic.entryCode);
-                    $("#entryValue").val(dic.entryValue);
+                    $("#menuId").val(menu.menuId);
+                    $("#menuName").val(menu.menuName);
+                    $("#menuUrl").val(menu.menuUrl);
+                    $("#sequence").val(menu.sequence);
+                    $("#icon_").val(menu.icon);
 
-                    if (dic.enabled == true) {
-                        $("#enabled").attr("checked", 'true');
+                    if (menu.isLeaf == true) {
+                        $("#isLeaf").attr("checked", 'true');
                     } else {
-                        $("#enabled").attr("checked", 'false');
+                        $("#isLeaf").attr("checked", 'false');
                     }
-                    $("#remark").val(dic.remark);
+                    $("#remark").val(menu.remark);
                 }
             }
         });
@@ -496,35 +526,36 @@
         return false;
     }
 
-    function removeDictionary(dicId) {
-        layer.confirm('您确定要删除该字典数据？', {
+    function removeMenu(menuId) {
+        alert(menuId);
+        layer.confirm('您确定要删除该菜单数据？', {
             btn: ['确定', '暂时不要']  // 按钮
-        }, function(){
-            layer.msg('您点击了确定', {icon:1});
+        }, function () {
+            layer.msg('您点击了确定', {icon: 1});
 
             // 执行异步删除动作
             $.ajax({
                 type: "POST",
-                url: "<%=basePath%>b/dictionary/removeDictionary.do",
+                url: "<%=basePath%>b/menu/removeMenu.do",
                 dataType: "json",
                 async: true,
                 data: {
-                    dicId: dicId
+                    menuId: menuId
                 },
                 success: function (rc) {
                     if (rc.code == '0') {
-                        var zTree = $.fn.zTree.getZTreeObj("dictionaryTree");
+                        var zTree = $.fn.zTree.getZTreeObj("menuTree");
                         var node = zTree.getNodeByParam("id", rc.data, null);
                         zTree.removeNode(node);
 
-                        layer.msg('已为您删除该字典数据[' + dicId + ']', {icon:1});
+                        layer.msg('已为您删除该菜单数据');
                     } else
-                        layer.msg('删除操作出错![' + rc.message + ']');
+                        layer.msg('删除操作出错!');
                 }
             });
 
             return true;
-        }, function() {
+        }, function () {
 
             return true;
         });

@@ -16,7 +16,7 @@
             <Pattern>
                 <!-- %replace: 字符串替换; %caller: 方法调用栈. -->
                 <!-- (\bCaller.+?(?=\()): 正则, 匹配字符串"Caller...(",不含(号 -->
-                %d{HH:mm:ss.SSS} %-5level %replace(%caller{1}){'(\bCaller.+?(?=\())|\r|\n|\s*|\t', ''} - %msg  [%thread] %n
+                %d{HH:mm:ss.SSS} [%thread] %-5level %replace(%caller{1}){'(\bCaller.+?(?=\())|\r|\n|\s*|\t', ''} - %msg%n
             </Pattern>
             <filter class="ch.qos.logback.classic.filter.LevelFilter">
                 <level>DEBUG,INFO,WARN,ERROR</level>
@@ -37,7 +37,7 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy/MM/dd-HH:mm:ss.SSS} [%thread] %caller{1} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
         <!-- 下面为配置只输出info级别的日志 -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -69,7 +69,7 @@
         </rollingPolicy>
         <!-- 日志输出的文件的格式 -->
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy/MM/dd-HH:mm:ss.SSS} [%thread] %caller{1} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -91,7 +91,7 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy/MM/dd-HH:mm:ss.SSS} [%thread] %caller{1} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -106,7 +106,7 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy/MM/dd-HH:mm:ss.SSS} [%thread] %caller{1} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
         <!-- 下面为配置只输出error级别的日志 -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -115,21 +115,6 @@
             <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
-
-    <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
-    <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
-    <!-- 添加附加的appender,最多只能添加一个 -->
-    <!--<appender name="file.async" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>0</discardingThreshold>
-        <queueSize>256</queueSize>
-        <includeCallerData>true</includeCallerData>
-    </appender>-->
-
-    <!--<appender name="file.async.other" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>0</discardingThreshold>
-        <queueSize>256</queueSize>
-        <includeCallerData>true</includeCallerData>
-    </appender>-->
 
     <!-- 为某个包下的所有类的指定Appender 这里也可以指定类名称例如：com.aa.bb.ClassName -->
     <logger name="com.hrp.rest" additivity="false">
@@ -158,6 +143,6 @@
 	<logger name="java.sql.PreparedStatement" level="DEBUG" />
     <logger name="net.sf.ehcache" level="ERROR" />
 
-    <logger name="org.springframework" level="INFO" />
+    <logger name="org.springframework" level="WARN"/>
 
 </configuration>

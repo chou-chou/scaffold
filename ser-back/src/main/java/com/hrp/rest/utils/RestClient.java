@@ -10,13 +10,11 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
@@ -33,8 +31,8 @@ import java.util.concurrent.TimeUnit;
  * @author KVLT
  * @date 2017-06-02.
  */
-@Component
-@Lazy(false)
+//@Component
+//@Lazy(false)
 public class RestClient {
 
     private static final Logger logger = LoggerFactory.getLogger(RestClient.class);

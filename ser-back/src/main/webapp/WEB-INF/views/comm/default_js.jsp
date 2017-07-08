@@ -35,11 +35,34 @@
 
 <script type="text/javascript" src="<%=basePath%>/static/js/index.js"></script>
 
-<script type="text/javascript" src="<%=basePath%>/plugins/zTree/3.5/jquery.ztree.all-3.5.min.js" ></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/zTree/3.5/jquery.ztree.all.js"></script>
+
 <script type="text/javascript" src="<%=basePath%>/plugins/layer/layer.js" ></script>
+
 <script type="text/javascript" src="<%=basePath%>/plugins/validation/jquery.validate.js"></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/validation/additional-methods.js"></script>
 <script type="text/javascript" src="<%=basePath%>/plugins/validation/jquery.validate.messages_zh.js"></script>
 
+<!-- datatables相关css/js -->
+<script type="text/javascript">
+    if ('ontouchstart' in document.documentElement) document.write("<script src='<%=basePath%>/plugins/jquery/jquery.mobile.custom.min.js'>" + "<" + "/script>")
+</script>
+
+<script type="text/javascript" src="<%=basePath%>/plugins/dataTables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/dataTables/jquery.dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/dataTables.buttons.js"></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/buttons.flash.js"></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/buttons.html5.js"></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/buttons.print.js"></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/buttons.colVis.js"></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/select/dataTables.select.js"></script>
+
+<script type="text/javascript" src="<%=basePath%>/plugins/select2/js/select2.full.js"></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/select2/js/i18n/zh-CN.js"></script>
+
+<script type="text/javascript" src="<%=basePath%>/static/js/pinyin.js"></script>
+
+<%-- 一些抽离具体页面的通用js方法 --%>
 <script type="text/javascript">
     // Select2 --> Tree
     (function($) {
@@ -134,8 +157,11 @@
         }
     })(jQuery);
 
-    // 绑定数据内容到指定的Select2控件
-    function BindSelect2(ctrlName, url) {
+    /**
+     * 绑定数据内容到指定的Select2控件
+     *
+     */
+    function bindSelect2(ctrlName, url) {
         var control = $('#' + ctrlName);
         // 设置select2
         control.select2({
@@ -153,6 +179,45 @@
             $.each(data, function(i, item) {
                 control.append("<option value='" + item.Value + "'>&nbsp;" + item.Text + "</option>");
             });
+        });
+    }
+
+    /**
+     * 初始化duallistbox
+     * @param fetchUrl      获取后台选中数据的url
+     * @param queryParam    参数
+     * @param valueName     返回json中坐标属性（如id）
+     * @param elementId     页面dualListBox对应的
+     * @param callback      处理前端的dualListBox对象的回调函数
+     */
+    function initDualListBox(fetchUrl, queryParam, valueName, elementId, callback) {
+        var paramData = {
+            param: queryParam
+        };
+
+        $.ajax({
+            url: fetchUrl,
+            type: 'get',
+            data: paramData,
+            dataType: "json",
+            async: false,  // 同步方式执行，可以成功对全局变量赋值
+            success: function (objs) {
+                $.each(objs, function (i, ele) {
+                    var val = ele["" + valueName + ""];
+                    $("#" + elementId + " option[value='" + val + "']").attr("selected", true);
+                });
+
+                try {
+                    if (typeof(eval(callback)) === "function") {
+                        callback();
+                    }
+                } catch (e) {
+                }
+                //dualListBox.bootstrapDualListbox('refresh', true);
+            },
+            error: function (e) {
+                alert(e.msg);
+            }
         });
     }
 </script>

@@ -4,6 +4,9 @@
 
 <mapper namespace="DictionaryMapper">
 
+    <!--<cache type="org.mybatis.caches.ehcache.LoggingEhcache" >
+    </cache>-->
+
     <resultMap type="TreeNode" id="TreeNodeMap">
         <result column="DIC_ID" property="id"/>
         <result column="SUP_CODE" property="pId"/>

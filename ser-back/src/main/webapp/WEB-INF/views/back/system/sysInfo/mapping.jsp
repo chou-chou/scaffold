@@ -25,20 +25,6 @@
 
     <%@ include file="../../../comm/default_header.jsp" %>
 
-    <!-- datatables相关css/js -->
-    <script type="text/javascript">
-        if ('ontouchstart' in document.documentElement) document.write("<script src='<%=basePath%>/plugins/jquery/jquery.mobile.custom.min.js'>" + "<" + "/script>")
-    </script>
-
-    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/jquery.dataTables.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/jquery.dataTables.bootstrap.min.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/dataTables.buttons.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/buttons.flash.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/buttons.html5.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/buttons.print.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/button/buttons.colVis.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/plugins/dataTables/extends/select/dataTables.select.js"></script>
-
 </head>
 
 <body class="skin-1" style="overflow:auto;">
@@ -58,10 +44,6 @@
                 <div class="row">
                     <div class="col-xs-12">
                         <h3 class="header smaller lighter">SpringMVC映射列表</h3>
-
-                        <div class="clearfix">
-                            <div class="pull-right tableTools-container"></div>
-                        </div>
 
                         <div>
                             <table id="dynamic-table" class="table table-striped table-bordered table-hover">
@@ -120,6 +102,9 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="clearfix">
+                            <div class="pull-right tableTools-container"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -132,8 +117,12 @@
         var myTable = $('#dynamic-table').DataTable({
             bAutoWidth: false,
             "aoColumns": [
+                null,
                 {"bSortable": false},
-                null, null, null, null
+                {"bSortable": true},
+                {"bSortable": true},
+                {"bSortable": true},
+                null
             ],
             "aaSorting": [],
 

@@ -29,6 +29,12 @@ public class Constant {
     public final static String SHIRO_LOGIN_FAILURE = "shiroLoginFailure";  // shiro错误类名
 
     /**
+     * 执行状态
+     */
+    public final static String EXECUTE_SUCCESS = "success";
+    public final static String EXECUTE_FAILED = "failed";
+
+    /**
      * 批量操作时，每批操作的数据单位个数
      */
     public final static int BATCH_UNIT_COUNT = 200;
@@ -87,7 +93,7 @@ public class Constant {
 
     public static ApplicationContext WEB_APP_CONTEXT = null; //该值会在web容器启动时由WebAppContextListener初始化
 
-    public static ConcurrentMap<String, String> MVC_MAP = null;  // 该值记录url - path的对应关系，对应资源映射关系
+    public static ConcurrentMap<String, String> MVC_MAP = null;  // 该值记录 tag - path的对应关系，对应资源映射关系
 
     public static final String NO_INTERCEPTOR_PATH = ".*/((login)|(logout)|(code)|(app)|(weixin)|(static)|(main)|(websocket)).*";	//不对匹配该值的访问路径拦截（正则）
 
@@ -101,5 +107,8 @@ public class Constant {
     public static final String SESSION_STATUS ="ser-online-status";
     public static final int PASSWORD_RETRY_MAX = 10;//密码重试次数
     public static final String salt = "tbyf!@#$%";  // 加盐
+
+    public static final String APPLICATION_JSON_UTF8 = "application/json;charset=utf-8";
+    public static final String TEXT_PLAIN_UTF8 = "text/plain;charset=utf-8";
 
 }

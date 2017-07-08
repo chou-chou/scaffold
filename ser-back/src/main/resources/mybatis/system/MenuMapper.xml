@@ -4,7 +4,7 @@
 
 <mapper namespace="MenuMapper">
 
-    <resultMap type="TreeNode" id="TreeNodeMap">
+    <resultMap type="TreeNode" id="treeNodeMap">
         <result column="MENU_ID" property="id"/>
         <result column="SUP_ID" property="pId"/>
         <result column="MENU_NAME" property="name"/>
@@ -17,6 +17,7 @@
         <id column="MENU_ID" property="menuId"/>
         <result column="MENU_NAME" property="menuName"/>
         <result column="MENU_URL" property="menuUrl"/>
+        <result column="MENU_TAG" property="menuTag"/>
         <result column="IS_LEAF" property="isLeaf"/>
         <result column="RANK" property="rank"/>
         <result column="SEQUENCE" property="sequence"/>
@@ -29,6 +30,12 @@
         <result column="UPDATE_USERID" property="updateUserId"/>
     </resultMap>
 
+    <resultMap type="Menu" id="menuExtendMap" extends="menuResultMap">
+        <!-- 查询父字典 -->
+        <association column="SUP_ID" property="parentMenu" select="MenuMapper.getBySupId"/>
+        <!-- 查询子字典 -->
+    </resultMap>
+
     <!-- 表名 -->
     <sql id="tableName">
         T_MENU
@@ -36,12 +43,12 @@
 
     <!-- 字段 -->
     <sql id="field">
-        MENU_ID,MENU_NAME,MENU_URL,IS_LEAF,RANK,SEQUENCE,ROOT_ID,SUP_ID,ICON, ENABLED,REMARK,UPDATE_TIME,UPDATE_USERID
+        MENU_ID,MENU_NAME,MENU_URL,MENU_TAG,IS_LEAF,RANK,SEQUENCE,ROOT_ID,SUP_ID,ICON, ENABLED,REMARK,UPDATE_TIME,UPDATE_USERID
     </sql>
 
     <!-- 字段值 -->
     <sql id="fieldValue">
-        #{menuId}, #{menuName}, #{menuUrl}, #{isLeaf}, #{rank}, #{sequence}, #{rootId}, #{supId},#{icon},#{enabled},#{remark},#{updateTime},#{updateUserId}
+        #{menuId}, #{menuName}, #{menuUrl}, #{menuTag}, #{isLeaf}, #{rank}, #{sequence}, #{rootId}, #{supId},#{icon},#{enabled},#{remark},#{updateTime},#{updateUserId}
     </sql>
 
     <!-- 获取菜单列表 -->
@@ -58,6 +65,9 @@
         <if test="menuUrl != null and menuUrl != ''">
             AND MENU_URL like '%' + #{menuUrl} + '%'
         </if>
+        <if test="menuTag != null and menuTag != ''">
+            AND MENU_TAG like '%' + #{menuTag} + '%'
+        </if>
         <if test="supId != null and supId != ''">
             AND SUP_ID = #{supId}
         </if>
@@ -73,11 +83,11 @@
     </select>
 
     <!-- 级联获取所有菜单列表（获取下级） -->
-    <select id="selectMenuCascade" parameterType="pd" resultMap="TreeNodeMap">
+    <select id="selectMenuCascade" parameterType="pd" resultMap="treeNodeMap">
         WITH TREE AS
         (select MENU_ID, MENU_NAME, MENU_URL, SUP_ID, SEQUENCE, IS_LEAF
         from T_MENU
-        where ENABLED = 1 AND IS_LEAF = 0
+        where ENABLED = 1
         <if test="menuInfo != null and menuInfo != ''"><!-- 关键词检索 -->
             AND (
             MENU_NAME LIKE '%'+#{menuInfo}+'%'
@@ -89,10 +99,10 @@
         SELECT m.MENU_ID, m.MENU_NAME, m.MENU_URL, m.SUP_ID, m.SEQUENCE, m.IS_LEAF
         FROM T_MENU m
         INNER JOIN TREE
-        ON m.IS_LEAF = 1 AND m.SUP_ID = TREE.MENU_ID
+        ON ENABLED = 1 AND m.SUP_ID = TREE.MENU_ID
         )
         SELECT DISTINCT MENU_ID, MENU_NAME, MENU_URL, SUP_ID, SEQUENCE, IS_LEAF FROM TREE
-        OPTION (MAXRECURSION 10)
+
         <!-- OPTION (MAXRECURSION 10) 限制递归次数 -->
     </select>
 
@@ -101,6 +111,7 @@
         insert into T_MENU (<trim suffixOverrides=",">
             <if test="menuName != null and menuName != ''">MENU_NAME,</if>
             <if test="menuUrl != null and menuUrl != ''">MENU_URL,</if>
+            <if test="menuTag != null and menuTag != ''">MENU_TAG,</if>
             <if test="isLeaf != null and isLeaf != ''">IS_LEAF,</if>
             <if test="rank != null and rank != ''">RANK,</if>
             <if test="sequence != null and sequence != ''">SEQUENCE,</if>
@@ -112,9 +123,10 @@
             <if test="updateTime != null and updateTime != ''">UPDATE_TIME,</if>
             <if test="updateUserId != null and updateUserId != ''">UPDATE_USERID</if>
         </trim>)
-            values(<trim suffixOverrides=",">
+            values(<trim suffixOverrides="," >
             <if test="menuName != null and menuName != ''">#{menuName},</if>
             <if test="menuUrl != null and menuUrl != ''">#{menuUrl},</if>
+            <if test="menuTag != null and menuTag != ''">#{menuTag},</if>
             <if test="isLeaf != null and isLeaf != ''">#{isLeaf},</if>
             <if test="rank != null and rank != ''">#{rank},</if>
             <if test="sequence != null and sequence != ''">#{sequence},</if>
@@ -134,6 +146,7 @@
         <set>
             <if test="menuName != null and menuName != ''">MENU_NAME=#{menuName},</if>
             <if test="menuUrl != null and menuUrl != ''">MENU_URL=#{menuUrl},</if>
+            <if test="menuTag != null and menuTag != ''">MENU_TAG=#{menuTag},</if>
             <if test="isLeaf != null and isLeaf != ''">IS_LEAF=#{isLeaf},</if>
             <if test="rank != null and rank != ''">RANK=#{rank},</if>
             <if test="sequence != null and sequence != ''">SEQUENCE=#{sequence},</if>
@@ -147,6 +160,7 @@
         </set>
         where MENU_ID = #{menuId}
     </update>
+
 
     <!-- 获取用户总数 -->
     <select id="getMenuCount" parameterType="String" resultType="pd">
@@ -163,5 +177,49 @@
             #{id}
         </foreach>
     </delete>
+
+    <delete id="deleteMenuId" parameterType="pd">
+        delete from T_MENU where MENU_ID = #{menuId}
+    </delete>
+
+    <select id="getMenuByIds" parameterType="pd" resultMap="menuExtendMap">
+        select <include refid="field"></include> from <include refid="tableName"></include>
+        where MENU_ID = #{menuId}
+    </select>
+
+    <select id="getMenuById" parameterType="java.lang.Integer" resultMap="menuResultMap">
+        select <include refid="field"></include> from <include refid="tableName"></include>
+        where MENU_ID = #{menuId}
+    </select>
+
+    <select id="getBySupId" parameterType="int" resultMap="menuResultMap">
+        select  <include refid="field"></include> from <include refid="tableName"></include>
+        where MENU_ID = #{supId}
+    </select>
+
+    <select id="getMenuByUserId" parameterType="java.lang.String" resultMap="menuResultMap">
+        SELECT m.* FROM
+	      T_MENU m,
+	      T_ROLE_MENU rm,
+	      T_ROLE r,
+	      T_USER_ROLE ur
+        WHERE
+	      m.MENU_ID = rm.MENU_ID
+        AND rm.ROLE_ID = ur.ROLE_ID
+        AND ur.USER_ID = #{userId}
+    </select>
+
+    <select id="getMenuTreeByUserId" parameterType="java.lang.String" resultMap="treeNodeMap">
+        SELECT m.MENU_ID, m.MENU_NAME, m.MENU_URL, m.SUP_ID, m.SEQUENCE, m.IS_LEAF
+        FROM
+        T_MENU m,
+        T_ROLE_MENU rm,
+        T_ROLE r,
+        T_USER_ROLE ur
+        WHERE
+        m.MENU_ID = rm.MENU_ID
+        AND rm.ROLE_ID = ur.ROLE_ID
+        AND ur.USER_ID = #{userId}
+    </select>
 
 </mapper>

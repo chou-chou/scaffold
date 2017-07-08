@@ -3,6 +3,7 @@ package com.hrp.service;
 import com.hrp.entity.system.Department;
 import com.hrp.entity.system.Dictionary;
 import com.hrp.entity.system.TreeNode;
+import com.hrp.entity.system.UserDept;
 import com.hrp.utils.PageData;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public interface DepartmentService {
     public Boolean saveDepartment(PageData pd) throws Exception;
 
     /**
-     * 新增字典
+     * 新增部门
      * @param dep
      * @return
      * @throws Exception
@@ -39,7 +40,7 @@ public interface DepartmentService {
     public Object saveDepartment(Department dep) throws Exception;
 
     /**
-     * 编辑字典
+     * 编辑部门
      * @param pd
      * @return
      * @throws Exception
@@ -50,5 +51,29 @@ public interface DepartmentService {
 
     public Boolean deleteByIds(PageData pd) throws Exception;
 
+
+    /**
+     * 获取用户对应的部门信息
+     * @param pd
+     * @return
+     * @throws Exception
+     */
+    public UserDept getUserDept(PageData pd) throws Exception;
+
+    /**
+     * 更新用户对应的部门
+     * @param userDept
+     * @return
+     * @throws Exception
+     */
+    public Object upadteUserDept(UserDept userDept) throws Exception;
+
+    /**
+     * 插入用户对应的部门
+     * @param userDept
+     * @return
+     * @throws Exception
+     */
+    public Object insUserDept(UserDept userDept) throws Exception;
 
 }

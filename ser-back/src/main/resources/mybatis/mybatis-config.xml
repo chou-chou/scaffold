@@ -2,12 +2,14 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD SQL Map Config 3.0//EN"  
 	"http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-	
-	<settings> 
-        <setting name="cacheEnabled" value="true" /><!-- 全局映射器启用缓存 -->   
-        <setting name="useGeneratedKeys" value="true" /> 
-        <setting name="defaultExecutorType" value="REUSE" /> 
-       <!--  <setting name="jdbcTypeForNull" value="NULL" /> -->
+
+    <!-- 开启延迟加载 -->
+	<settings>
+        <setting name="cacheEnabled" value="true"/><!-- 全局映射器启用缓存，二级缓存，默认false -->
+        <setting name="useGeneratedKeys" value="true" />
+        <!--<setting name="defaultExecutorType" value="BATCH"/>--><!-- 可以重复执行语句和批量更新 -->
+        <!--<setting name="defaultExecutorType" value="REUSE" />--><!-- 可能重复使用prepared statement语句 -->
+        <!--  <setting name="jdbcTypeForNull" value="NULL" /> -->
     </settings>
 
 	<typeAliases>
@@ -26,17 +28,21 @@
 		<typeAlias type="com.hrp.entity.system.Dictionary" alias="Dictionary"/>
 		<typeAlias type="com.hrp.entity.system.Department" alias="Department"/>
 		<typeAlias type="com.hrp.entity.system.UserRoleLink" alias="UserRoleLink"/>
-
+		<typeAlias type="com.hrp.entity.system.TbTeam" alias="Team"/>
+		<typeAlias type="com.hrp.entity.system.UserTeam" alias="UserTeam"/>
+		<typeAlias type="com.hrp.entity.system.UserDept" alias="UserDept"/>
         <!-- business -->
         <typeAlias type="com.hrp.entity.business.TbProject" alias="Project"/>
+
+
 	</typeAliases>
 	
-	<plugins>
-        <!-- 分页处理 -->
+	<!--<plugins>
+        &lt;!&ndash; 分页处理 &ndash;&gt;
 		<plugin interceptor="com.hrp.utils.plugins.PagePlugin">
 			<property name="dialect" value="sqlserver"/>
 			<property name="pageSqlId" value=".*listPage.*"/>
 		</plugin>
-	</plugins>
+	</plugins>-->
 	
 </configuration>

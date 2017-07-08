@@ -1,6 +1,6 @@
 package com.hrp.service;
 
-import com.hrp.entity.system.User;
+import com.hrp.entity.system.*;
 import com.hrp.utils.PageData;
 import com.hrp.utils.plugins.Page;
 
@@ -153,6 +153,35 @@ public interface UserService {
 
     public User getByUserId(PageData pd) throws Exception;
 
+    public List<UserRoleLink> findRoleIdByUserId(PageData pd) throws Exception;
 
+    public void deleteUserRole(String USER_ID) throws Exception;
+
+    public Object insertUserRole(List<UserRoleLink> userRoleLink) throws Exception;
+
+    /**
+     * 根据用户ID获取该用户可以操作的所有按钮信息
+     *
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    public List<Button> getButtonByUserId(String userId) throws Exception;
+
+    /**
+     * 获取当前userid对应的菜单列表
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    public List<Menu> getMenuByUserId(String userId) throws Exception;
+
+    /**
+     * 获取当卡userId对应的菜单树列表 适配页面zTree的json
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    public List<TreeNode> getMenuTreeByUserId(String userId) throws Exception;
 
 }

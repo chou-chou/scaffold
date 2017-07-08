@@ -26,6 +26,12 @@
 
     </resultMap>
 
+    <resultMap type="UserDept" id="userDeptMap">
+        <id column="ID" property="id"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="DEPT_ID" property="deptId"/>
+    </resultMap>
+
     <resultMap type="Department" id="DepartmentExtendMap" extends="DepartmentMap">
         <!-- 查询父部门 -->
         <association column="SUP_ID" property="supDepartment" select="DepartmentMapper.getBySupId"/>
@@ -170,5 +176,32 @@
             #{id}
         </foreach>
     </delete>
+
+    <update id="updateUserDept" parameterType="UserDept">
+        update T_USER_DEPT
+        <set>
+            <if test="userId != null and userId != ''">USER_ID=#{userId},</if>
+            <if test="deptId != null and deptId != ''">DEPT_ID=#{deptId},</if>
+        </set>
+        where USER_ID = #{userId}
+    </update>
+
+    <insert id="saveUserDept" parameterType="UserDept" useGeneratedKeys="true" keyProperty="deptId">
+        insert into T_USER_DEPT (<trim suffixOverrides=",">
+        <if test="userId != null and userId != ''">USER_ID,</if>
+        <if test="deptId != null and deptId != ''">DEPT_ID,</if>
+
+    </trim>)
+        values(<trim suffixOverrides=",">
+        <if test="userId != null and userId != ''">#{userId},</if>
+        <if test="deptId != null and deptId != ''">#{deptId}</if>
+    </trim>)
+    </insert>
+
+    <select id="getUserDept" parameterType="pd" resultMap="userDeptMap">
+        select ID,DEPT_ID,USER_ID
+        FROM T_USER_DEPT
+        where USER_ID = #{userId}
+    </select>
 
 </mapper>

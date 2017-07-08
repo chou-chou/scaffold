@@ -1,7 +1,7 @@
 ﻿(function ($) {
     var local = window.location;
     var contextPath = local.pathname.split("/")[1];
-    var basePath = local.protocol+"//"+local.host+"/"+contextPath;
+    var basePath = local.protocol + "//" + local.host + "/" + contextPath + "/";
 
     $.sertab = {
         requestFullScreen: function () {
@@ -346,13 +346,17 @@
                                 _html += '</ul>';
 
                             } else {
-                                _html += '<li class=""><a class="menuItem" data-id="' + subrow.menuId + '" href="' + basePath + subrow.menuUrl + '"><i class="menu-icon fa ' + subrow.icon + '"></i><span class="menu-text">' + subrow.menuName + '</span></a><b class="arrow"></b>';
+                                if (subrow.menuUrl == '#') {
+                                    _html += '<li class=""><a class="menuItem" data-id="' + subrow.menuId + '" href="#"><i class="menu-icon fa ' + subrow.icon + '"></i><span class="menu-text">' + subrow.menuName + '</span></a><b class="arrow"></b>';
+                                } else {
+                                    _html += '<li class=""><a class="menuItem" data-id="' + subrow.menuId + '" href="' + basePath + subrow.menuUrl + '"><i class="menu-icon fa ' + subrow.icon + '"></i><span class="menu-text">' + subrow.menuName + '</span></a><b class="arrow"></b>';
+                                }
                             }
                             _html += '</li>';
                         });
                         _html += '</ul>';
                     } else {
-                        _html += '<a href="' + basePath + row.menuUrl + '">';
+                        _html += '<a href="' + row.menuUrl + '">';
                         _html += '<i class="menu-icon fa ' + row.icon + '"></i><span class="menu-text">' + row.menuName + '</span>';
                         _html += '</a>';
                         _html += '<b class="arrow"></b>';

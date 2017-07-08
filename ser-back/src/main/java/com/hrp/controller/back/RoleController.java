@@ -2,9 +2,16 @@ package com.hrp.controller.back;
 
 import com.hrp.annotation.MvcMapping;
 import com.hrp.controller.common.BaseController;
+import com.hrp.entity.system.Button;
 import com.hrp.entity.system.Role;
+import com.hrp.entity.system.TreeNode;
+import com.hrp.entity.system.User;
 import com.hrp.pojo.Result;
+import com.hrp.service.ButtonService;
+import com.hrp.service.MenuService;
 import com.hrp.service.RoleService;
+import com.hrp.service.UserService;
+import com.hrp.utils.Constant;
 import com.hrp.utils.JsonUtil;
 import com.hrp.utils.PageData;
 import com.hrp.utils.lang.StringUtil;
@@ -17,6 +24,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,24 +46,42 @@ public class RoleController extends BaseController {
     @Resource(name = "roleService")
     private RoleService roleService;
 
+    @Resource(name = "menuService")
+    private MenuService menuService;
+
+    @Resource
+    private ButtonService buttonService;
+
+    @Resource
+    private UserService userSerivce;
+
     /**
      * 角色列表
      */
     @RequestMapping(method = RequestMethod.GET, value = "/list")
-    @MvcMapping(url = "/b/role/list.do", path = BASE_PATH + "role_list", type = MvcMapping.ViewType.JSP)
-    private ModelAndView list(){
+    @MvcMapping(tag = "role:list", path = BASE_PATH + "role_list", type = MvcMapping.ViewType.JSP)
+    private ModelAndView list(HttpSession session){
         ModelAndView mv = this.getModelAndView();
         Page page = this.getPage();
         PageData pd = this.getPageData();
+        List<TreeNode> nodeList = new ArrayList();
+        List<Button> allBtnList = new ArrayList();
+
+        User user = (User)session.getAttribute(Constant.CURRENT_USER);  // 当前用户
 
         try {
-            String userInfo = pd.getString("userInfo");
-            if (StringUtil.isNotNullOrBlank(userInfo)) {
-                pd.put("userInfo", userInfo.trim());
+            if (null != user) {
+                nodeList = this.userSerivce.getMenuTreeByUserId(user.getUserId());
+            }
+
+            allBtnList = buttonService.getButtonList(pd);
+
+            String roleInfo = pd.getString("roleInfo");
+            if (StringUtil.isNotNullOrBlank(roleInfo)) {
+                pd.put("userInfo", roleInfo.trim());
             }
             page.setPd(pd);
             List<Role> roleList = this.roleService.listAllRolesByPId(pd);
-
             Map<String, String> QX = new HashMap<String, String>();
             QX.put("add", "1");
             QX.put("email", "1");
@@ -62,6 +89,10 @@ public class RoleController extends BaseController {
             QX.put("del", "1");
             QX.put("cha", "1");
             QX.put("edit", "1");
+
+            String menuJson = JsonUtil.getJsonString(nodeList, JsonUtil.OBJECT_TYPE_LIST);  // 菜单json
+            mv.addObject("menuJson", menuJson);
+            mv.addObject("allBtnList", allBtnList);
 
             mv.addObject("roleList", roleList);
             mv.addObject("pd", pd);

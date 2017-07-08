@@ -23,7 +23,7 @@
         equalTo: "你的输入不相同",
         accept: "后缀名错误",
         mobile: "手机号码格式错误",
-        tel: "电话号码格式错误",
+        telephone: "电话号码格式错误",
         mobileOrTel: "手机或电话号码格式错误",
         qq: "QQ号码格式错误",
         chinese: "请输入中文",

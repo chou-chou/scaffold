@@ -37,12 +37,14 @@ public interface MenuService {
      */
     public PageData getMenuById(PageData pd) throws Exception;
 
+    public Menu getMenuByIds(PageData pd) throws Exception;
+
     /**
      * 新增菜单
      * @param menu
      * @throws Exception
      */
-    public void saveMenu(Menu menu) throws Exception;
+    public Object saveMenu(Menu menu) throws Exception;
 
     /**
      * 取最大ID
@@ -54,10 +56,10 @@ public interface MenuService {
 
     /**
      * 删除菜单
-     * @param MENU_ID
+     * @param pd
      * @throws Exception
      */
-    public void deleteMenuById(String MENU_ID) throws Exception;
+    public Boolean deleteMenuById(PageData pd) throws Exception;
 
     /**
      * 编辑
@@ -65,7 +67,9 @@ public interface MenuService {
      * @return
      * @throws Exception
      */
-    public void updateMenu(Menu menu) throws Exception;
+    public Boolean updateMenu(Menu menu) throws Exception;
+
+    public Boolean updateMenuPd(PageData pd) throws Exception;
 
     /**
      * 保存菜单图标
@@ -113,5 +117,7 @@ public interface MenuService {
      * @throws Exception
      */
     public List<TreeNode> selectMenuCascade(PageData pd) throws Exception;
+
+    public Menu getSupMenu(int supId)throws Exception;
 
 }

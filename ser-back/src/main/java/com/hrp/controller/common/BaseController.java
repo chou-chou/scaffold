@@ -33,6 +33,8 @@ public class BaseController {
 
     protected Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
 
+    protected PageData pd = new PageData();
+
     public static String URL404 = "404.jsp";
     public static String URL500 = "500.jsp";
 

@@ -17,7 +17,7 @@ public class ButtonMapperTest extends BaseDaoTest {
     public void testButton() throws Exception{
         Button bt = new Button();
         bt.setBtnTitle("查询");
-        bt.setDisabled(false);
+        bt.setEnabled(false);
         bt.setMenuId(1);
         bt.setRemark("功能查询");
         Object obj = dao.save("ButtonMapper.saveButtonvity", bt);
@@ -31,6 +31,27 @@ public class ButtonMapperTest extends BaseDaoTest {
         for (Button button : btnList) {
             logger.info(button.toString());
         }
+    }
+
+    /**
+     * 根据用户ID获取用户按钮信息
+     *
+     * @throws Exception
+     */
+    @Test
+    public void getButtonByUserId() throws Exception {
+        pd.put("userId", "067448C76BC748BAA9EC01BBCB75631D");
+        List<Button> btnList = (List<Button>) dao.findForList("ButtonMapper.getButtonByUserId", pd);
+        logger.info("获取按钮个数：\t" + btnList.size());
+        for (Button button : btnList) {
+            logger.info(button.toString());
+        }
+    }
+
+    @Test
+    public void getButtonInfo() throws Exception {
+        Button btn = (Button) dao.findForObject("ButtonMapper.getButtonInfo", 12);
+        logger.info(btn.toString());
     }
 
 }

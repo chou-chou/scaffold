@@ -18,15 +18,15 @@ import java.util.List;
 public class SysLogServiceImpl implements SysLogService {
 
     @Resource(name = "baseDao")
-    private BaseDao dao;
+    private BaseDao baseDao;
 
     @Override
     public int add(SysLog sysLog) throws Exception {
-        return (Integer) dao.save("SysLogMapper.saveSysLog", sysLog);
+        return (Integer) baseDao.save("SysLogMapper.saveSysLog", sysLog);
     }
 
     @Override
     public int batchSave(List<SysLog> sysLogs) throws Exception {
-        return (Integer) dao.batchSave("SysLogMapper.batchSave", sysLogs);
+        return (Integer) baseDao.batchSave("SysLogMapper.batchSave", sysLogs);
     }
 }

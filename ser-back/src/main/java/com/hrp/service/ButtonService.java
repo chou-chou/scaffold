@@ -15,6 +15,8 @@ public interface ButtonService {
 
     public List<Button> getButtonList(PageData pd) throws Exception;
 
+    public Button getButtonInfo(Integer id) throws Exception;
+
     public Boolean saveButton(Button button) throws Exception;
 
     public Boolean deleteButton(PageData pd) throws Exception;

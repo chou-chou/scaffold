@@ -22,6 +22,15 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <filter>
+        <filter-name>xssFilter</filter-name>
+        <filter-class>com.hrp.filter.xss.XssFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>xssFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <context-param>
         <param-name>webAppRootKey</param-name>
         <param-value>ser.root</param-value>
@@ -128,13 +137,20 @@
         <listener-class>com.hrp.listener.SystemInitListener</listener-class>
     </listener>
 
+    <!--<jsp-config>
+        <taglib>
+            <taglib-uri>/shiro-tag-extend</taglib-uri>
+            <taglib-location>/WEB-INF/tld/shiro.tld</taglib-location>
+        </taglib>
+    </jsp-config>-->
+
     <!-- 接口调用跨域处理 -->
-    <!-- <filter>
+    <!--<filter>
           <filter-name>corsFilter</filter-name>
           <filter-class>com.hrp.filter.CorsFilter</filter-class>
           <init-param>
               <param-name>allowOrigin</param-name>
-              <param-value>http://test-static.998jk.com,http://static.998jk.com</param-value>
+              <param-value>http://192.168.0.8,http://192.168.2.8</param-value>
           </init-param>
           <init-param>
               <param-name>allowMethods</param-name>
@@ -159,6 +175,8 @@
         <filter-name>startFilter</filter-name>
         <filter-class>com.hrp.filter.StartFilter</filter-class>
     </filter>-->
+
+
 
     <!-- 错误跳转页面 -->
 

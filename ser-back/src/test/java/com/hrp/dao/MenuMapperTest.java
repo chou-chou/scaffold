@@ -25,7 +25,7 @@ public class MenuMapperTest extends BaseDaoTest {
         me.setRank(1);
         me.setSequence(1);
         me.setRootId(0);
-        me.setSupId("1");
+        me.setSupId(1);
         me.setIcon("1");
         //me.setDisabled(false);
         me.setRemark("1");
@@ -42,4 +42,24 @@ public class MenuMapperTest extends BaseDaoTest {
 
     }
 
+    @Test
+    public void getMenuById() throws Exception {
+        pd.put("menuId", 1);
+        Menu menu = (Menu) dao.findForObject("MenuMapper.getMenuById", 2);
+
+        logger.info(menu.toString());
+    }
+
+    @Test
+    public void saveMenu() throws Exception {
+        Menu menu = new Menu();
+        menu.setMenuName("test");
+        menu.setRemark("test");
+        menu.setMenuUrl("/u/t/root.do");
+//        menu.setEnabled(true);
+
+        Object obj = dao.save("MenuMapper.saveMenu", menu);
+        //Assert.assertEquals("没有插入", 1, obj);
+        logger.info(" --> " + menu.getMenuId());
+    }
 }

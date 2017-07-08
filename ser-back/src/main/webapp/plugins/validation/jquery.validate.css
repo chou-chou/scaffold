@@ -67,29 +67,44 @@ fieldset[disabled] .radio.fv-error input[type="radio"] + .checked {
     color: #FF8585;
 }
 
+.tip {
+    display: inline-block;
+    padding: 0 10px;
+    vertical-align: middle;
+}
+
+input.error, input.valid, input.focus, input.normal {
+    vertical-align: middle;
+}
+
 label.error, label.valid, label.focus, label.normal {
-    background: url(/icon/icon_warn.png) no-repeat 4px -197px;
+
     font: 12px/1 verdana, simsun, sans-serif;
     margin: 0;
     padding: 4px 0px 4px 23px;
+    background-clip: content-box
 }
 
 label.normal {
-    background-position: 4px -197px;
+    background: url(icon/icon_i.png) no-repeat 4px -197px;
+    /*background-position: 4px -197px;*/
     color: #999999;
 }
 
 label.error {
-    background-position: 4px -253px;
+    background: url(icon/icon_error.png) no-repeat 4px -197px;
+    /*background-position: 4px -253px;*/
     color: #B52726;
 }
 
 label.valid {
-    background-position: 4px 3px;
+    background: url(icon/icon_success.png) no-repeat 4px -197px;
+    /*background-position: 4px 3px;*/
     color: #2666AF;
 }
 
 label.focus {
-    background-position: 4px -365px;
+    background: url(icon/icon_warn.png) no-repeat 4px -197px;
+    /*background-position: 4px -365px;*/
     color: #999999;
 }
