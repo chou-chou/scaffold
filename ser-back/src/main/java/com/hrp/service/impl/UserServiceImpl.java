@@ -70,6 +70,10 @@ public class UserServiceImpl implements UserService {
         return (List<PageData>) baseDao.findForList("UserMapper.listAllUserRoleId", pd);
     }
 
+    public List<PageData> listAllUserByRoldCode(PageData pd) throws Exception {
+        return (List<PageData>) baseDao.findForList("UserMapper.listAllUserByRoldCode", pd);
+    }
+
     public List<PageData> listUsers(Page page) throws Exception {
         return null;
     }
@@ -183,7 +187,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<PageData> listPdPageUser(Page page) throws Exception {
-        return (List<PageData>) baseDao.findForList("UserMapper.userListPage", page);
+        return (List<PageData>) baseDao.findForList("UserMapper.userList", page);
     }
 
     @Override

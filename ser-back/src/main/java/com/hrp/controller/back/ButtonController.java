@@ -94,6 +94,11 @@ public class ButtonController extends BaseController {
         JsonUtil.writeJsonToResponse(response, btn, JsonUtil.OBJECT_TYPE_BEAN);
     }
 
+    /**
+     * 编辑角按钮
+     * @param request
+     * @param response
+     */
     @RequestMapping(method = RequestMethod.POST, value = "/editButton.do")
     private void editButton(HttpServletRequest request, HttpServletResponse response) {
         Boolean success = false;

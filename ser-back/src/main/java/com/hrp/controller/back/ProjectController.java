@@ -1,10 +1,18 @@
 package com.hrp.controller.back;
 
+import com.alibaba.fastjson.JSONArray;
 import com.hrp.annotation.MvcMapping;
 import com.hrp.controller.common.BaseController;
+import com.hrp.entity.business.TbIndexTable;
 import com.hrp.entity.business.TbProject;
+import com.hrp.entity.business.TbProjectOpinion;
+import com.hrp.entity.system.User;
 import com.hrp.pojo.Result;
+import com.hrp.service.IndexTableService;
+import com.hrp.service.ProjectOpinionService;
 import com.hrp.service.ProjectService;
+import com.hrp.service.UserService;
+import com.hrp.utils.Constant;
 import com.hrp.utils.JsonUtil;
 import com.hrp.utils.PageData;
 import com.hrp.utils.lang.StringUtil;
@@ -17,10 +25,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpSession;
+import java.util.*;
 
 /**
  * RoleController
@@ -37,6 +43,15 @@ public class ProjectController extends BaseController {
 
     @Resource(name = "projectService")
     private ProjectService projectService;
+    @Resource(name = "userService")
+    private UserService userService;
+
+    @Resource(name = "projectOpinionService")
+    private ProjectOpinionService projectOpinionService;
+
+    @Resource(name = "indexTableService")
+    private IndexTableService indexTableService;
+
 
     /**
      * 查询所有记录
@@ -54,7 +69,11 @@ public class ProjectController extends BaseController {
                 pd.put("userInfo", userInfo.trim());
             }
             page.setPd(pd);
+            pd.put("CODE", Constant.EXPER);
             List<TbProject> proList = this.projectService.listAllProjectsByPId(pd);
+
+            List<PageData> userList = userService.listAllUserByRoldCode(pd);
+            List<TbIndexTable> indexTableList = indexTableService.listAllIndexTableById(pd);
 
             Map<String, String> QX = new HashMap<String, String>();
             QX.put("add", "1");
@@ -65,6 +84,9 @@ public class ProjectController extends BaseController {
             QX.put("edit", "1");
 
             mv.addObject("proList", proList);
+            mv.addObject("userList", userList);
+            mv.addObject("indexTableList", indexTableList);
+
             mv.addObject("pd", pd);
             mv.addObject("page", page);
             mv.addObject("QX", QX);
@@ -153,9 +175,9 @@ public class ProjectController extends BaseController {
                 try {
                     System.out.print(request.getParameter("id"));
                     TbProject project = new TbProject();
-                    Date reportTime=new Date();
+                    Date reportTime = new Date();
                     System.out.print(Double.valueOf(pd.getString("declareFunds")));
-                    pd.put("reportTime",reportTime);
+                    pd.put("reportTime", reportTime);
                     pd.put("declareFunds", Double.valueOf(pd.getString("declareFunds")));
                     Boolean success = this.projectService.updateProject(pd);
                     if (success) {
@@ -209,5 +231,196 @@ public class ProjectController extends BaseController {
         }
 
         JsonUtil.writeJsonToResponse(response, rc, JsonUtil.OBJECT_TYPE_BEAN);
+    }
+
+
+    /**
+     * 获取已指定的评审用户
+     *
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/selectUser.do", method = RequestMethod.GET)
+    public void getUserss(HttpServletRequest request, HttpServletResponse response) {
+        String projectId = StringUtil.isNotNullOrBlank(request.getParameter("projectId"))
+                ? request.getParameter("projectId") : "";
+        PageData pd = this.getPageData();
+        pd.put("projectId", projectId);
+        TbProjectOpinion projectOpinion = null;
+        List<String> userList = new ArrayList<String>();
+        try {
+            projectOpinion = this.projectOpinionService.getProjectOpinion(pd);
+            String userId = projectOpinion.getUserId();
+            if(null !=userId && !"".equals(userId)){
+                String[] userIdArr = userId.split("/");
+                for (int i = 0; i < userIdArr.length; i++) {
+                    userList.add(userIdArr[i]);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JsonUtil.writeJsonToResponse(response, userList, JsonUtil.OBJECT_TYPE_LIST);
+
+
+    }
+
+    /**
+     * 获取已有的指标表
+     *
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/editIndexTable.do", method = RequestMethod.GET)
+    public void getIndexTable(HttpServletRequest request, HttpServletResponse response) {
+        String projectId = StringUtil.isNotNullOrBlank(request.getParameter("param"))
+                ? request.getParameter("param") : "";
+        PageData pd = this.getPageData();
+        pd.put("projectId", projectId);
+        TbProjectOpinion projectOpinion;
+        List<TbIndexTable> indexTableList = new ArrayList();
+        try {
+            projectOpinion = projectOpinionService.getProjectOpinion(pd);
+
+            String indexTableId = projectOpinion.getIndexTableId();
+            if (null != indexTableId && !"".equals(indexTableId)) {
+                String[] indexIdArr = indexTableId.split("/");
+                int[] idsArr = new int[indexIdArr.length];
+                for (int i = 0; i < indexIdArr.length; i++) {
+                    idsArr[i] = Integer.parseInt(indexIdArr[i]);
+                }
+                indexTableList = indexTableService.queryIndexTableById(idsArr);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JsonUtil.writeJsonToResponse(response, indexTableList, JsonUtil.OBJECT_TYPE_LIST);
+
+    }
+
+    /**
+     * 保存表id
+     *
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/saveIndexTableId.do", method = RequestMethod.POST)
+    public void saveIndexTableId(HttpServletRequest request, HttpServletResponse response) {
+        String indexTableArr = request.getParameter("indexTableArr"); // 指标表id
+        String projectId = request.getParameter("projectId"); // 项目id
+        PageData pd = this.getPageData();
+        Result result = new Result();
+        try {
+            String indexTableId = "";
+            if (!("".equals(indexTableArr) || null == indexTableArr || "null".equals(indexTableArr))) {
+
+                List<String> indexTableIdList = JSONArray.parseArray(indexTableArr, String.class);//前端的json数组转成list
+                for (int i = 0; i < indexTableIdList.size(); i++) { // 拼接成字符串
+                    if (i != indexTableIdList.size() - 1) {
+                        indexTableId += indexTableIdList.get(i) + "/";
+                    } else {
+                        indexTableId += indexTableIdList.get(i);
+                    }
+                }
+                pd.put("indexTableId", indexTableId);
+
+            } else {
+                pd.put("indexTableId", indexTableId);
+            }
+
+            TbProjectOpinion projectOpinion = projectOpinionService.getProjectOpinion(pd);
+            Boolean success;
+            if (null != projectOpinion) {
+                success = this.projectOpinionService.updateProjectOpinion(pd);
+            } else {
+                TbProjectOpinion projectOpinionAdd = new TbProjectOpinion();
+                projectOpinionAdd.setProjectId(Integer.valueOf(projectId));
+                projectOpinionAdd.setIndexTableId(indexTableId);
+                Integer res = (Integer) this.projectOpinionService.add(projectOpinionAdd);
+                if (res > 0) {
+                    success = true;
+                } else {
+                    success = false;
+                }
+            }
+
+            if (success) {
+                result.setCode("0");
+                result.setMessage("更新指标表成功");
+                result.setSuccess(true);
+            } else {
+                result.setCode("1");
+                result.setMessage("更新失败");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JsonUtil.writeJsonToResponse(response, result, JsonUtil.OBJECT_TYPE_BEAN);
+
+
+    }
+
+    /**
+     * 保存评审用户
+     *
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/saveUser.do", method = RequestMethod.POST)
+    public void saveUser(HttpServletRequest request, HttpServletResponse response) {
+        String userId = request.getParameter("userId"); // 指标表id
+        String projectId = request.getParameter("projectId"); // 项目id
+        PageData pd = this.getPageData();
+        Result result = new Result();
+        try {
+            TbProjectOpinion projectOpinion = projectOpinionService.getProjectOpinion(pd);
+            Boolean success;
+            if (null != projectOpinion) {
+                success = this.projectOpinionService.updateProjectOpinion(pd);
+            } else {
+                TbProjectOpinion projectOpinionAdd = new TbProjectOpinion();
+                projectOpinionAdd.setProjectId(Integer.valueOf(projectId));
+                projectOpinionAdd.setUserId(userId);
+                Integer res = (Integer) this.projectOpinionService.add(projectOpinionAdd);
+                if (res > 0) {
+                    success = true;
+                } else {
+                    success = false;
+                }
+            }
+
+            if (success) {
+                result.setCode("0");
+                result.setMessage("更新评审专家成功");
+                result.setSuccess(true);
+            } else {
+                result.setCode("1");
+                result.setMessage("更新失败");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JsonUtil.writeJsonToResponse(response, result, JsonUtil.OBJECT_TYPE_BEAN);
+
+    }
+
+    /**
+     * 获取需当前用户评审的项目
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "" ,method = RequestMethod.POST)
+    public void getProject(HttpServletRequest request,HttpServletResponse response){
+        //this.ge
+
+        // 获取当前用户账号
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("userInfoSession");
+        String userIdd = user.getUserId();
+
+
+
     }
 }

@@ -3,12 +3,11 @@ package com.hrp.interceptor;
 import com.hrp.utils.ReflectUtil;
 import com.hrp.utils.Tools;
 import com.hrp.utils.plugins.Page;
-import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.statement.BaseStatementHandler;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
+import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
@@ -18,10 +17,10 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 import org.apache.ibatis.scripting.xmltags.ForEachSqlNode;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ResultHandler;
-import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.PropertyException;
 import java.lang.reflect.Field;
@@ -39,13 +38,10 @@ import java.util.Properties;
  * @date 2017-03-14.
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Intercepts(
-        {
-                @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
-                @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
-        }
-)
+@Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PageInterceptor implements Interceptor {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static String dialect = "";	//数据库方言
     private static String pageSqlId = ""; //mapper.xml中需要拦截的ID(正则匹配)
@@ -59,7 +55,7 @@ public class PageInterceptor implements Interceptor {
             if(mappedStatement.getId().matches(pageSqlId)){ //拦截需要分页的SQL
                 BoundSql boundSql = delegate.getBoundSql();
                 Object parameterObject = boundSql.getParameterObject();//分页SQL<select>中parameterType属性对应的实体参数，即Mapper接口中执行分页方法的参数,该参数不得为空
-                if(parameterObject==null){
+                if(parameterObject == null){
                     throw new NullPointerException("parameterObject尚未实例化！");
                 }else{
                     Connection connection = (Connection) ivk.getArgs()[0];
@@ -77,7 +73,8 @@ public class PageInterceptor implements Interceptor {
                     }
                     rs.close();
                     countStmt.close();
-                    //System.out.println(count);
+
+                    logger.info(" --> 总数据条数： " + count);
                     Page page = null;
                     if(parameterObject instanceof Page){	//参数就是Page实体
                         page = (Page) parameterObject;
@@ -96,7 +93,7 @@ public class PageInterceptor implements Interceptor {
                             throw new NoSuchFieldException(parameterObject.getClass().getName()+"不存在 page 属性！");
                         }
                     }
-                    String pageSql = generatePageSql(sql,page);
+                    String pageSql = generatePageSql(sql, page);
                     ReflectUtil.setValueByFieldName(boundSql, "sql", pageSql); //将分页sql语句反射回BoundSql.
                 }
             }
@@ -159,13 +156,23 @@ public class PageInterceptor implements Interceptor {
     private String generatePageSql(String sql,Page page){
         if(page!=null && Tools.notEmpty(dialect)){
             StringBuffer pageSql = new StringBuffer();
-            if("mysql".equals(dialect)){
-                pageSql.append(sql);
-                pageSql.append(" limit "+page.getCurrentResult()+","+page.getShowCount());
-            }else if("oracle".equals(dialect)){
-                pageSql.append("Select * From (Select rownum rn,tempPageView.* From (");
-                pageSql.append(sql);
-                pageSql.append(")tempPageView) Where rn > "+(page.getCurrentPage()-1)*page.getShowCount()+" and rn < "+((page.getCurrentPage()*page.getShowCount())+1));
+            switch (dialect) {
+                case "mysql":
+                    pageSql.append(sql);
+                    pageSql.append(" limit "+page.getCurrentResult()+","+page.getShowCount());
+                    break;
+                case "sqlserver":
+                    pageSql.append("Select top " + page.getShowCount() + " * From (Select t.*, row_number() over(order by " + page.getOrderColumn() + " " + page.getOrderDir() + ") as rownumber From(");
+                    pageSql.append(sql);
+                    pageSql.append(") As t) As tempPageView where rownumber > " + (page.getCurrentPage()-1)*page.getShowCount() + " and rownumber < " + ((page.getCurrentPage()*page.getShowCount())+1));
+                    logger.info(" --> sql: " + pageSql.toString());
+                    break;
+                case "oracle":
+                    pageSql.append("Select * From (Select rownum rn,tempPageView.* From (");
+                    pageSql.append(sql);
+                    pageSql.append(")tempPageView) Where rn > "+(page.getCurrentPage()-1)*page.getShowCount()+" and rn < "+((page.getCurrentPage()*page.getShowCount())+1));
+                    break;
+                default: break;
             }
             return pageSql.toString();
         }else{
@@ -173,18 +180,17 @@ public class PageInterceptor implements Interceptor {
         }
     }
 
-    public Object plugin(Object arg0) {
-        // TODO Auto-generated method stub
-        return Plugin.wrap(arg0, this);
+    public Object plugin(Object target) {
+        return Plugin.wrap(target, this);
     }
 
     public void setProperties(Properties p) {
         dialect = p.getProperty("dialect");
+        logger.info(" --> mybatis intercept dialect:{}", dialect);
         if (Tools.isEmpty(dialect)) {
             try {
                 throw new PropertyException("dialect property is not found!");
             } catch (PropertyException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -193,7 +199,6 @@ public class PageInterceptor implements Interceptor {
             try {
                 throw new PropertyException("pageSqlId property is not found!");
             } catch (PropertyException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

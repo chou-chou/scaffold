@@ -7,7 +7,7 @@
 %>
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 
 <head>
     <base href="<%=basePath%>">
@@ -15,10 +15,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="shortcut icon" href="<%=basePath%>/static/img/favicon.ico" type="image/x-ico">
 
     <link rel="stylesheet" href="<%=basePath%>/static/css/login.css"/>
     <link rel="stylesheet" href="<%=basePath%>/plugins/ace/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style"/>
-    <link rel="stylesheet" href="<%=basePath%>/static/fonts/font-awesome/4.5.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="<%=basePath%>/static/fonts/font-awesome/4.7.0/css/font-awesome.min.css"/>
 
 </head>
 

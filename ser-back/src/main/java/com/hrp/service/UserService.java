@@ -67,6 +67,14 @@ public interface UserService {
     public List<PageData> listAllUserByRoldId(PageData pd)throws Exception;
 
     /**
+     * 列出某角色下的所有用户
+     * @param pd
+     * @return
+     * @throws Exception
+     */
+    public List<PageData> listAllUserByRoldCode(PageData pd)throws Exception;
+
+    /**
      * 用户列表
      * @param page
      * @return
@@ -183,5 +191,7 @@ public interface UserService {
      * @throws Exception
      */
     public List<TreeNode> getMenuTreeByUserId(String userId) throws Exception;
+
+
 
 }

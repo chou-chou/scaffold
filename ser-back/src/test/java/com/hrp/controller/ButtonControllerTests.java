@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.hrp.annotation.MvcMapping;
 import com.hrp.entity.system.Button;
 import com.hrp.entity.system.Menu;
+import com.hrp.utils.Constant;
 import com.hrp.utils.JsoupUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,10 +45,11 @@ public class ButtonControllerTests extends BaseMvcTest {
             logger.info("获取到菜单数目：\t" + menuList.size());
 
             for (Menu menu : menuList) {
-                map.put(menu.getMenuUrl(), menu.getMenuId());
+                map.put(menu.getMenuTag(), menu.getMenuId());
             }
 
             btnInner = (List<Button>) dao.findForList("ButtonMapper.getButtonList", pd);
+            logger.info(" -------------- 数据库已有按钮: ----------------");
             for (Button button : btnInner) {
                 logger.info(button.toString());
             }
@@ -71,9 +73,9 @@ public class ButtonControllerTests extends BaseMvcTest {
                 for (Method method : methods) {
                     if (method.isAnnotationPresent(MvcMapping.class)) {
                         MvcMapping mvcMapping = method.getAnnotation(MvcMapping.class);
-                        String url = mvcMapping.tag();
+                        String tag = mvcMapping.tag();
                         String path = mvcMapping.type().getPrefix() + mvcMapping.path() + mvcMapping.type().getSuffix();
-                        mvcMap.put(url, path);
+                        mvcMap.put(tag, path);
                     }
                 }
             }
@@ -102,7 +104,7 @@ public class ButtonControllerTests extends BaseMvcTest {
 
                 List<Button> btns = Lists.newArrayList();
                 try {
-                    btns = ju.parseBtnByFile(filePath, ".inCtrl");
+                    btns = ju.parseBtnByFile(filePath, Constant.IN_CONTROL);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -121,11 +123,12 @@ public class ButtonControllerTests extends BaseMvcTest {
             // 找出新增button
             for (Button button : btnList) {
                 for (Button inner : btnInner) {
-                    if (button.getBtnId() != null && button.getBtnId().equals(inner.getBtnId())) {
-                        flag = false;
-                        continue;
-                    }
+                if (button.getBtnId() != null && button.getBtnId().equals(inner.getBtnId())) {
+                    flag = false;
+                    continue;
                 }
+            }
+
 
                 if (flag)
                 btnToAdd.add(button);
@@ -143,8 +146,7 @@ public class ButtonControllerTests extends BaseMvcTest {
                     }
                 }
 
-                if (flag)
-                btnToDelete.add(inner);
+                if (flag) btnToDelete.add(inner);
 
                 flag = true;
             }
@@ -162,8 +164,10 @@ public class ButtonControllerTests extends BaseMvcTest {
                 ids.add(button.getId());
             }
 
-            pd.put("ids", ids);
-            dao.delete("ButtonMapper.deleteButton", pd);
+            if (ids.size() > 0) {
+                pd.put("ids", ids);
+                dao.delete("ButtonMapper.deleteButton", pd);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

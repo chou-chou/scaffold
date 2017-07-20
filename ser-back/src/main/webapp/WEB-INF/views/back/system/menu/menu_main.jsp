@@ -11,16 +11,10 @@
 <html lang="en">
 <head>
     <title>菜单列表</title>
-    <base href="<%=basePath%>">
 
     <%@ include file="../../../comm/default_header.jsp" %>
 
-    <link rel="stylesheet" href="<%=basePath%>/plugins/select2/css/select2.min.css"/>
     <link rel="stylesheet" href="<%=basePath%>/plugins/iconpicker/css/fontawesome-iconpicker.min.css"/>
-
-    <script type="text/javascript" src="<%=basePath%>/static/js/pinyin.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/plugins/select2/js/select2.full.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/plugins/select2/js/i18n/zh-CN.js"></script>
     <script type="text/javascript" src="<%=basePath%>/plugins/iconpicker/js/fontawesome-iconpicker.min.js"></script>
 
 </head>
@@ -65,15 +59,6 @@
                         <div class="row">
                             <!-- 菜单树 -->
                             <div class="col-sm-4">
-                                <!-- 工具按钮 新增/编辑/删除
-                                <div>
-                                    <p>
-                                        <button class="btn btn-sm btn-primary" onclick="">新增</button>
-                                        <button class="btn btn-sm btn-primary" onclick="">编辑</button>
-                                        <button class="btn btn-sm btn-primary" onclick="">删除</button>
-                                    </p>
-                                </div>
-                                -->
 
                                 <div class="widget-box widget-color-blue2">
                                     <div class="widget-header">
@@ -117,6 +102,16 @@
 
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label no-padding-right"
+                                                           for="menuTag">菜单标记:</label>
+                                                    <div class="col-sm-10">
+                                                        <input type="text" id="menuTag" name="menuTag"
+                                                               placeholder="菜单标记" class="col-xs-10 col-sm-5"
+                                                               value="${menu.menuTag}"/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label no-padding-right"
                                                            for="menuName">菜单名称:</label>
                                                     <div class="col-sm-10">
                                                         <input type="text" id="menuName" name="menuName"
@@ -146,14 +141,13 @@
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label class="col-sm-2 control-label no-padding-right" for="icon">图标:</label>
+                                                    <label class="col-sm-2 control-label no-padding-right" for="icon_">图标:</label>
                                                     <div class="col-sm-10">
                                                         <input type="text" id="icon_" name="icon_"
-                                                               class="col-xs-10 col-sm-5"
+                                                               class="col-xs-9 col-sm-5 icp icp-auto"
                                                                value="${menu.icon}"/>
-                                                        <button id="icon" type="buton"
-                                                                class="btn btn-primary iconpicker-component">
-                                                        </button>
+                                                        <%--<span class="col-xs-3 col-sm-2 input-group-addon" style="height: 100%;">
+                                                        </span>--%>
                                                     </div>
                                                 </div>
 
@@ -193,8 +187,6 @@
                                                         重置
                                                     </button>
                                                 </div>
-
-
                                             </form>
                                         </div>
                                     </div>
@@ -210,24 +202,29 @@
 
 <script type="text/javascript">
 
-    jQuery(function ($) {
-        $('#icon_').iconpicker({
-            selected: false,
-            defaultValue: false,theme: 'fip-bootstrap',
-            source: 'fa_icons',
-            searchSource: 'fa_icons',
-            templates: {
-                popover: '<div class="iconpicker-popover popover"><div class="arrow"></div>' +
-                '<div class="popover-title"></div><div class="popover-content"></div></div>',
-                footer: '<div class="popover-footer"></div>',
-                buttons: '<button class="iconpicker-btn iconpicker-btn-cancel btn btn-default btn-sm">Cancel</button>' +
-                ' <button class="iconpicker-btn iconpicker-btn-accept btn btn-primary btn-sm">Accept</button>',
-                search: '<input type="search" class="form-control iconpicker-search" placeholder="Type to filter" />',
-                iconpicker: '<div class="iconpicker"><div class="iconpicker-items"></div></div>',
-                iconpickerItem: '<a role="button" href="#" class="iconpicker-item"><i></i></a>',
-            }
-        });
-    })
+    var option = {
+        selected: false,
+        placement: 'top',
+        defaultValue: false,
+        theme: 'fip-bootstrap',
+        source: 'fa_icons',
+        searchSource: 'fa_icons',
+        component: '.input-group-addon,.iconpicker-component',
+        templates: {
+            popover: '<div class="iconpicker-popover popover"><div class="arrow"></div>' +
+            '<div class="popover-title"></div><div class="popover-content"></div></div>',
+            footer: '<div class="popover-footer"></div>',
+            buttons: '<button class="iconpicker-btn iconpicker-btn-cancel btn btn-default btn-sm">Cancel</button>' +
+            ' <button class="iconpicker-btn iconpicker-btn-accept btn btn-primary btn-sm">Accept</button>',
+            search: '<input type="search" class="form-control iconpicker-search" placeholder="Type to filter" />',
+            iconpicker: '<div class="iconpicker"><div class="iconpicker-items"></div></div>',
+            iconpickerItem: '<a role="button" href="#" class="iconpicker-item"><i></i></a>',
+        }
+    }
+
+    $(function () {
+        $('.icp-auto').iconpicker();
+    });
 
     var zTree;
     var demoIframe;
@@ -244,19 +241,21 @@
         var addBtn = $("#addBtn_" + treeNode.tId);
 
         // 添加新增按钮点击操作
-        if (addBtn)
+        if (addBtn) {
             addBtn.bind("click", function () {
                 $("#tag").val("ADD");
                 return editMenu(treeNode.id, 'ADD'); // , treeNode.id -> 1 / treeNode.tId -->
             });
+        }
 
         // 添加编辑按钮点击操作
         var editBtn = $("#editBtn_" + treeNode.tId);
-        if (editBtn)
+        if (editBtn) {
             editBtn.bind("click", function () {
                 $("#tag").val("EDIT");
                 return editMenu(treeNode.id, 'EDIT');
             });
+        }
 
         // 添加删除按钮点击操作
         var removeBtn = $("#removeBtn_" + treeNode.tId);
@@ -304,12 +303,7 @@
                     return true;
                 }
             }
-        }/*,
-         async: {
-         enabled: true,
-         autoParam: ['code'],
-         dataType: "json"
-         }*/
+        }
     };
 
     $(document).ready(function () {
@@ -328,25 +322,8 @@
         multiple: false
     });
 
-    /*$('.multiselect').multiselect({
-     enableFiltering: true,
-     filterPlaceholder: '键入关键词查询',
-     enableHTML: true,
-     buttonClass: 'btn btn-white btn-primary',
-     templates: {
-     button: '<button type="button" class="multiselect dropdown-toggle" data-toggle="dropdown"><span class="multiselect-selected-text"></span> &nbsp;<b class="fa fa-caret-down"></b></button>',
-     ul: '<ul class="multiselect-container dropdown-menu"></ul>',
-     filter: '<li class="multiselect-item filter"><div class="input-group"><span class="input-group-addon"><i class="fa fa-search"></i></span><input class="form-control multiselect-search" type="text"></div></li>',
-     filterClearBtn: '<span class="input-group-btn"><button class="btn btn-default btn-white btn-grey multiselect-clear-filter" type="button"><i class="fa fa-times-circle red2"></i></button></span>',
-     li: '<li><a tabindex="0"><label></label></a></li>',
-     divider: '<li class="multiselect-item divider"></li>',
-     liGroup: '<li class="multiselect-item multiselect-group"><label></label></li>'
-     }
-     });*/
-
     $(document).one('ajaxloadstart.page', function (e) {
         $('[class*=select2]').remove();
-        //$('.multiselect').multiselect('destroy');
     });
 
     // 业务功能
@@ -378,6 +355,7 @@
         var tag = $("#tag").val();
         var menuId = $("#menuId").val();
         var supId = $("#supId").val();
+        var menuTag = $("#menuTag").val();
         var menuName = $("#menuName").val();
         var menuUrl = $("#menuUrl").val();
         var icon_ = $("#icon_").val();
@@ -402,6 +380,7 @@
                 tag: $("#tag").val(),
                 menuId: menuId,
                 supId: supId,
+                menuTag: menuTag,
                 menuName: menuName,
                 menuUrl: menuUrl,
                 icon: icon_,
@@ -410,7 +389,7 @@
                 remark: remark
             },
             success: function (rc) {
-                if (rc.code == '0') {
+                if (rc.code == "success") {
                     var zTree = $.fn.zTree.getZTreeObj("menuTree");
                     if (tag == "ADD" || "" == tag) {
                         if (rc.data != null && rc.data.supId != null) {
@@ -455,9 +434,10 @@
                         var node = zTree.getNodeByParam("id", rc.data, null);
                         node.name = menuName;
                         zTree.updateNode(node);
+                        layer.msg("编辑菜单成功!");
                     }
                 } else {
-                    layer.msg(rc.message);
+                    layer.msg("没有操作标识: ADD or EDIT");
                 }
             }
         });
@@ -478,7 +458,7 @@
 
         $.ajax({
             type: "GET",
-            url: "b/menu/editMenu.do",
+            url: "<%=basePath%>b/menu/editMenu.do",
             dataType: "json",
             async: true,
             data: {
@@ -487,11 +467,11 @@
             },
             success: function (menu) {
 
-                alert(tag);
                 if (tag == "ADD") {
                     $("#supId").val(menu.menuId).trigger('change.select2');// 动态改变值以后必须触发改变事件。否则将不会生效(联动)
 
                     $("#menuId").val("");
+                    $("#menuTag").val("");
                     $("#menuName").val("");
                     $("#menuUrl").val("");
                     $("#sequence").val("");
@@ -509,9 +489,11 @@
 
                     $("#menuId").val(menu.menuId);
                     $("#menuName").val(menu.menuName);
+                    $("#menuTag").val(menu.menuTag);
                     $("#menuUrl").val(menu.menuUrl);
                     $("#sequence").val(menu.sequence);
                     $("#icon_").val(menu.icon);
+                    $("#i_icon").addClass("fa " + menu.icon);
 
                     if (menu.isLeaf == true) {
                         $("#isLeaf").attr("checked", 'true');
@@ -527,7 +509,6 @@
     }
 
     function removeMenu(menuId) {
-        alert(menuId);
         layer.confirm('您确定要删除该菜单数据？', {
             btn: ['确定', '暂时不要']  // 按钮
         }, function () {

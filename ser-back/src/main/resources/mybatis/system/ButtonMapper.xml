@@ -161,6 +161,19 @@
           ur.USER_ID = #{userId}
     </select>
 
+    <!-- 根据角色id获取对应的button集合 -->
+    <select id="getButtonByRoleId" parameterType="Integer" resultMap="buttonMap">
+        SELECT
+            b.*
+        FROM
+            T_BUTTON b,
+            T_ROLE_BTN rb
+        WHERE
+            b.ID = rb.BTN_ID
+        AND
+            rb.ROLE_ID = #{roleId}
+    </select>
+
     <!-- 支持批量删除 -->
     <delete id="deleteButton" parameterType="pd">
         delete from T_BUTTON where ID in

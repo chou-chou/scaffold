@@ -1,3 +1,129 @@
+# 系统开发说明： #
+
+## 源码说明 ##
+1、实体层（Model层、Entity层）
+    + src/main/java/com.hrp.entity
+    + system表示系统相关实体，business表示业务相关实体
+
+2、持久层（数据访问层、Dao层）
+    + src/main/java/com.hrp.dao
+    + 采用通用 DAO 形式
+    + 调用方式： baseDao.findForList("AuthorityMapper.listAll", null);
+    + 单元测试： test/java/com.hrp.dao
+        测试基类： BaseDaoTest
+        新建单元测试： public class ButtonMapperTest extends BaseDaoTest
+
+3、业务层（Service层）
+    + src/main/java/com.hrp.service
+
+4、控制层（Action层、Controller层）
+    + src/main/java/hrp.controller
+    + common表示通用的控制处理，back针对管理页面的控制处理
+
+5、Filter
+    + CorsFilter 跨域   参考：[CORS 跨域 实现思路及相关解决方案](http://www.cnblogs.com/sloong/p/cors.html)
+    + KickoutSessioniFilter 并发登录控制
+    + MonitorAccessControlFilter 登录验证
+    + StartFilter 系统启动时运行
+    + SysAuthorityFilter 系统有效性验证
+
+6、Interceptor
+    + shiro/ShiroRealm Shiro验证
+    + PaginationInterceptor Mybatis分页处理
+
+7、listener
+    + MvcMappingListener 资源-视图映射（菜单和页面对应关系 ）
+    + SystemInitListener 系统初始化监听器
+
+8、rest
+
+9、task
+    + AuthorityTask 系统有效性验证定时器
+    + RemoveLogTask 清除日子定时器
+
+10、utils
+    + log/ 日志切面
+    + plugins/ 分页
+
+## 配置说明 ##
+1、config
+    + ehcache.xml 缓存
+    + logback.xml 日志
+    + system.propeerties 配置信息
+
+2、messages
+
+3、mybatis
+    + system 系统相关
+    + business 业务相关
+
+4、spring
+    + spring-base
+    + spring-mvc
+
+5、mybatis-generator-config.xml  MyBatis自动生成配置和实体
+
+## 资源说明 ##
+1、plugins 页面资源插件
+    + ace
+    + bootstrap
+    + chosen 选择框
+    + colorbox 颜色选择
+    + dataTables 页面列表
+    + daterangepicker 日期时间选择
+    + dropzone 拖拽上传
+    + echarts 百度统计图
+    + fullcalendar 全屏
+    + iconpicker 图标选择
+    + jquery IE用1.11.3，现代浏览器用2.1.4
+    + jquery-ui
+    + layer 弹出层
+    + pinyin 拼音
+    + select2 下拉选框
+    + toastr 消息提示
+    + ueditor 编辑器
+    + uploadify 上传
+    + validation 表单验证
+    + websocketInstantMsg
+    + webuploader
+    + zTree 树
+
+2、static
+    + css
+    + fonts 字体图标
+    + img
+    + js
+    + swf
+
+3、swagger
+
+4、uploadFiles 上传目录
+
+5、WEB-INF
+    + lib 外部包
+    + views
+        + comm  公共页面
+        + back  后端页面
+        + error 错误页面
+        + front
+        + web.xml
+
+## 单元测试 ##
+1、cache
+
+2、controller
+
+3、dao
+
+4、shiro
+
+5、util
+
+
+---------------------------------------------------------------------------------------------------
+
+# 系统使用说明：#
+
 1、获取系统硬件信息 —— Sigar在Java中的使用：
 
     Windows：将sigar.jar包放到classpath下，将sigar-amd64-winnt.dll放到环境变量java.library.path下。
@@ -12,10 +138,62 @@
 3、资源映射处理
 
     针对菜单树需要放访问的主页面 main.do
-    涉及T_MENU中 访问路径对应的Controller的Method，需要加 @MvcMapping注解，并标注 url、path、type
+    涉及T_MENU中 访问路径对应的Controller的Method，需要加 @MvcMapping注解，并标注 tag、path、type
+    tag对应T_MENU中的MENU_TAG
 
     例如：
     DepartmentController.java中main.do方法
-    url     -> /b/department/main.do
+    tag     -> department:main
     path    -> back/system/department/deptList  最终这个path会映射成 /WEB-INF/views/back/system/department/deptList.jsp
     type    -> MvcMapping.ViewType.JSP (默认)   指定映射类型 JSP、FTL、HTML等
+
+4、页面按钮权限设置
+
+    本项目中拓展shiro标签实现按钮权限控制。
+        com.hrp.utils.shiro.HasAnyPermissionTag
+        /WEB-INF/tld/shiro.tld
+
+    4.1、页面引入 <%@ taglib prefix="shiro" uri="/shiro-tag-extend" %>
+    4.2、加入控制
+        shiro:hasAnyPermission + inCtrl
+        <shiro:hasAnyPermission permission="sys:role:add">
+            <button inCtrl id="xxx" name="xxx" onclick="xxx();" />
+        </shiro:hasAnyPermission>
+
+        permission为对应的当前按钮的tag（标识），对应数据表T_BUTTON的字段BTN_TAG
+
+5、分页处理
+
+    本项目中拓展MyBatsi插件实现分页逻辑。
+        1、com.hrp.interceptor.PageInterceptor
+        2、resources/mybatis/mybatis-config.xml
+            <plugins>
+                <plugin interceptor="com.hrp.interceptor.PageInterceptor">
+                    <property name="dialect" value="sqlserver"/> <!-- 声明数据库方言 -->
+                    <property name="pageSqlId" value=".*ListPage.*"/> <!-- 对应拦截的查询语句 -->
+                </plugin>
+            </plugins>
+            这里是拦截 XxxMapper.xml 中 id 带有 'ListPage' 字样的 select 语句，例如：
+                <select id="sysLogListPage" parameterType="page" resultMap="sysLogMap"> ... </select>
+        3、com.hrp.entity.vo.DataTableView
+            对应DataTables的数据实体
+
+    参考：
+        com.hrp.controller.SysLogController
+            @RequestMapping("/fetchData.do")
+            @ResponseBody
+            public DataTableView<SysLog> getRequestParam() throws Exception {}
+        /WEB-INF/views/back/system/syslog/syslog_list.jsp
+            $('#log_list').DataTable({
+                "sPaginationType" : "full_numbers",  //详细分页组，可以支持直接跳转到某页
+                "processing": true,  // 设置为true，就会有表格加载时的提示
+                // 开启服务器模式
+                serverSide: true,
+                // 绑定数据
+                "aoColumns": [],
+                // 数据来源（包括处理分页，排序，过滤）
+                ajax: {
+                    url: "<%=basePath%>/b/syslog/fetchData.do",
+                    "dataSrc": "data"
+                }
+            });

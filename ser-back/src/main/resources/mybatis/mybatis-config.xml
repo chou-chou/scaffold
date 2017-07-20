@@ -33,16 +33,20 @@
 		<typeAlias type="com.hrp.entity.system.UserDept" alias="UserDept"/>
         <!-- business -->
         <typeAlias type="com.hrp.entity.business.TbProject" alias="Project"/>
+		<typeAlias type="com.hrp.entity.business.TbProjectIndex" alias="ProjectIndex"/>
+		<typeAlias type="com.hrp.entity.business.TbIndexTable" alias="IndexTable"/>
+		<typeAlias type="com.hrp.entity.business.TbProjectOpinion" alias="ProjectOpinion"/>
+
 
 
 	</typeAliases>
 	
-	<!--<plugins>
-        &lt;!&ndash; 分页处理 &ndash;&gt;
-		<plugin interceptor="com.hrp.utils.plugins.PagePlugin">
+	<plugins>
+        <!-- 分页处理 -->
+		<plugin interceptor="com.hrp.interceptor.PageInterceptor">
 			<property name="dialect" value="sqlserver"/>
-			<property name="pageSqlId" value=".*listPage.*"/>
+			<property name="pageSqlId" value=".*ListPage.*"/>
 		</plugin>
-	</plugins>-->
+	</plugins>
 	
 </configuration>

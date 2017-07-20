@@ -12,7 +12,7 @@
 
 <!-- bootstrap & fontawesome -->
 <link rel="stylesheet" href="<%=basePath%>/plugins/bootstrap/css/bootstrap.min.css"/>
-<link rel="stylesheet" href="<%=basePath%>/static/fonts/font-awesome/4.5.0/css/font-awesome.min.css"/>
+<link rel="stylesheet" href="<%=basePath%>/static/fonts/font-awesome/4.7.0/css/font-awesome.min.css"/>
 
 <!-- text fonts -->
 <link rel="stylesheet" href="<%=basePath%>/static/css/fonts.googleapis.com.css" />
@@ -32,4 +32,10 @@
 <link rel="stylesheet" href="<%=basePath%>/plugins/validation/jquery.validate.css"/>
 
 <link rel="stylesheet" href="<%=basePath%>plugins/select2/css/select2.min.css"/>
+
+<link rel="stylesheet" href="<%=basePath%>/plugins/bootstrap/extends/bootstrap-duallistbox/bootstrap-duallistbox.min.css" />
+
+<link rel="stylesheet" href="<%=basePath%>/plugins/bootstrap/extends/bootstrap-datepicker/bootstrap-datepicker3.min.css"/>
+
+<link rel="stylesheet" href="<%=basePath%>/plugins/chosen/chosen.min.css" />
 

@@ -62,6 +62,14 @@
 
 <script type="text/javascript" src="<%=basePath%>/static/js/pinyin.js"></script>
 
+<script type="text/javascript" src="<%=basePath%>/plugins/bootstrap/extends/bootstrap-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+
+<script type="text/javascript" src="<%=basePath%>/static/js/moment.min.js"></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/bootstrap/extends/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript" src="<%=basePath%>/plugins/bootstrap/extends/bootstrap-datepicker/i18n/bootstrap-datepicker.zh-CN.js"></script>
+
+<script type="text/javascript" src="<%=basePath%>/plugins/chosen/chosen.jquery.min.js" ></script>
+
 <%-- 一些抽离具体页面的通用js方法 --%>
 <script type="text/javascript">
     // Select2 --> Tree
@@ -202,6 +210,11 @@
             dataType: "json",
             async: false,  // 同步方式执行，可以成功对全局变量赋值
             success: function (objs) {
+                console.info(objs);
+                /*$("#" + elementId + " option:checked").attr("selected", false );
+                $("#" + elementId + " option").each(function(){  //遍历所有option
+                    $(this).attr("selected", false);
+                });*/
                 $.each(objs, function (i, ele) {
                     var val = ele["" + valueName + ""];
                     $("#" + elementId + " option[value='" + val + "']").attr("selected", true);
@@ -212,12 +225,102 @@
                         callback();
                     }
                 } catch (e) {
+                    console.info("出错: " + e);
                 }
-                //dualListBox.bootstrapDualListbox('refresh', true);
             },
             error: function (e) {
                 alert(e.msg);
             }
         });
+    }
+
+    /**
+     * 为DataTables添加button
+     */
+    function addButton2DataTables(table) {
+        new $.fn.dataTable.Buttons(table, {
+            buttons: [
+                {
+                    extend: "colvis",
+                    text: "<i class='fa fa-search bigger-110 blue'></i><span class='hidden'>显示/隐藏 列</span>",
+                    className: "btn btn-white btn-primary btn-bold"/*,
+                 columns: ":not(:first):not(:last)"*/
+                },
+                {
+                    extend: "copy",
+                    text: "<i class='fa fa-copy bigger-110 pink'></i><span class='hidden'>复制</span>",
+                    className: "btn btn-white btn-primary btn-bold"
+                },
+                {
+                    extend: "csv",
+                    text: "<i class='fa fa-database bigger-110 orange'></i> <span class='hidden'>导出CSV</span>",
+                    className: "btn btn-white btn-primary btn-bold"
+                },
+                {
+                    extend: "excel",
+                    text: "<i class='fa fa-file-excel-o bigger-110 green'></i> <span class='hidden'>导出Excel</span>",
+                    className: "btn btn-white btn-primary btn-bold"
+                },
+                {
+                    extend: "pdf",
+                    text: "<i class='fa fa-file-pdf-o bigger-110 red'></i> <span class='hidden'>导出PDF</span>",
+                    className: "btn btn-white btn-primary btn-bold",
+                    download: 'open'
+                },
+                {
+                    extend: "print",
+                    text: "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>打印</span>",
+                    className: "btn btn-white btn-primary btn-bold",
+                    autoPrint: false,
+                    message: 'This print was produced using the Print button for DataTables'
+                }
+            ]
+        });
+
+        table.buttons().container().appendTo($('.tableTools-container'));
+
+        // style the message box
+        var defaultCopyAction = table.button(1).action();
+        table.button(1).action(function (e, dt, button, config) {
+            defaultCopyAction(e, dt, button, config);
+            $('.dt-button-info').addClass('gritter-item-wrapper gritter-info gritter-center white');
+        });
+
+        var defaultColvisAction = table.button(0).action();
+        table.button(0).action(function (e, dt, button, config) {
+
+            defaultColvisAction(e, dt, button, config);
+
+            if ($('.dt-button-collection > .dropdown-menu').length == 0) {
+                $('.dt-button-collection')
+                    .wrapInner('<ul class="dropdown-menu dropdown-light dropdown-caret dropdown-caret" />')
+                    .find('a').attr('href', '#').wrap("<li />")
+            }
+            $('.dt-button-collection').appendTo('.tableTools-container .dt-buttons')
+        });
+
+    }
+
+    /**
+     * 时间格式化处理
+     * @param fmt
+     * @param date
+     */
+    var dateFmt = function(fmt, date) {
+        var o = {
+            "M+" : date.getMonth()+1,                 //月份
+            "d+" : date.getDate(),                    //日
+            "h+" : date.getHours(),                   //小时
+            "m+" : date.getMinutes(),                 //分
+            "s+" : date.getSeconds(),                 //秒
+            "q+" : Math.floor((date.getMonth()+3)/3), //季度
+            "S"  : date.getMilliseconds()             //毫秒
+        };
+        if(/(y+)/.test(fmt))
+            fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));
+        for(var k in o)
+            if(new RegExp("("+ k +")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+        return fmt;
     }
 </script>

@@ -1,13 +1,14 @@
 package com.hrp.service.impl;
 
 import com.hrp.dao.BaseDao;
-import com.hrp.entity.system.Dictionary;
+import com.hrp.entity.system.Button;
 import com.hrp.entity.system.Role;
 import com.hrp.service.RoleService;
 import com.hrp.utils.PageData;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -91,5 +92,44 @@ public class RoleServiceImpl implements RoleService {
     public boolean updateRole(PageData pd) throws Exception {
         Integer result = (Integer) baseDao.update("RoleMapper.updateRole", pd);
         return (result > 0) ? true : false;
+    }
+
+    @Override
+    public List<Button> getButtonByRoleId(Integer roleId) throws Exception {
+        return (List<Button>) baseDao.findForList("ButtonMapper.getButtonByRoleId", roleId);
+    }
+
+    @Override
+    public boolean batchSaveRoleBtn(Integer roleId, Integer[] btnIds) throws Exception {
+        if (null == roleId || null == btnIds || btnIds.length <= 0) {
+            return false;
+        }
+
+        List<PageData> pdList = new ArrayList<>();
+
+        for (Integer btnId : btnIds) {
+            PageData pd = new PageData();
+            pd.put("ROLE_ID", roleId);
+            pd.put("BTN_ID", btnId);
+
+            pdList.add(pd);
+        }
+
+        Integer result = (Integer) baseDao.save("RoleMapper.batchSaveRoleBtn", pdList);
+        return result > 0 ? true : false;
+    }
+
+    @Override
+    public boolean batchDeleteRoleBtn(Integer roleId, Integer[] btnIds) throws Exception {
+        if (null == roleId || null == btnIds || btnIds.length <= 0) {
+            return false;
+        }
+
+        PageData pd = new PageData();
+        pd.put("ROLE_ID", roleId);
+        pd.put("array", btnIds);
+
+        Integer result = (Integer) baseDao.delete("RoleMapper.batchDeleteRoleBtn", pd);
+        return result > 0 ? true : false;
     }
 }

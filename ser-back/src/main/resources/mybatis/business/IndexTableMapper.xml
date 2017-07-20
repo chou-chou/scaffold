@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="IndexTableMapper">
+
+    <resultMap type="IndexTable" id="indexTableMap">
+        <id column="ID" property="id"/>
+        <result column="INDEX_TABLE_CODE" property="indexTableCode"/>
+        <result column="INDEX_TABLE_NAME" property="indexTableName"/>
+        <result column="INDEX_ID" property="indexId"/>
+        <result column="REMARK" property="remark"/>
+        <result column="CREATOR" property="creator"/>
+    </resultMap>
+
+    <!-- 表名 -->
+    <sql id="tableName">
+        TB_INDEX_TABLE
+    </sql>
+
+    <!-- 字段 -->
+    <sql id="field">
+        ID, INDEX_TABLE_CODE, INDEX_TABLE_NAME, INDEX_ID, REMARK, CREATOR
+    </sql>
+
+    <!-- 字段值 -->
+    <sql id="fieldValue">
+        #{ID}, #{INDEX_TABLE_CODE}, #{INDEX_TABLE_NAME}, #{INDEX_ID}, #{REMARK}, #{CREATOR}
+    </sql>
+
+    <!-- 属性值 -->
+    <sql id="propertyValue">
+        #{id},#{indexTableCode},#{indexTableName},#{indexId},#{remark},#{creator}
+    </sql>
+
+    <select id="getByIndexTableId" parameterType="pd" resultMap="indexTableMap">
+        select top 1 <include refid="field"></include> from <include refid="tableName"></include>
+        where ID = #{id}
+    </select>
+
+
+    <select id="listAllIndexTable" parameterType="pd" resultMap="indexTableMap">
+        SELECT
+        <include refid="field"></include>
+        FROM
+        <include refid="tableName"></include>
+        WHERE
+        1=1
+        <if test="indexTableInfo != null and indexTableInfo != ''"><!-- 关键词检索 -->
+            AND (
+            INDEX_TABLE_CODE LIKE '%'+#{indexTableInfo}+'%'
+            OR
+            INDEX_TABLE_NAME LIKE '%'+#{indexTableInfo}+'%'
+            )
+        </if>
+    </select>
+
+    <insert id="saveIndexTableBean" parameterType="IndexTable" useGeneratedKeys="true" keyProperty="id">
+        insert into TB_INDEX_TABLE (<trim suffixOverrides=",">
+        <if test="indexTableCode != null and indexTableCode != ''">INDEX_TABLE_CODE,</if>
+        <if test="indexTableName != null and indexTableName != ''">INDEX_TABLE_NAME,</if>
+        <if test="creator != null and creator != ''">CREATOR,</if>
+        <if test="indexId != null and indexId != ''">INDEX_ID,</if>
+        <if test="remark != null and remark != ''">REMARK</if>
+    </trim>)
+        values(<trim suffixOverrides=",">
+        <if test="indexTableCode != null and indexTableCode != ''">#{indexTableCode},</if>
+        <if test="indexTableName != null and indexTableName != ''">#{indexTableName},</if>
+        <if test="creator != null and creator != ''">#{creator},</if>
+        <if test="indexId != null and indexId != ''">#{indexId},</if>
+        <if test="remark != null and remark != ''">#{remark}</if>
+    </trim>)
+    </insert>
+
+    <update id="updateIndexTable" parameterType="pd">
+        update TB_INDEX_TABLE
+        <set>
+            <if test="indexTableCode != null and indexTableCode != ''">INDEX_TABLE_CODE=#{indexTableCode},</if>
+            <if test="indexTableName != null and indexTableName != ''">INDEX_TABLE_NAME=#{indexTableName},</if>
+            <if test="creator != null and creator != ''">CREATOR=#{creator},</if>
+            <if test="remark != null and remark != ''">REMARK=#{remark},</if>
+            <if test="indexId != null ">INDEX_ID=#{indexId},</if>
+        </set>
+        where ID = #{id}
+    </update>
+
+
+    <!-- 批量删除 -->
+    <delete id="batchDeleteIndexTable" parameterType="int">
+        delete from
+        <include refid="tableName"></include>
+        where  ID  in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="queryIndexTableById" parameterType="int" resultMap="indexTableMap">
+        SELECT
+        <include refid="field"></include>
+        FROM
+        <include refid="tableName"></include>
+        WHERE  ID  in
+        <foreach collection="array" item="ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+
+    </select>
+
+</mapper>
+

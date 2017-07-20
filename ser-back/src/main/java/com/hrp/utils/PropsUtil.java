@@ -39,6 +39,7 @@ public final class PropsUtil {
                 System.out.println(filePath);
                 filePath = filePath.replaceAll("file:/", "");
                 filePath = filePath.replaceAll("%20", " ");
+                filePath = filePath.replaceAll("test-classes", "classes");
                 System.out.println(filePath);
                 prop.load(new File(filePath));
                 props.put(propFilePath, prop);

@@ -25,10 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * RoleController
@@ -229,6 +226,90 @@ public class RoleController extends BaseController {
                 rc.setCode("1");
                 rc.setMessage("删除失败");
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        JsonUtil.writeJsonToResponse(response, rc, JsonUtil.OBJECT_TYPE_BEAN);
+    }
+
+    /**
+     * 跳转到角色按钮编辑页面
+     * @param request
+     */
+    @RequestMapping(value = "/editRoleButton.do", method = RequestMethod.GET)
+    public void toEditRoleButton(HttpServletRequest request, HttpServletResponse response) {
+        String roleId = request.getParameter("roleId");
+        List<Button> ownBtnList = new ArrayList<>();
+
+        try {
+            ownBtnList = this.roleService.getButtonByRoleId(Integer.parseInt(roleId));
+        } catch (Exception e) {
+
+        }
+
+        JsonUtil.writeJsonToResponse(response, ownBtnList, JsonUtil.OBJECT_TYPE_LIST);
+
+    }
+
+    /**
+     * 编辑角色按钮
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/editRoleButton.do", method = RequestMethod.POST)
+    public void editRoleButton(HttpServletRequest request, HttpServletResponse response) {  // 返回json数据
+        String roleId = request.getParameter("roleId");
+        String[] btnIds = request.getParameterValues("btnId");
+
+        List<Button> ownBtnList;  // 该角色已有button权限
+
+        Set<Integer> ownBtnIdSet = new HashSet();
+        Set<Integer> fromPageBtnIdSet = new HashSet();
+
+        Set<Integer> temp = new HashSet<>(); // 临时存放
+
+        for (String btnId : btnIds) {
+            fromPageBtnIdSet.add(Integer.parseInt(btnId));
+        }
+
+        Result rc = new Result();
+
+        try {
+            ownBtnList = this.roleService.getButtonByRoleId(Integer.parseInt(roleId));
+            for (Button button : ownBtnList) {
+                ownBtnIdSet.add(button.getId());
+            }
+
+            /**
+             * 1、新增
+             */
+            temp.clear();
+            temp.addAll(fromPageBtnIdSet);
+            temp.removeAll(ownBtnIdSet);
+
+            Integer[] toSave = temp.toArray(new Integer[0]);
+            boolean success = roleService.batchSaveRoleBtn(Integer.parseInt(roleId), toSave);
+
+            /**
+             * 2、删除
+             */
+            temp.clear();
+            temp.addAll(ownBtnIdSet);
+            temp.removeAll(fromPageBtnIdSet);
+            Integer[] toDelete = temp.toArray(new Integer[0]);
+            success &= roleService.batchDeleteRoleBtn(Integer.parseInt(roleId), toDelete);
+
+            if (success) {
+                rc.setCode(Constant.EXECUTE_SUCCESS);
+                rc.setSuccess(true);
+                rc.setMessage("更新成功!");
+            } else {
+                rc.setCode(Constant.EXECUTE_FAILED);
+                rc.setSuccess(false);
+                rc.setMessage("更新失败...");
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,10 +5,7 @@ import com.hrp.entity.system.Menu;
 import com.hrp.entity.system.TreeNode;
 import com.hrp.pojo.Result;
 import com.hrp.service.MenuService;
-import com.hrp.utils.AppUtil;
-import com.hrp.utils.JsonUtil;
-import com.hrp.utils.Jurisdiction;
-import com.hrp.utils.PageData;
+import com.hrp.utils.*;
 import com.hrp.utils.lang.StringUtil;
 import net.sf.json.JSONArray;
 import org.springframework.stereotype.Controller;
@@ -313,6 +310,8 @@ public class MenuController extends BaseController {
         switch (tag) {
             case "ADD": // 新增
                 try {
+                    String menuTag = StringUtil.isNotNullOrBlank(request.getParameter("menuTag"))
+                            ? request.getParameter("menuTag") : "";
                     String menuName = StringUtil.isNotNullOrBlank(request.getParameter("menuName"))
                             ? request.getParameter("menuName") : "";
                     String menuUrl = StringUtil.isNotNullOrBlank(request.getParameter("menuUrl"))
@@ -333,6 +332,7 @@ public class MenuController extends BaseController {
                     }
 
                     Menu menu = new Menu();
+                    menu.setMenuTag(menuTag);
                     menu.setMenuName(menuName);
                     menu.setMenuUrl(menuUrl);
                     menu.setSupId(Integer.valueOf(supId));
@@ -346,13 +346,14 @@ public class MenuController extends BaseController {
                     menu.setParentMenu(supMenu);  // 父级bean
 
                     if (res > 0) {
-                        rc.setCode("0");
+                        rc.setCode(Constant.EXECUTE_SUCCESS);
                         rc.setMessage("新增菜单成功");
                         rc.setData(menu); // 返回部门数据（包括父级）
                         rc.setSuccess(true);
                     } else {
-                        rc.setCode("1");
+                        rc.setCode(Constant.EXECUTE_FAILED);
                         rc.setMessage("新增失败");
+                        rc.setSuccess(false);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -362,13 +363,14 @@ public class MenuController extends BaseController {
                 try {
                     Boolean success = this.menuService.updateMenuPd(pd);
                     if (success) {
-                        rc.setCode("0");
+                        rc.setCode(Constant.EXECUTE_SUCCESS);
                         rc.setMessage("更新菜单成功");
                         rc.setSuccess(true);
                         rc.setData(request.getParameter("menuId"));
                     } else {
-                        rc.setCode("1");
+                        rc.setCode(Constant.EXECUTE_FAILED);
                         rc.setMessage("更新失败");
+                        rc.setSuccess(false);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

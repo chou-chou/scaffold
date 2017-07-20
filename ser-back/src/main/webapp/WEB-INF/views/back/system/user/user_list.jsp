@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="shiro" uri="/shiro-tag-extend" %>
 <%
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://"
@@ -277,9 +278,9 @@
                                         <table style="width:100%">
                                             <tr>
                                                 <td style="vertical-align: top;">
-                                                    <c:if test="${QX.add == 1}">
-                                                        <a class="btn btn-mini btn-success"  data-toggle="modal" data-target="#userModal" onclick="add();">新增</a>
-                                                    </c:if>
+                                                    <shiro:hasAnyPermission name="sys:user:add">
+                                                        <a inCtrl class="btn btn-mini btn-success"  data-toggle="modal" data-target="#userModal" onclick="add();">新增</a>
+                                                    </shiro:hasAnyPermission>
                                                     <c:if test="${QX.email == 1 }">
                                                         <a id="userEmailBtn" title="批量发送电子邮件" class="btn btn-mini btn-info"
                                                            onclick="makeAll('确定要给选中的用户发送邮件吗?');">
@@ -292,12 +293,12 @@
                                                             <i class="ace-icon fa fa-envelope-o bigger-120"></i>
                                                         </a>
                                                     </c:if>
-                                                    <c:if test="${QX.del == 1 }">
-                                                        <a id="userDeleteBtn" title="批量删除" class="btn btn-mini btn-danger"
+                                                    <shiro:hasAnyPermission name="sys:user:delete">
+                                                        <a inCtrl id="userDeleteBtn" title="批量删除" class="btn btn-mini btn-danger"
                                                            onclick="batchDeleteUser('确定要删除选中的数据吗?');">
                                                             <i class='ace-icon fa fa-trash-o bigger-120'></i>
                                                         </a>
-                                                    </c:if>
+                                                    </shiro:hasAnyPermission>
                                                 </td>
                                                 <td style="vertical-align: top;">
                                                     <div class="pagination"

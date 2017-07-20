@@ -49,28 +49,26 @@ public class JsoupUtil {
 
         Document doc = Jsoup.parse(input, ENCODE);  // 解析
 
-        Elements elements = new Elements();
         for (String elementField : elementFields) {
             Elements es = doc.select(elementField);
-            logger.info(elementField + "\t" + es.size());
-            elements.addAll(es); // 选择页面元素
-        }
 
-        for (Element ele : elements) {
-            logger.info("\n --- " + "id:\t" + ele.id()
-                    + "\n --- tag:\t" + ele.tagName()
-                    + "\n --- class:\t" + ele.className()
-                    + "\n --- title:\t" + ele.attr("title")
-                    + "\n --- text:\t" + ele.text());
-            Button btn = new Button();
-            btn.setBtnId(ele.id());
-            btn.setBtnTag(ele.tagName());
-            btn.setBtnClass(ele.className());
-            btn.setBtnType(ele.attr("type"));
-            btn.setBtnTitle(ele.attr("title"));
-            btn.setBtnText(ele.text());
+            logger.info("\n" + elementField + "\t" + es.size());
+            for (Element e : es) {
 
-            idList.add(btn);
+                Element p = e.parent();
+
+                Button btn = new Button();
+                btn.setBtnId(e.id());
+                btn.setBtnTag(p != null ? p.attr("name") : "");
+                btn.setBtnType(e.tagName());
+                btn.setBtnClass(e.className());
+                btn.setBtnType(e.attr("type"));
+                btn.setBtnTitle(e.attr("title"));
+                btn.setBtnText(e.text());
+
+                idList.add(btn);
+                //logger.info(" ----> " + btn.toString());
+            }
         }
 
         return idList;

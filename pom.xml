@@ -20,11 +20,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javax-activation.version>1.1</javax-activation.version>
         <spring.version>4.3.6.RELEASE</spring.version>
-        <spring.security.version>3.2.4.RELEASE</spring.security.version>
-        <mybatis.version>3.2.8</mybatis.version>
-        <slf4j.version>1.7.12</slf4j.version>
-        <logback.version>1.2.2</logback.version>
-        <jackson.version>2.6.5</jackson.version>
+        <!--<spring.security.version>3.2.4.RELEASE</spring.security.version>-->
+        <mybatis.version>3.4.2</mybatis.version>
+        <slf4j.version>1.7.24</slf4j.version>
+        <logback.version>1.2.3</logback.version>
+        <jackson.version>2.8.7</jackson.version>
+        <junit.version>4.12</junit.version>
         <!-- Mybatis生成器插件-->
         <mybatis-generator.version>1.3.2</mybatis-generator.version>
 
@@ -85,6 +86,18 @@
                     <source>1.7</source>
                     <target>1.7</target>
                     <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- mybatis-generator根据数据库生成对应实体和Mapping -->
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>1.3.2</version>
+                <configuration>
+                    <configurationFile>src/main/resources/config/generatorConfig.xml</configurationFile>
+                    <verbose>true</verbose>
+                    <overwrite>true</overwrite>
                 </configuration>
             </plugin>
 
@@ -308,15 +321,15 @@
             <artifactId>spring-dao</artifactId>
             <version>2.0.8</version>
         </dependency>-->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-mock</artifactId>
             <version>2.0.8</version>
-        </dependency>
+        </dependency>-->
         <!-- spring end -->
 
         <!-- swagger start -->
-        <dependency>
+        <!--<dependency>
             <groupId>com.mangofactory</groupId>
             <artifactId>swagger-springmvc</artifactId>
             <version>1.0.2</version>
@@ -330,7 +343,23 @@
             <groupId>com.wordnik</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>1.3.11</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.7.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>io.github.robwin</groupId>
+            <artifactId>swagger2markup</artifactId>
+            <version>0.9.2</version>
+        </dependency>-->
         <!-- swagger end -->
 
         <!-- mybatis start -->
@@ -342,18 +371,18 @@
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
-            <version>1.2.0</version>
+            <version>1.3.1</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-ehcache</artifactId>
             <version>1.0.0</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-oscache</artifactId>
             <version>1.0.0</version>
-        </dependency>
+        </dependency>-->
         <!-- mybatis end -->
 
         <!-- shiro -->
@@ -424,20 +453,8 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.9</version>
+            <version>1.2.29</version>
         </dependency>
-        <!--<dependency>
-            <groupId>org.bgee.log4jdbc-log4j2</groupId>
-            <artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
-            <version>1.16</version>
-        </dependency>-->
-        <!-- mybatis打印sql log -->
-        <!--<dependency>
-            <groupId>org.bgee.log4jdbc-log4j2</groupId>
-            <artifactId>log4jdbc-log4j2</artifactId>
-            <version>1.16</version>
-        </dependency>-->
-        <!-- log end -->
 
         <dependency>
             <groupId>org.aspectj</groupId>
@@ -454,7 +471,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.0</version>
         </dependency>
 
         <dependency>
@@ -463,11 +480,17 @@
             <version>2.3.1</version>
         </dependency>
 
-        <!-- 添加jtl支持 -->
+        <!-- 添加jstl支持 -->
         <dependency>
-            <groupId>javax.servlet</groupId>
+            <groupId>jstl</groupId>
             <artifactId>jstl</artifactId>
             <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+            <version>1.1.2</version>
         </dependency>
 
         <!-- 引入JSON -->
@@ -492,6 +515,12 @@
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.13</version>
         </dependency>
+
+        <!--<dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.8.6</version>
+        </dependency>-->
 
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -547,13 +576,13 @@
             <version>2.0.4</version>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.googlecode.ehcache-spring-annotations</groupId>
             <artifactId>ehcache-spring-annotations</artifactId>
-            <version>1.1.2</version>
+            <version>1.2.0</version>
             <type>jar</type>
             <scope>compile</scope>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>net.sf.ezmorph</groupId>
@@ -577,12 +606,6 @@
             <groupId>javax.xml</groupId>
             <artifactId>jaxrpc</artifactId>
             <version>1.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>taglibs</groupId>
-            <artifactId>standard</artifactId>
-            <version>1.1.2</version>
         </dependency>
 
         <dependency>
@@ -647,11 +670,6 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.5</version>
         </dependency>
-        <!--<dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.2</version>
-        </dependency>-->
 
         <dependency>
             <groupId>aopalliance</groupId>
@@ -663,10 +681,15 @@
             <artifactId>asm</artifactId>
             <version>3.3.1</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
             <version>3.1</version>
+        </dependency>-->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2.2</version>
         </dependency>
 
         <dependency>
@@ -816,11 +839,17 @@
             <version>2.1.7</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.8.3</version>
+        </dependency>
+
         <!-- 添加junit单元测试包 -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>${junit.version}</version>
             <!-- scope>test</scope -->
         </dependency>
 

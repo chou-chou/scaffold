@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProjectIndexMapper">
+
+    <resultMap type="ProjectIndex" id="projectIndexMap">
+        <id column="ID" property="id"/>
+        <result column="INDEX_NAME" property="indexName"/>
+        <result column="INDEX_TYPE" property="indexType"/>
+        <result column="REMARK" property="remark"/>
+        <result column="INDEX_CODE" property="indexCode"/>
+        <result column="INDEX_SCORE" property="indexScore"/>
+    </resultMap>
+
+    <!-- 表名 -->
+    <sql id="tableName">
+        TB_PROJECT_INDEX
+    </sql>
+
+    <!-- 字段 -->
+    <sql id="field">
+        ID, INDEX_NAME, INDEX_TYPE, REMARK, INDEX_CODE, INDEX_SCORE
+    </sql>
+
+    <!-- 字段值 -->
+    <sql id="fieldValue">
+        #{ID}, #{INDEX_NAME}, #{INDEX_TYPE}, #{REMARK}, #{INDEX_CODE}, #{INDEX_SCORE}
+    </sql>
+
+    <!-- 属性值 -->
+    <sql id="propertyValue">
+        #{id},#{indexName},#{indexType},#{remark},#{indexCode},#{indexScore}
+    </sql>
+
+    <select id="getByProjectIndexId" parameterType="pd" resultMap="projectIndexMap">
+        select top 1 <include refid="field"></include> from <include refid="tableName"></include>
+        where ID = #{id}
+    </select>
+
+
+    <select id="listAllProjectIndex" parameterType="pd" resultMap="projectIndexMap">
+        SELECT
+        <include refid="field"></include>
+        FROM
+        <include refid="tableName"></include>
+        WHERE
+        1=1
+        <if test="indexInfo != null and indexInfo != ''"><!-- 关键词检索 -->
+            AND (
+            INDEX_CODE LIKE '%'+#{indexCode}+'%'
+            OR
+            INDEX_NAME LIKE '%'+#{indexNamae}+'%'
+            )
+        </if>
+   </select>
+
+    <insert id="saveProjectIndexBean" parameterType="ProjectIndex" useGeneratedKeys="true" keyProperty="id">
+        insert into TB_PROJECT_INDEX (<trim suffixOverrides=",">
+        <if test="indexCode != null and indexCode != ''">INDEX_CODE,</if>
+        <if test="indexName != null and indexName != ''">INDEX_NAME,</if>
+        <if test="indexType != null and indexType != ''">INDEX_TYPE,</if>
+        <if test="indexScore != null and indexScore != ''">INDEX_SCORE,</if>
+        <if test="remark != null and remark != ''">REMARK</if>
+    </trim>)
+        values(<trim suffixOverrides=",">
+        <if test="indexCode != null and indexCode != ''">#{indexCode},</if>
+        <if test="indexName != null and indexName != ''">#{indexName},</if>
+        <if test="indexType != null and indexType != ''">#{indexType},</if>
+        <if test="indexScore != null and indexScore != ''">#{indexScore},</if>
+        <if test="remark != null and remark != ''">#{remark}</if>
+    </trim>)
+    </insert>
+
+    <update id="updateProjectIndex" parameterType="pd">
+        update TB_PROJECT_INDEX
+        <set>
+            <if test="indexCode != null and indexCode != ''">INDEX_CODE=#{indexCode},</if>
+            <if test="indexName != null and indexName != ''">INDEX_NAME=#{indexName},</if>
+            <if test="indexType != null and indexType != ''">INDEX_TYPE=#{indexType},</if>
+            <if test="indexScore != null and indexScore != ''">INDEX_SCORE=#{indexScore},</if>
+            <if test="remark != null and remark != ''">REMARK=#{remark}</if>
+        </set>
+        where ID = #{id}
+    </update>
+
+
+    <!-- 批量删除 -->
+    <delete id="batchDeleteProjectIndex" parameterType="int">
+        delete from
+        <include refid="tableName"></include>
+        where  ID  in
+        <foreach collection="array" item="ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="queryProjectIndexById" parameterType="int" resultMap="projectIndexMap">
+        SELECT
+        <include refid="field"></include>
+        FROM
+        <include refid="tableName"></include>
+        WHERE  ID  in
+        <foreach collection="array" item="ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+
+    </select>
+
+
+
+</mapper>

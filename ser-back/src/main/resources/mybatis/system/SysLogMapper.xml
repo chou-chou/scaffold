@@ -9,13 +9,28 @@
         <result column="USERNAME" property="username"/>
         <result column="CREATE_DATE" property="createDate"/>
         <result column="HANDLE" property="handle"/>
-        <result column="url" property="url"/>
+        <result column="URL" property="url"/>
         <result column="METHOD" property="method"/>
         <result column="PARAMETER" property="parameter"/>
         <result column="IP" property="ip"/>
         <result column="BEGIN_DATE" property="beginDate"/>
         <result column="END_DATE" property="endDate"/>
     </resultMap>
+
+    <!-- 表名 -->
+    <sql id="tableName">
+        T_SYS_LOG
+    </sql>
+
+    <!-- 字段 -->
+    <sql id="field">
+        LOG_ID,USERNAME,CREATE_DATE,HANDLE,URL,METHOD,PARAMETER,IP,BEGIN_DATE,END_DATE
+    </sql>
+
+    <!-- 字段值 -->
+    <sql id="fieldValue">
+        #{logId}, #{username}, #{createDate}, #{handle}, #{url}, #{method}, #{parameter}, #{ip}, #{beginDate},#{endDate}
+    </sql>
 
     <!-- 查询日志 -->
     <select id="getLogInfo" parameterType="pd" resultType="pd">
@@ -70,5 +85,29 @@
             #{logId}
         </foreach>
     </delete>
+
+    <!-- 分页查询 -->
+    <select id="sysLogListPage" parameterType="page" resultMap="sysLogMap">
+        select <include refid="field"></include> from <include refid="tableName"></include>
+        where 1=1
+        <if test="pd.keywords !=null and pd.keywords != ''">
+            AND (
+                USERNAME LIKE '%' + #{pd.keywords} + '%'
+              OR
+                HANDLE LIKE '%' + #{pd.keywords} + '%'
+              OR
+                URL LIKE '%' + #{pd.keywords} + '%'
+              OR
+                METHOD LIKE '%' + #{pd.keywords} + '%'
+              OR
+                IP LIKE '%' + #{pd.keywords} + '%'
+            )
+        </if>
+    </select>
+
+    <select id="findLogById" parameterType="String" resultMap="sysLogMap">
+        select <include refid="field"></include> from <include refid="tableName"></include>
+        where LOG_ID = #{logId}
+    </select>
 
 </mapper>

@@ -161,6 +161,26 @@
         where MENU_ID = #{menuId}
     </update>
 
+    <!-- 更新菜单信息 -->
+    <update id="updateMenuPd" parameterType="pd">
+        update T_MENU
+        <set>
+            <if test="menuName != null and menuName != ''">MENU_NAME=#{menuName},</if>
+            <if test="menuUrl != null and menuUrl != ''">MENU_URL=#{menuUrl},</if>
+            <if test="menuTag != null and menuTag != ''">MENU_TAG=#{menuTag},</if>
+            <if test="isLeaf != null and isLeaf != ''">IS_LEAF=#{isLeaf},</if>
+            <if test="rank != null and rank != ''">RANK=#{rank},</if>
+            <if test="sequence != null and sequence != ''">SEQUENCE=#{sequence},</if>
+            <if test="rootId != null and rootId != ''">ROOT_ID=#{rootId},</if>
+            <if test="supId != null and supId != ''">SUP_ID=#{supId},</if>
+            <if test="icon != null and icon != ''">ICON=#{icon},</if>
+            <if test="enabled != null and enabled != ''">ENABLED=#{enabled},</if>
+            <if test="remark != null and remark != ''">REMARK=#{remark},</if>
+            <if test="updateTime != null and updateTime != ''">UPDATE_TIME=#{updateTime},</if>
+            <if test="updateUserId != null and updateUserId != ''">UPDATE_USERID=#{updateUserId}</if>
+        </set>
+        where MENU_ID = #{menuId}
+    </update>
 
     <!-- 获取用户总数 -->
     <select id="getMenuCount" parameterType="String" resultType="pd">
@@ -220,6 +240,11 @@
         m.MENU_ID = rm.MENU_ID
         AND rm.ROLE_ID = ur.ROLE_ID
         AND ur.USER_ID = #{userId}
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="menuListPage" parameterType="page" resultMap="menuResultMap">
+        select <include refid="field"></include> from <include refid="tableName"></include>
     </select>
 
 </mapper>

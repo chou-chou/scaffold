@@ -142,7 +142,7 @@
     </select>
 
     <!-- 用户列表 -->
-    <select id="userListPage" parameterType="page" resultType="pd">
+    <select id="userList" parameterType="page" resultType="pd">
         SELECT u.USER_ID, u.USERNAME, u.PASSWORD, u.LAST_LOGIN, u.ENABLED, u.LOCKED, u.EXPIRED, u.ACCOUNT
         FROM <include refid="tableName"></include> u
         WHERE
@@ -158,13 +158,13 @@
         </if>
         <if test="pd.userInfo != null and pd.userInfo != ''"><!-- 关键词检索 -->
             AND (
-              u.USERNAME LIKE '%' + #{pd.userInfo}) + '%')
+              u.USERNAME LIKE '%' + #{pd.userInfo} + '%'
               OR
-              u.ACCOUNT LIKE '%' + #{pd.userInfo}) + '%')
+              u.ACCOUNT LIKE '%' + #{pd.userInfo} + '%'
               OR
-              u.EMAIL LIKE '%' + #{pd.userInfo}) + '%')
+              u.EMAIL LIKE '%' + #{pd.userInfo} + '%'
               OR
-              u.TELEPHONE LIKE '%' + #{pd.userInfo}) + '%')
+              u.TELEPHONE LIKE '%' + #{pd.userInfo} + '%'
             )
         </if>
         ORDER BY u.LAST_LOGIN DESC
@@ -268,5 +268,20 @@
             (#{item.userId},#{item.roleId},#{item.enabled})
         </foreach>
     </insert>
+
+    <select id="listAllUserByRoldCode" parameterType="pd" resultType="pd">
+        SELECT
+        u.USER_ID, u.ACCOUNT, u.USERNAME, u.NICKNAME, u.PASSWORD, u.ENABLED, u.LOCKED, u.EXPIRED, u.LAST_LOGIN, u.REMARK,u.EMAIL,u.TELEPHONE
+        FROM
+        T_USER u
+        LEFT JOIN T_USER_ROLE ur ON u.USER_ID = ur.USER_ID
+        LEFT JOIN T_ROLE  r ON ur.ROLE_ID = r.ROLE_ID
+        where
+        1=1
+        <if test="CODE != null and CODE != ''">
+            AND r.CODE = #{CODE}
+        </if>
+
+    </select>
 
 </mapper>

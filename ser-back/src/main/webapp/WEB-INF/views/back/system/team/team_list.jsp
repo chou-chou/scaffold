@@ -99,15 +99,10 @@
                                                     <td class="center">${team.teamCode}</td>
                                                     <td class="center">${team.teamName}</td>
                                                     <td class="center">${team.teamType}</td>
-                                                    <td class="center"><fmt:formatDate value="${team.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>:
+                                                    <td class="center"><fmt:formatDate value="${team.createTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                                                     <td class="center">${team.remark}</td>
                                                 </tr>
                                             </c:forEach>
-                                            </c:if>
-                                            <c:if test="${QX.cha == 0}">
-                                                <tr>
-                                                    <td colspan="100" class="center">您无权查看</td>
-                                                </tr>
                                             </c:if>
                                         </c:when>
 
@@ -123,16 +118,20 @@
                                     <table style="width:100%">
                                         <tr>
                                             <td style="vertical-align: top;">
-                                                <c:if test="${QX.add == 1}">
-                                                    <a class="btn btn-mini btn-success" data-toggle="modal" data-target="#teamModal" onclick="addTag();">新增</a>
-                                                </c:if>
-                                                <a class="btn btn-mini btn-warn" data-toggle="modal"
+                                                <shiro:hasAnyPermission name="sys:team:add">
+                                                    <a inCtrl class="btn btn-mini btn-success" data-toggle="modal" data-target="#teamModal" onclick="addTag();">新增</a>
+                                                </shiro:hasAnyPermission>
+                                                <shiro:hasAnyPermission name="sys:team:edit">
+                                                    <a inCtrl class="btn btn-mini btn-warn" data-toggle="modal"
                                                     onclick="editTeam();">编辑</a><%--data-target="#teamModal"--%>
-                                                <c:if test="${QX.del == 1 }">
-                                                    <a title="批量删除" class="btn btn-mini btn-danger" onclick="deleteTeam();" >删除
+                                                </shiro:hasAnyPermission>
+                                                <shiro:hasAnyPermission name="sys:team:delete">
+                                                    <a inCtrl title="批量删除" class="btn btn-mini btn-danger" onclick="deleteTeam();" >删除
                                                     </a>
-                                                </c:if>
-                                                <a title="成员管理" class="btn btn-mini btn-danger" onclick="memberManage();" >成员管理</a>
+                                                </shiro:hasAnyPermission>
+                                                <shiro:hasAnyPermission name="sys:team:memberManage">
+                                                    <a inCtrl title="成员管理" class="btn btn-mini btn-danger" onclick="memberManage();" >成员管理</a>
+                                                </shiro:hasAnyPermission>
                                             </td>
                                             <td style="vertical-align: top;">
                                                 <div class="pagination" style="float: right;padding-top:0px; margin-top:0px;">

@@ -1,5 +1,6 @@
 package com.hrp.service;
 
+import com.hrp.entity.system.Button;
 import com.hrp.entity.system.Role;
 import com.hrp.utils.PageData;
 
@@ -77,5 +78,11 @@ public interface RoleService {
     public Role getByRoleId(PageData pd) throws Exception ;
 
     public boolean updateRole(PageData pd) throws Exception;
+
+    public List<Button> getButtonByRoleId(Integer roleId) throws Exception;
+
+    public boolean batchSaveRoleBtn(Integer roleId, Integer[] btnIds) throws Exception;
+
+    public boolean batchDeleteRoleBtn(Integer roleId, Integer[] btnIds) throws Exception;
 
 }

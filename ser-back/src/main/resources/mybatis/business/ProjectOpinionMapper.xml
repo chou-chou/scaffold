@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProjectOpinionMapper">
+
+    <resultMap type="ProjectOpinion" id="projectOpinionMap">
+        <id column="ID" property="id"/>
+        <result column="PROJECT_ID" property="projectId"/>
+        <result column="USER_ID" property="userId"/>
+        <result column="INDEX_TABLE_ID" property="indexTableId"/>
+
+    </resultMap>
+
+    <!-- 表名 -->
+    <sql id="tableName">
+        TB_PROJECT_Opinion
+    </sql>
+
+    <!-- 字段 -->
+    <sql id="field">
+        ID, PROJECT_ID, USER_ID, INDEX_TABLE_ID
+    </sql>
+
+    <!-- 字段值 -->
+    <sql id="fieldValue">
+        #{ID}, #{PROJECT_ID}, #{USER_ID}, #{INDEX_TABLE_ID}
+    </sql>
+
+    <!-- 属性值 -->
+    <sql id="propertyValue">
+        #{id},#{projectId},#{userId},#{indexTableId}
+    </sql>
+
+    <select id="geProjectOpinion" parameterType="pd" resultMap="projectOpinionMap">
+        select top 1 <include refid="field"></include> from <include refid="tableName"></include>
+        where   PROJECT_ID=#{projectId}
+    </select>
+
+
+    <select id="getProjectOpinionByProjectId" parameterType="pd" resultMap="projectOpinionMap">
+        SELECT
+        <include refid="field"></include>
+        FROM
+        <include refid="tableName"></include>
+        WHERE
+        1=1
+        <if test="projectId != null and indexInfo != ''"><!-- 关键词检索 -->
+            AND (
+            PROJECT_ID=#{projectId}
+
+        </if>
+   </select>
+
+    <insert id="saveProjectOpinionBean" parameterType="ProjectOpinion" useGeneratedKeys="true" keyProperty="id">
+        insert into TB_PROJECT_Opinion (<trim suffixOverrides=",">
+        <if test="projectId != null and projectId != ''">PROJECT_ID,</if>
+        <if test="userId != null and userId != ''">USER_ID,</if>
+        <if test="indexTableId != null and indexTableId != ''">INDEX_TABLE_ID</if>
+    </trim>)
+        values(<trim suffixOverrides=",">
+        <if test="projectId != null and projectId != ''">#{projectId},</if>
+        <if test="userId != null and userId != ''">#{userId},</if>
+        <if test="indexTableId != null and indexTableId != ''">#{indexTableId}</if>
+    </trim>)
+    </insert>
+
+    <update id="updateProjectOpinion" parameterType="pd">
+        update TB_PROJECT_OPINION
+        <set>
+            <if test="projectId != null and projectId != ''">PROJECT_ID=#{projectId},</if>
+            <if test="userId != null and userId != ''">USER_ID=#{userId},</if>
+            <if test="indexTableId != null ">INDEX_TABLE_ID=#{indexTableId}</if>
+        </set>
+        where PROJECT_ID = #{projectId}
+    </update>
+
+
+    <!-- 批量删除 -->
+    <delete id="batchDeleteProjectIndex" parameterType="int">
+        delete from
+        <include refid="tableName"></include>
+        where  ID  in
+        <foreach collection="array" item="ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <select id="queryProjectIndexById" parameterType="int" resultMap="projectOpinionMap">
+        SELECT
+        <include refid="field"></include>
+        FROM
+        <include refid="tableName"></include>
+        WHERE  ID  in
+        <foreach collection="array" item="ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+
+    </select>
+
+
+
+</mapper>

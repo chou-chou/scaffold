@@ -107,21 +107,21 @@
                                         <tr>
                                             <td style="vertical-align: top;">
                                                 <shiro:hasAnyPermission name="sys:role:add">
-                                                    <a id="roleAddBtn" class="btn btn-mini btn-success"
+                                                    <a inCtrl id="roleAddBtn" class="btn btn-mini btn-success"
                                                        data-toggle="modal"
                                                        data-target="#myModal" onclick="addTag();">新增</a>
                                                 </shiro:hasAnyPermission>
                                                 <shiro:hasAnyPermission name="sys:role:edit">
-                                                    <a id="roleEditBtn" class="btn btn-mini btn-warn"
+                                                    <a inCtrl id="roleEditBtn" class="btn btn-mini btn-warn"
                                                        data-toggle="modal"
                                                        data-target="#myModal" onclick="editTag();">编辑</a>
                                                 </shiro:hasAnyPermission>
                                                 <shiro:hasAnyPermission name="sys:role:delete">
-                                                    <a id="roleDeleteBtn" title="批量删除" class="btn btn-mini btn-danger"
+                                                    <a inCtrl id="roleDeleteBtn" title="批量删除" class="btn btn-mini btn-danger"
                                                        onclick="makeAll();">删除</a>
                                                 </shiro:hasAnyPermission>
                                                 <shiro:hasAnyPermission name="sys:role:privilege">
-                                                    <a id="rolePrivilegeBtn" class="btn btn-mini btn-danger"
+                                                    <a inCtrl id="rolePrivilegeBtn" class="btn btn-mini btn-danger"
                                                        onclick="editRight();">权限设置</a>
                                                 </shiro:hasAnyPermission>
                                             </td>
@@ -308,7 +308,7 @@
 
                                             <tbody>
                                             <c:forEach items="${allBtnList}" var="button" varStatus="vs">
-                                                <tr>
+                                                <tr id="${button.id}">
                                                     <td class="center">
                                                         <label class="pos-rel">
                                                             <input type="checkbox" name="bids"
@@ -335,9 +335,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-default" <%--data-dismiss="modal"--%> onclick="test();">关闭</button>
                 <shiro:hasAnyPermission name="sys:role:add">
-                    <button type="button" class="btn btn-primary" onclick="saveRight();">提交</button>
+                    <button inCtrl type="button" class="btn btn-primary" onclick="saveRight();">提交</button>
                 </shiro:hasAnyPermission>
             </div>
         </div><!-- /.modal-content -->
@@ -371,8 +371,8 @@
     <!-- 添加add标签 重置form -->
     function addTag() {
         $('h4').html("新增");
-        $("#shiro").val("ADD");
-        var tag = $("#shiro").val();
+        $("#tag").val("ADD");
+        var tag = $("#tag").val();
         $("#code").val("");
         $("#roleName").val("");
         $("[name=isSys]:checkbox").prop("checked", false);
@@ -386,8 +386,8 @@
     <!--编辑角色 -->
     function editRole(id) {
         $('h4').html("编辑");
-        $("#shiro").val("EDIT");
-        var tag = $("#shiro").val();
+        $("#tag").val("EDIT");
+        var tag = $("#tag").val();
         if (id == '') {
             layer.msg("编辑操作出错！");
             return false;
@@ -483,7 +483,6 @@
                 return false;
             }
 
-
             // 执行异步删除动作
             $.ajax({
                 type: "POST",
@@ -516,7 +515,7 @@
 
     <!-- 提交form -->
     function saveChange() {
-        var tag = $("#shiro").val();
+        var tag = $("#tag").val();
         var code = $("#code").val();
         var roleName = $("#roleName").val();
         if ($("input[type='checkbox']").is(':checked')) {
@@ -564,9 +563,7 @@
 </script>
 <script type="text/javascript">
     jQuery(function ($) {
-        //initiate dataTables plugin
         var role_list_table = $('#role_list').DataTable({
-            /*"dom": 'Bfrtip',*/
             bAutoWidth: false,
             "aoColumns": [
                 null, null,
@@ -579,7 +576,7 @@
             "aaSorting": [],
 
             select: {
-                style: 'multi'
+                style: 'single'
             },
 
             language: {
@@ -589,66 +586,7 @@
 
         $.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
 
-        new $.fn.dataTable.Buttons(role_list_table, {
-            buttons: [
-                {
-                    extend: "colvis",
-                    text: "<i class='fa fa-search bigger-110 blue'></i><span class='hidden'>显示/隐藏 列</span>",
-                    className: "btn btn-white btn-primary btn-bold"/*,
-                 columns: ":not(:first):not(:last)"*/
-                },
-                {
-                    extend: "copy",
-                    text: "<i class='fa fa-copy bigger-110 pink'></i><span class='hidden'>复制</span>",
-                    className: "btn btn-white btn-primary btn-bold"
-                },
-                {
-                    extend: "csv",
-                    text: "<i class='fa fa-database bigger-110 orange'></i> <span class='hidden'>导出CSV</span>",
-                    className: "btn btn-white btn-primary btn-bold"
-                },
-                {
-                    extend: "excel",
-                    text: "<i class='fa fa-file-excel-o bigger-110 green'></i> <span class='hidden'>导出Excel</span>",
-                    className: "btn btn-white btn-primary btn-bold"
-                },
-                {
-                    extend: "pdf",
-                    text: "<i class='fa fa-file-pdf-o bigger-110 red'></i> <span class='hidden'>导出PDF</span>",
-                    className: "btn btn-white btn-primary btn-bold",
-                    download: 'open'
-                },
-                {
-                    extend: "print",
-                    text: "<i class='fa fa-print bigger-110 grey'></i> <span class='hidden'>打印</span>",
-                    className: "btn btn-white btn-primary btn-bold",
-                    autoPrint: false,
-                    message: 'This print was produced using the Print button for DataTables'
-                }
-            ]
-        });
-
-        role_list_table.buttons().container().appendTo($('.tableTools-container'));
-
-        // style the message box
-        var defaultCopyAction = role_list_table.button(1).action();
-        role_list_table.button(1).action(function (e, dt, button, config) {
-            defaultCopyAction(e, dt, button, config);
-            $('.dt-button-info').addClass('gritter-item-wrapper gritter-info gritter-center white');
-        });
-
-        var defaultColvisAction = role_list_table.button(0).action();
-        role_list_table.button(0).action(function (e, dt, button, config) {
-
-            defaultColvisAction(e, dt, button, config);
-
-            if ($('.dt-button-collection > .dropdown-menu').length == 0) {
-                $('.dt-button-collection')
-                    .wrapInner('<ul class="dropdown-menu dropdown-light dropdown-caret dropdown-caret" />')
-                    .find('a').attr('href', '#').wrap("<li />")
-            }
-            $('.dt-button-collection').appendTo('.tableTools-container .dt-buttons')
-        });
+        addButton2DataTables(role_list_table);  // 为DataTables添加button
 
         setTimeout(function () {
             $($('.tableTools-container')).find('a.dt-button').each(function () {
@@ -769,6 +707,8 @@
         zTree = $.fn.zTree.init(zTree, setting, json);
     });
 
+    var btnSelected = new Array();  // 用来记录分页被选中的button id
+
     // 按钮列表页面
     jQuery(function ($) {
         // 全选/反选
@@ -779,7 +719,7 @@
         });
 
         button_list_table = $('#button_list').DataTable({
-            "dom": 'ftlp',
+            //"dom": 'ftlp',
             "columnDefs": [
                 {
                     "name": "menuId",
@@ -799,8 +739,7 @@
                 {"bSortable": false}, {"bSortable": false}
             ],
             bAutoWidth: false,
-            //"aaSorting": [],
-            //"info": false,
+            "info": false,
 
             select: {
                 style: 'multi'
@@ -808,57 +747,111 @@
 
             language: {
                 "url": "<%=basePath%>/plugins/dataTables/i18n/dataTables_zh-CN.json"
-            }
+            },
 
-            //bStateSave: true // 异步执行完成之后才调用页面刷新
+            "createdRow": function(row, data, index) {
+                var id = $('td', row).eq(0).find('input:checkbox').attr('id');
+                if ($.inArray(id, btnSelected) !== -1) {
+                    $('td', row).eq(0).find('input:checkbox').prop('checked', true);
+                    $(row).addClass('selected');
+                    //$('td', row).addClass('');
+                }
+            }//,
+
+            // 保存状态操作
+            //stateSave: true,
+
+            /*"stateSaveParams": function (settings, data) {
+                console.log("stateSaveParams");
+                // 这里操作保存的数据，写自己特定的逻辑
+            },
+
+            "stateSaveCallback": function (settings, data) {
+                console.log("stateSaveCallback");
+
+                //DT默认保存的key值为DataTables_+表格id+页面名称
+
+                localStorage.setItem('DataTables_' + settings.sInstance, JSON.stringify(data));
+            },
+
+            //读取状态操作
+
+            "stateLoadParams": function (settings, data) {
+                console.log("stateSaveParams");
+
+                //在读取数据的时候可以改变数据，根据自己逻辑来处理
+
+                //data.search.search = "";
+
+                //或者你可以直接禁用从缓存里读取数据，只要直接返回false即可
+
+                //return false;
+            },
+
+            "stateLoadCallback": function (settings) {
+                console.log("stateLoadCallback");
+                return JSON.parse(localStorage.getItem('DataTables_' + settings.sInstance));
+
+                //同样你还可以从服务器取数，采用同步的方式获取到保存在服务器里的数据
+            },
+
+            //状态加载完后执行的回调函数
+
+            "stateLoaded": function (settings, data) {
+                console.log("stateLoaded");
+
+                //在这里你可以打印出保存的缓存数据
+
+                //alert( 'Saved filter was: '+data.search.search );
+            }*/
+
         });
 
-        button_list_table.columns(1).visible(false);
-
-        //$.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
-
-        button_list_table.on('select', function (e, dt, type, index) {
-            if (type === 'row') {
-                $(button_list_table.row(index).node()).find('input:checkbox').prop('checked', true);
-                $('#rowSelector').attr("value", index);
-            }
-        });
-        button_list_table.on('deselect', function (e, dt, type, index) {
-            if (type === 'row') {
-                $(button_list_table.row(index).node()).find('input:checkbox').prop('checked', false);
-            }
-        });
+        button_list_table.columns(1).visible(false);  // 隐藏menuId列
 
         //table checkboxes
         $('th input[type=checkbox], td input[type=checkbox]').prop('checked', false);
 
-        //select/deselect all rows according to table header checkbox
-        $('#button_list > thead > tr > th input[type=checkbox], #button_list_wrapper input[type=checkbox]').eq(0).on('click', function () {
-            var th_checked = this.checked;//checkbox inside "TH" table header
-
-            $('#button_list').find('tbody > tr').each(function () {
-                var row = this;
-                if (th_checked) button_list_table.row(row).select();
-                else  button_list_table.row(row).deselect();
-            });
-        });
-
         //select/deselect a row when the checkbox is checked/unchecked
         $('#button_list').on('click', 'td input[type=checkbox]', function () {
-            var row = $(this).closest('tr').get(0);
-            if (this.checked) button_list_table.row(row).deselect();
-            else button_list_table.row(row).select();
+            var id = this.id;
+            var index = $.inArray(id, btnSelected);
+
+            if (index === -1) {
+                btnSelected.push(id);
+            } else {
+                btnSelected.splice(index, 1);
+            }
+
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                $(this).addClass('selected');
+            }
+
+            //var row = $(this).closest('tr').get(0);
+            //alert(row + " _ " + id + " _ " + index);
         });
 
         $(document).on('click', '#button_list .dropdown-toggle', function (e) {
             e.stopImmediatePropagation();
             e.stopPropagation();
             e.preventDefault();
-        })
+        });
 
     });
 
     //////////////////////////// 权限编辑页面功能 //////////////////////////////////
+
+    $("#button_list").on('page.dt', function() {
+
+        $.each(btnSelected, function(index, btnId) {
+            $("td input[name='bids'][id='" + btnId + "']").prop('checked', true);
+        });
+        //button_list_table.state.save();
+        //alert("page...  " + btnSelected);
+    });
 
     /**
      * 跳转到按钮权限编辑页面
@@ -866,14 +859,49 @@
     function editRight() {
         var rightModal = $('#rightModal');
 
-        var id = $('input[name="ids"]:checked').val();
+        var roleId = $('input[name="ids"]:checked').val();
 
-        if (id == '' || null == id || typeof(id) == "undefined" || id == "undefined") {
+        if (roleId == '' || null == roleId || typeof(roleId) == "undefined" || roleId == "undefined") {
             layer.msg("勾选要编辑的按钮！");
             return false;
         } else {
-            $('#roleId4Right').attr('value', id[0]);
+            $('#roleId4Right').attr('value', roleId[0]);
             rightModal.modal();
+
+            $.ajax({
+                type: "GET",
+                url: "<%=basePath%>/b/role/editRoleButton.do",
+                dataType: "json",
+                data: {
+                    roleId: roleId
+                },
+                success: function (btnList) {
+                    var btnId;
+
+//                    button_list_table.$('tr.selected').removeClass('selected');
+                    button_list_table.$('tr.selected').attr("checked", 'true');
+                    $.each(btnList, function(index, button) {
+                        btnId = button.id;
+
+                        var c = 0;
+                        $.each(btnSelected, function(index, ele) {
+                            if (ele == btnId)   {
+                                c++;    return true; // 类似continue
+                            }
+                        });
+                        if (c==0)   btnSelected.push(btnId);
+
+                        //$("#button_list > tbody > tr > td input[type=checkbox][id='" + btnId + "']").prop("checked", true);
+//                        $("input[name='bids'][type=checkbox]").addClass('selected');
+                        //$("input[name='bids'][type=checkbox]").attr("checked", 'true');
+                        $("td input[name='bids'][id='" + btnId + "']").prop('checked', true);
+                    });
+
+                    //$("input[name='bids']").prop('checked', true);
+                    //button_list_table.draw();
+                    //alert(btnSelected);
+                }
+            });
 
             return true;
         }
@@ -881,22 +909,39 @@
 
     var btnIds = "";
 
-
-
     /**
      * 保存角色和按钮的对应关系
      */
     function saveRight() {
+        var rightModal = $('#rightModal');
         var roleId = $('#roleId4Right').val();
 
-        var btnIds = new Array();
-        $("input:checkbox[name='bids']:checked").each(function(i) {
-            btnIds.push($(this).attr('id'));  // 向数组中添加元素
+        alert(roleId + " _ " + btnSelected);
+
+        $.ajax({
+            type: "POST",
+            url: "<%=basePath%>/b/role/editRoleButton.do",
+            dataType: "json",
+            async: true,
+            traditional: true,
+            data: {
+                roleId: roleId,
+                btnId: btnSelected
+            },
+            success: function (rc) {
+                if (rc.code == 'success') {
+                    alert(rc.message);
+                    rightModal.modal("hide");
+                }
+            }
         });
-        var bids = btnIds.join(',');  // 将数组元素连接起来以构建一个字符串
 
-        alert(roleId + " _ " + bids);
+    }
 
+    function test() {
+//        $("input[name='bids']").attr("checked", 'checked');
+        $("td input[name='bids'][id='17']").prop('checked', true);
+//        $("input[name='bids']").addClass('selected');
     }
 
 </script>

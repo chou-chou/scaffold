@@ -21,7 +21,7 @@ public class Constant {
     public final static String LOCK_PAGE = "locked";
     public final static String AUTHORITY_PAGE = "authorization";
 
-    public final static String IN_CONTROL = "inCtrl";  // 标记页面上的按钮（button/a/input等）是否被管控
+    public final static String IN_CONTROL = "[inCtrl]";  // 标记页面上的按钮（button/a/input等）是否被管控 按照页面元素的标签查找
 
     public final static String S_REMEMBER_ME = "rememberMe";  // 记住我
     public final static String S_ADMIN = "admin";  //
@@ -110,5 +110,8 @@ public class Constant {
 
     public static final String APPLICATION_JSON_UTF8 = "application/json;charset=utf-8";
     public static final String TEXT_PLAIN_UTF8 = "text/plain;charset=utf-8";
+
+
+    public static final String EXPER="EXPERT"; // 专家角色编码
 
 }

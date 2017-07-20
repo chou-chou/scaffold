@@ -71,10 +71,8 @@
                                         <th>
                                             <i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>按钮标识
                                         </th>
-                                        <th>按钮标题</th>
-
+                                        <th>按钮文本</th>
                                         <th>按钮类型</th>
-                                        <%--<th>按钮修饰</th>--%>
                                         <th>是否可见</th>
                                         <th>是否可用</th>
                                     </tr>
@@ -125,11 +123,11 @@
                                         <tr>
                                             <td style="vertical-align: top;">
                                                 <shiro:hasAnyPermission name="sys:button:refresh">
-                                                    <a id="buttonEditBtn" class="btn btn-mini btn-success"
+                                                    <a inCtrl id="buttonEditBtn" class="btn btn-mini btn-success"
                                                        onclick="refreshList();">刷新</a>
                                                 </shiro:hasAnyPermission>
                                                 <shiro:hasAnyPermission name="sys:button:edit">
-                                                    <a id="buttonEditBtn" class="btn btn-mini btn-success" onclick="btnEdit();">编辑</a>
+                                                    <a inCtrl id="buttonEditBtn" class="btn btn-mini btn-success" onclick="btnEdit();">编辑</a>
                                                 </shiro:hasAnyPermission>
                                             </td>
                                         </tr>
@@ -172,7 +170,7 @@
                                 <label for="menuName" class="col-sm-3 control-label no-padding-right">对应菜单:</label>
                                 <div class="col-sm-9">
                                     <input type="text" id="menuName" name="menuName" value="" class="col-xs-10 col-sm-5"
-                                           disabled="true"　readOnly="true"></i>
+                                           disabled="true"　readOnly="true">
                                 </div>
                             </div>
 
@@ -181,7 +179,7 @@
                                         class="required-item">*</span>&nbsp;按钮标识:</label>
                                 <div class="col-sm-9">
                                     <input type="text" id="btnTag" name="btnTag" value="" class="col-xs-10 col-sm-5"
-                                           placeholder="请键入..."></i>
+                                           placeholder="请键入...">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -190,7 +188,16 @@
                                 </label>
                                 <div class="col-sm-9">
                                     <input type="text" id="btnId" name="btnId" value="" class="col-xs-10 col-sm-5"
-                                           disabled="true"　readOnly="true"></i>
+                                           disabled="true"　readOnly="true">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right" for="btnText">
+                                    按钮文本:
+                                </label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="btnText" name="btnText" value="" class="col-xs-10 col-sm-5">
                                 </div>
                             </div>
 
@@ -199,7 +206,7 @@
                                     按钮标题:
                                 </label>
                                 <div class="col-sm-9">
-                                    <input type="text" id="btnTitle" name="btnTitle" value="" class="col-xs-10 col-sm-5"></i>
+                                    <input type="text" id="btnTitle" name="btnTitle" value="" class="col-xs-10 col-sm-5">
                                 </div>
                             </div>
 
@@ -208,7 +215,7 @@
                                        for="btnType">按钮类型:</label>
                                 <div class="col-sm-9 col-xs-12">
                                     <input type="text" id="btnType" name="btnType" value="" class="col-xs-10 col-sm-5"
-                                           disabled="true"　readOnly="true"></i>
+                                           disabled="true"　readOnly="true">
                                 </div>
                             </div>
 
@@ -217,7 +224,7 @@
                                        for="btnClass">按钮修饰:</label>
                                 <div class="col-sm-9 col-xs-12">
                                     <input type="text" id="btnClass" name="btnClass" value="" class="col-xs-10 col-sm-5"
-                                           disabled="true" readOnly="true"></i>
+                                           disabled="true" readOnly="true">
                                 </div>
                             </div>
 
@@ -345,12 +352,9 @@
     jQuery(function ($) {
         button_list_table = $('#button_list').DataTable({
             "columnDefs": [
-                {
-                    "targets": 1,
-                    "visible": false
-                },
+                {"name": "menuId", "targets": 1},
                 {"name": "btnTag", "targets": 3},  // 设置列标记
-                {"name": "btnTitle", "targets": 4},
+                {"name": "btnText", "targets": 4},
                 {"name": "btnType", "targets": 5}
             ],
             //"retrieve": true, // button_list_table共用一个实例
@@ -358,16 +362,16 @@
             "aoColumns": [
                 {"bSortable": false},
                 {"bSortable": false},  // menuId列不可见
-                null, null, null, null,
+                null, null, null,
                 {"bSortable": false},
                 {"bSortable": false},
                 {"bSortable": false}
             ],
             "aaSorting": [],
-            //"info": false,
+            "info": false,
 
             select: {
-                style: 'multi'
+                style: 'single'
             },
 
             language: {
@@ -381,7 +385,7 @@
 
         //$.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons btn-overlap btn-group btn-overlap';
 
-        button_list_table.on('select', function (e, dt, type, index) {
+        /*button_list_table.on('select', function (e, dt, type, index) {
             if (type === 'row') {
                 $(button_list_table.row(index).node()).find('input:checkbox').prop('checked', true);
                 $('#rowSelector').attr("value", index);
@@ -391,7 +395,7 @@
             if (type === 'row') {
                 $(button_list_table.row(index).node()).find('input:checkbox').prop('checked', false);
             }
-        });
+        });*/
 
         //table checkboxes
         $('th input[type=checkbox], td input[type=checkbox]').prop('checked', false);
@@ -418,7 +422,71 @@
             e.stopImmediatePropagation();
             e.stopPropagation();
             e.preventDefault();
-        })
+        });
+
+        /**
+         * 打开编辑Modal
+         * @param id
+         * @returns {boolean}
+         */
+        function openEditModal(id) {
+            var rowSelector = $('#rowSelector').val();
+            $('#rowSelector').attr("value", rowSelector);
+
+            if (id == '' || null == id || typeof(id) == "undefined" || id == "undefined") {
+                layer.msg("勾选要编辑的按钮！");
+                return false;
+            } else {
+                btnEditModal.modal();
+
+                $.ajax({
+                    type:"POST",
+                    url:"b/button/getButton.do",
+                    dataType:"json",
+                    data:{
+                        id : id
+                    },
+                    success: function (button) {
+                        $('#autoId').attr("value", button.id);
+                        $('#menuId').attr('value', button.menu.id);
+                        $('#menuName').attr('value', button.menu.menuName);
+
+                        $('#btnTag').attr('value', button.btnTag);
+                        $('#btnId').attr('value', button.btnId);
+                        $('#btnType').attr('value', button.btnType);
+                        $('#btnTitle').attr('value', button.btnTitle);
+                        $('#btnText').attr('value', button.btnText);
+                        $('#btnClass').attr('value', button.btnClass);
+
+                        if (button.enabled === '1') {
+                            $("#enabled").attr("checked", 'true');
+                        } else {
+                            $("#enabled").attr("checked", 'false');
+                        }
+
+                        if (button.visible === '1') {
+                            $("#visible").attr("checked", 'true');
+                        } else {
+                            $("#visible").attr("checked", 'false');
+                        }
+
+                        $('#btnText').attr('value', button.btnText);
+                        $('#remark').attr('value', button.remark);
+                    },
+                    error: function() {
+                        layer.msg("没有获取到该按钮信息...");
+                    }
+                });
+            }
+        }
+
+        // 为列表添加双击监听事件 编辑页面
+        $('#button_list tbody').on('dblclick', 'tr', function() {
+            var tr = $(this).closest('tr');
+            var id = tr.find('td:first-child input:checkbox').val();
+
+            openEditModal(id);
+        });
 
     });
 
@@ -433,60 +501,14 @@
 
     function refreshList() {
         var data = button_list_table.cell(1, 3).data();
-        alert(data + " _ ");
+        //alert(data + " _ ");
         button_list_table.draw(false);  // 刷新表格数据，分页信息不会重置
     }
 
     function btnEdit() {
         var id = $('input[name="ids"]:checked').val();
 
-        var rowSelector = $('#rowSelector').val();
-        $('#rowSelector').attr("value", rowSelector);
-
-        if (id == '' || null == id || typeof(id) == "undefined" || id == "undefined") {
-            layer.msg("勾选要编辑的按钮！");
-            return false;
-        } else {
-            btnEditModal.modal();
-
-            $.ajax({
-                type:"POST",
-                url:"b/button/getButton.do",
-                dataType:"json",
-                data:{
-                    id : id
-                },
-                success: function (button) {
-                    $('#autoId').attr("value", button.id);
-                    $('#menuId').attr('value', button.menu.id);
-                    $('#menuName').attr('value', button.menu.menuName);
-
-                    $('#btnTag').attr('value', button.btnTag);
-                    $('#btnId').attr('value', button.btnId);
-                    $('#btnType').attr('value', button.btnType);
-                    $('#btnTitle').attr('value', button.btnTitle);
-                    $('#btnClass').attr('value', button.btnClass);
-
-                    if (button.enabled === '1') {
-                        $("#enabled").attr("checked", 'true');
-                    } else {
-                        $("#enabled").attr("checked", 'false');
-                    }
-
-                    if (button.visible === '1') {
-                        $("#visible").attr("checked", 'true');
-                    } else {
-                        $("#visible").attr("checked", 'false');
-                    }
-
-                    $('#btnText').attr('value', button.btnText);
-                    $('#remark').attr('value', button.remark);
-                },
-                error: function() {
-                    layer.msg("没有获取到该按钮信息...");
-                }
-            });
-        }
+        openEditModal(id);
     }
 
     function saveChange() {

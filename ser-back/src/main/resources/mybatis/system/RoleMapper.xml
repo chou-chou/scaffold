@@ -128,6 +128,26 @@
         </foreach>
     </delete>
 
+    <!-- 批量新增角色按钮信息 -->
+    <insert id="batchSaveRoleBtn" parameterType="java.util.List">
+        insert into T_ROLE_BTN (ROLE_ID, BTN_ID)
+        values
+        <foreach collection="list" item="pd" index="index" separator=",">
+            (#{pd.ROLE_ID}, #{pd.BTN_ID})
+        </foreach>
+    </insert>
 
+    <!-- 批量删除 -->
+    <delete id="batchDeleteRoleBtn" parameterType="pd">
+        delete from T_ROLE_BTN
+        where
+        <if test="ROLE_ID != null and ROLE_ID != ''">
+          ROLE_ID = #{ROLE_ID}
+        </if>
+          AND BTN_ID  in
+        <foreach collection="array" item="btnId" index="index" open="(" separator="," close=")">
+            #{btnId}
+        </foreach>
+    </delete>
 
 </mapper>

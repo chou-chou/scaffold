@@ -22,13 +22,15 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- 这个Filter可以防止XSS、SQL注入 -->
     <filter>
-        <filter-name>xssFilter</filter-name>
+        <filter-name>xssSqlFilter</filter-name>
         <filter-class>com.hrp.filter.xss.XssFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>xssFilter</filter-name>
+        <filter-name>xssSqlFilter</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
     <context-param>
@@ -137,12 +139,27 @@
         <listener-class>com.hrp.listener.SystemInitListener</listener-class>
     </listener>
 
-    <!--<jsp-config>
-        <taglib>
-            <taglib-uri>/shiro-tag-extend</taglib-uri>
-            <taglib-location>/WEB-INF/tld/shiro.tld</taglib-location>
-        </taglib>
-    </jsp-config>-->
+    <!-- gzip压缩过滤器 -->
+    <filter>
+        <filter-name>gzipFilter</filter-name>
+        <filter-class>com.hrp.filter.GZipFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.js</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.css</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.html</url-pattern>
+    </filter-mapping>
 
     <!-- 接口调用跨域处理 -->
     <!--<filter>

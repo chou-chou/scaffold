@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="shiro" uri="/shiro-tag-extend" %>
 <%
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://"
@@ -112,6 +113,11 @@
                                 <div class="widget-box widget-color-blue2">
                                     <div class="widget-header">
                                         <h4 class="widget-title lighter smaller">部门树</h4>
+                                        <shiro:hasAnyPermission name="sys:userDept:save">
+                                            <button inCtrl type="button" id="saveChange" class="btn btn-inverse" style="float:right" onclick="saveChange()">
+                                                提交
+                                            </button>
+                                        </shiro:hasAnyPermission>
                                     </div>
 
                                     <div class="widget-body scroll-content" style="overflow:auto;">
@@ -120,9 +126,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" id="saveChange" class="btn btn-primary" onclick="saveChange()">
-                                    提交
-                                </button>
+
                             </div>
                         </div><!-- /.row -->
                     </div>
